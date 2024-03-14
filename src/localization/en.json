@@ -1,0 +1,58 @@
+{
+    "translations": {
+        "Dashboard": "Dashboard",
+        "Manage Clients": "Manage Clients",
+        "Manage Projects": "Manage Projects",
+        "Manage Employees": "Manage Employees",
+        "Manage Products": "Manage Products",
+        "Manage Roles": "Manage Roles",
+
+        "Manage Users": "Manage Users",
+        "Manage Partners": "Manage Partners",
+        "Manage Brands": "Manage Brands",
+
+        "Manage Categories": "Manage Categories",
+
+        "Manage Qrcodes": "Manage Qrcodes",
+
+        "Manage Specs": "Manage Specs",
+
+        "Manage Orders": "Manage Orders",
+
+        "Manage Payments": "Manage Payments",
+
+        "Clients": "Clients",
+        "Create Client": "Create client",
+        "View Details": "View Details",
+        "Create Appointment": "Create appointment",
+
+        "Projects": "Projects",
+        "Project": "Project",
+
+        "Dine": "Dine",
+        "Takeaway": "Takeaway",
+        "Client Unpaid": "Client Unpaid",
+        "Empty Table": "Empty Table",
+
+        "Sign In": "Sign In",
+        "Sign Up": "Sign Up",
+        "Username": "Username",
+        "Email": "Email",
+        "Phone": "Phone",
+        
+        "Title":"Title",
+        "Description": "Description",
+        "Notes": "Notes",
+        "Status": "Status",
+        "Created Date": "Created Date",
+        "Save": "Save",
+        "Search": "Search",
+        "Change": "Change",
+        "Cancel": "Cancel",
+        "Login": "Login",
+        "Logout": "Logout",
+        "Submit": "Submit",
+        "Does not have yet": "Dose not have yet",
+        "Details": "Details"
+    }
+}

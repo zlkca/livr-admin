@@ -1,0 +1,150 @@
+/**
+=========================================================
+* Material Dashboard 2 React - v2.2.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/material-dashboard-react
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+
+Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+
+import { Navigate, Route, Routes } from "react-router-dom";
+
+/** 
+  All of the routes for the Material Dashboard 2 React are added here,
+  You can add a new route, customize the routes and delete the routes here.
+
+  Once you add a new route on this file it will be visible automatically on
+  the Sidenav.
+
+  For adding a new route you can follow the existing routes in the routes array.
+  1. The `type` key with the `collapse` value is used for a route.
+  2. The `type` key with the `title` value is used for a title inside the Sidenav. 
+  3. The `type` key with the `divider` value is used for a divider between Sidenav items.
+  4. The `name` key is used for the name of the route on the Sidenav.
+  5. The `key` key is used for the key of the route (It will help you with the key prop inside a loop).
+  6. The `icon` key is used for the icon of the route on the Sidenav, you have to add a node.
+  7. The `collapse` key is used for making a collapsible item on the Sidenav that has other routes
+  inside (nested routes), you need to pass the nested routes inside an array as a value for the `collapse` key.
+  8. The `route` key is used to store the route location which is used for the react router.
+  9. The `href` key is used to store the external links location.
+  10. The `title` key is only for the item with the type of `title` and its used for the title text on the Sidenav.
+  10. The `component` key is used to store the component of its route.
+*/
+
+// Material Dashboard 2 React layouts
+import Dashboard from "layouts/dashboard";
+import Tables from "layouts/tables";
+import Billing from "layouts/billing";
+import RTL from "layouts/rtl";
+import Notifications from "layouts/notifications";
+import Profile from "layouts/profile";
+
+// @mui icons
+import Icon from "@mui/material/Icon";
+
+import ChangePassword from "pages/auth/ChangePassword";
+import SignIn from "pages/auth/SignIn";
+import SignUp from "pages/auth/SignUp";
+import ClientList from "pages/client/ClientList";
+import EmployeeList from "pages/employee/EmployeeList";
+import PartnerList from "pages/partner/PartnerList";
+import ClientForm from "pages/client/ClientForm";
+import EmployeeForm from "pages/employee/EmployeeForm";
+import BranchList from "pages/branch/BranchList";
+import BranchDetails from "pages/branch/BranchDetails";
+import BranchForm from "pages/branch/BranchForm";
+import ProjectList from "pages/project/ProjectList";
+import ProjectDetails from "pages/project/ProjectDetails";
+import ProjectForm from "pages/project/ProjectForm";
+import OrderList from "pages/order/OrderList";
+import OrderDetails from "pages/order/OrderDetails";
+import OrderForm from "pages/order/OrderForm";
+import PaymentList from "pages/payment/PaymentList";
+import PaymentForm from "pages/payment/PaymentForm";
+import AppointmentFormPage from "pages/appointment/AppointmentFormPage";
+import AppointmentList from "pages/appointment/AppointmentList";
+import DashboardPage from "pages/dashboard/DashboardPage";
+import ClientDetails from "pages/client/ClientDetails";
+import EmployeeDetails from "pages/employee/EmployeeDetails";
+import PaymentDetails from "pages/payment/PaymentDetails";
+import AppointmentDetails from "pages/appointment/AppointmentDetails";
+import { isAdmin } from "utils";
+
+export const MyRoutes = ({ tokenId, signedInUser }) => {
+  return (
+    <Routes>
+      {isAdmin(signedInUser) && (
+        <Route exact path="/dashboard" element={<DashboardPage />} key="dashboard" />
+      )}
+      <Route exact path="/clients" element={<ClientList />} key="clients" />
+      <Route exact path="/clients/:id" element={<ClientDetails />} key="client" />
+      <Route exact path="/clients/:id?/form" element={<ClientForm />} key="client-form" />
+      {isAdmin(signedInUser) && (
+        <Route exact path="/employees" element={<EmployeeList />} key="employees" />
+      )}
+      {isAdmin(signedInUser) && (
+        <Route exact path="/employees/:id" element={<EmployeeDetails />} key="employee" />
+      )}
+      {isAdmin(signedInUser) && (
+        <Route exact path="/employees/:id?/form" element={<EmployeeForm />} key="employee-form" />
+      )}
+      <Route exact path="/partners" element={<PartnerList />} key="partners" />
+      {isAdmin(signedInUser) && (
+        <Route exact path="/branches" element={<BranchList />} key="branches" />
+      )}
+      {isAdmin(signedInUser) && (
+        <Route exact path="/branches/:id" element={<BranchDetails />} key="branch" />
+      )}
+      {isAdmin(signedInUser) && (
+        <Route exact path="/branches/:id?/form" element={<BranchForm />} key="branch-form" />
+      )}
+      <Route exact path="/projects" element={<ProjectList />} key="projects" />
+      <Route exact path="/projects/:id" element={<ProjectDetails />} key="project" />
+      <Route exact path="/projects/:id?/form" element={<ProjectForm />} key="project-form" />
+      <Route exact path="/orders" element={<OrderList />} key="orders" />
+      <Route exact path="/orders/:id" element={<OrderDetails />} key="order" />
+      <Route exact path="/orders/:id?/form" element={<OrderForm />} key="order-form" />
+      <Route exact path="/payments" element={<PaymentList />} key="payments" />
+      <Route exact path="/payments/:id" element={<PaymentDetails />} key="payment" />
+      <Route exact path="/payments/:id?/form" element={<PaymentForm />} key="payment-form" />
+      <Route exact path="/appointments" element={<AppointmentList />} key="appointments" />
+      <Route exact path="/appointments/:id" element={<AppointmentDetails />} key="appointment" />
+      <Route
+        exact
+        path="/appointments/:id?/form"
+        element={<AppointmentFormPage />}
+        key="appointment-form"
+      />
+      <Route exact path="/billing" element={<Billing />} key="billing" />
+      <Route exact path="/notifications" element={<Notifications />} key="notifications" />
+      <Route exact path="/profile" element={<Profile />} key="profile" />
+      <Route exact path="/authentication/sign-in" element={<SignIn />} key="sign-in" />
+      <Route exact path="/authentication/sign-up" element={<SignUp />} key="sign-up" />
+      <Route
+        exact
+        path="/authentication/change-password"
+        element={<ChangePassword />}
+        key="change-pass"
+      />
+      {isAdmin(signedInUser) ? (
+        <Route exact path="/" element={<DashboardPage />} key="root" />
+      ) : (
+        <Route exact path="/" element={<ClientList />} key="root" />
+      )}
+      {/* {tokenId ? (
+        <Route
+          path="*"
+          element={<Navigate to={isAdmin(signedInUser) ? "/dashboard" : "/clients"} />}
+        />
+      ) : (
+        <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
+      )} */}
+    </Routes>
+  );
+};
