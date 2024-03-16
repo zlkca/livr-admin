@@ -246,3 +246,19 @@ export function calcSummary(rows) {
   }
   return { total, receivable: -balance, received: total + balance };
 }
+
+export function isValidDate(d) {
+  return d instanceof Date && !isNaN(d);
+}
+export function getFirstDayOfMonth(year, month) {
+  return new Date(year, month, 1);
+}
+export function getLastDayOfMonth(year, month) {
+  return new Date(year, month + 1, 0, 23, 59, 59);
+}
+export function getFirstDayOfYear(year) {
+  return new Date(year, 0, 1);
+}
+export function getLastDayOfYear(year) {
+  return new Date(year, 13, 0, 23, 59, 59);
+}

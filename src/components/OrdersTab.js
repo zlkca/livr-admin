@@ -4,10 +4,10 @@ import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDDateRangePicker from "components/MDDateRangePicker";
 import MDLinearProgress from "components/MDLinearProgress";
-import MDSection from "components/MDSection";
+// import MDSection from "components/MDSection";
 import VField from "components/VField";
 import GridTable from "components/common/GridTable";
-import { set } from "date-fns";
+// import { set } from "date-fns";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,19 +15,29 @@ import { useNavigate } from "react-router-dom";
 import { selectOrders } from "redux/order/order.selector";
 import { setOrders } from "redux/order/order.slice";
 import { setOrder } from "redux/order/order.slice";
+import { on } from "rsuite/esm/DOMHelper";
 import { orderAPI } from "services/orderAPI";
 import { numToString } from "utils";
 import { calcSummary } from "utils";
 import { logout } from "utils";
+import MDMonthPicker from "./MDMonthPicker";
+import MDYearPicker from "./MDYearPicker";
+import DateRangeFilter from "./DateRangeFilter";
+import { isValidDate } from "utils";
+import { getFirstDayOfYear } from "utils";
+import { getLastDayOfYear } from "utils";
+import { set } from "date-fns";
+import { getFirstDayOfMonth } from "utils";
+import { getLastDayOfMonth } from "utils";
 
 export default function OrdersTab(props) {
   const d = new Date();
   const month = d.getMonth();
   const year = d.getFullYear();
   const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
+  const lastDay = new Date(year, month + 1, 0, 23, 59, 59);
 
-  const { branch } = props;
+  const { branch, onDateRangeChange } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -37,28 +47,16 @@ export default function OrdersTab(props) {
   const [isLoading, setLoading] = useState();
   const [selectedRow, setSelectedRow] = useState();
   const [summary, setSummary] = useState();
+
+  const [searchMode, setSearchMode] = useState("month");
+  const [searchMonth, setSearchMonth] = useState(new Date());
+  const [searchYear, setSearchYear] = useState(new Date().getFullYear());
   const [dateRange, setDateRange] = useState([firstDay, lastDay]);
 
   const handleFilterModelChange = (newFilterModel) => {
     const filteredRows = gridFilteredSortedRowEntriesSelector(gridApiRef);
     setSummary(calcSummary(filteredRows));
   };
-
-  useEffect(() => {
-    setLoading(true);
-    const q = { "branch._id": branch._id };
-
-    orderAPI.searchOrders(q).then((r) => {
-      if (r.status == 200) {
-        dispatch(setOrders(r.data));
-        setSummary(calcSummary(r.data));
-        setLoading(false);
-      } else if (r.status === 401) {
-        dispatch(setSignedInUser());
-        logout();
-      }
-    });
-  }, []);
 
   const handleSelectRow = (row) => {
     setSelectedRow(row);
@@ -78,39 +76,6 @@ export default function OrdersTab(props) {
           navigate(`/orders/${_id}/form`);
         }
       });
-    }
-  };
-
-  const handleDateRangeChange = (range) => {
-    if (range) {
-      setDateRange(range);
-      const fd = `${range[0].toISOString().split("T")[0]}T00:00:00`;
-      const ld = `${range[1].toISOString().split("T")[0]}T23:59:59`;
-
-      orderAPI
-        .searchOrders({
-          created: { $gte: fd, $lte: ld },
-        })
-        .then((r) => {
-          if (r.status === 200) {
-            dispatch(setOrders(r.data));
-            setSummary(calcSummary(r.data));
-          }
-        });
-    } else {
-      setDateRange([firstDay, lastDay]);
-      const fd = `${firstDay.toISOString().split("T")[0]}T00:00:00`;
-      const ld = `${lastDay.toISOString().split("T")[0]}T23:59:59`;
-      orderAPI
-        .searchOrders({
-          created: { $gte: fd, $lte: ld },
-        })
-        .then((r) => {
-          if (r.status === 200) {
-            dispatch(setOrders(r.data));
-            setSummary(calcSummary(r.data));
-          }
-        });
     }
   };
 
@@ -184,12 +149,75 @@ export default function OrdersTab(props) {
     },
   ];
 
+  const handleSearchModeChange = (mode) => {
+    if (mode === "year") {
+      setSearchMode("year");
+      handleSearchYear(searchYear);
+    } else if (mode === "month") {
+      setSearchMode("month");
+      handleSearchMonth(searchMonth);
+    } else {
+      setSearchMode("range");
+      handleDateRangeChange(dateRange);
+    }
+  };
+
+  const handleSearchMonth = (d) => {
+    if (d && isValidDate(d)) {
+      const m = d.getMonth();
+      const y = d.getFullYear();
+      const firstDay = getFirstDayOfMonth(y, m);
+      const lastDay = getLastDayOfMonth(y, m);
+      const fd = `${firstDay.toISOString()}`;
+      const ld = `${lastDay.toISOString()}`;
+      setSearchMonth(d);
+      onDateRangeChange(fd, ld);
+    }
+  };
+
+  const handleSearchYear = (year) => {
+    if (year && year < 10000 && year > 1900) {
+      const firstDay = getFirstDayOfYear(year);
+      const lastDay = getLastDayOfYear(year);
+      const fd = `${firstDay.toISOString()}`;
+      const ld = `${lastDay.toISOString()}`;
+      setSearchYear(year);
+      onDateRangeChange(fd, ld);
+    }
+  };
+
+  const handleDateRangeChange = (range) => {
+    if (range) {
+      setDateRange(range);
+      const fd = `${range[0].toISOString()}`;
+      const ld = `${range[1].toISOString()}`;
+      onDateRangeChange(fd, ld);
+    } else {
+      setDateRange([firstDay, lastDay]);
+      const fd = `${firstDay.toISOString()}`;
+      const ld = `${lastDay.toISOString()}`;
+      onDateRangeChange(fd, ld);
+    }
+  };
   return (
     <Grid xs={12} style={{ height: 400 }}>
       <Grid container display="flex" justifyContent={"flex-start"}>
         <Grid item xs={6}>
-          {dateRange && <MDDateRangePicker range={dateRange} onChange={handleDateRangeChange} />}
+          {/* {dateRange && (
+            <MDDateRangePicker range={dateRange} onChange={handleDateRangeChange} />
+          )} */}
+          <DateRangeFilter
+            mode={searchMode}
+            year={searchYear}
+            month={searchMonth}
+            range={dateRange}
+            onModeChange={handleSearchModeChange}
+            onYearChange={handleSearchYear}
+            onMonthChange={handleSearchMonth}
+            onRangeChange={handleDateRangeChange}
+          />
         </Grid>
+
         <Grid item xs={6}>
           <Grid container spacing={2} direction="row" justifyContent="flex-end">
             <Grid item>

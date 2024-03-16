@@ -2,8 +2,8 @@ export const JWT_COOKIE = "shutterlux-backoffice-jwt";
 export const LANGUAGE_COOKIE = "shutterlux-backoffice-lang";
 export const ACCOUNT_COOKIE = "shutterlux-backoffice-account";
 
-// export const RootApiUrl = `http://192.168.12.4:5001`; // "192.168.12.4";
-export const RootApiUrl = "https://12pqq5anfh.execute-api.us-east-1.amazonaws.com/dev"; //
+export const RootApiUrl = `http://192.168.12.4:5001`; // "192.168.12.4";
+// export const RootApiUrl = "https://12pqq5anfh.execute-api.us-east-1.amazonaws.com/dev"; //
 // export const nonsqlApiUrl = `http://${localhost}:5001`;
 
 export const googleMapApiUrl = "https://maps.googleapis.com/maps/api";

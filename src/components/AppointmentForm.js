@@ -51,8 +51,9 @@ export default function AppointmentForm({ data, error, onChange }) {
   const [backdrop, setBackdrop] = useState({ opened: false });
 
   const typeOptions = [
-    { id: "measurement", label: t("Measurement") },
-    { id: "installation", label: t("Installation") },
+    { id: "measure", label: t("Measure") },
+    { id: "install", label: t("Install") },
+    { id: "repair", label: t("Repair") },
   ];
 
   const handleTypeChange = (event) => {
@@ -122,11 +123,9 @@ export default function AppointmentForm({ data, error, onChange }) {
           <Grid item xs={3}>
             <MDInput
               readOnly
-              label={data.type === "measurement" ? t("Sales") : t("Technician")}
+              label={data.type === "measure" ? t("Sales") : t("Technician")}
               value={data.employee ? data.employee.username : ""}
-              onClick={() =>
-                handleOpenBackdrop(data.type === "measurement" ? "sales" : "technician")
-              }
+              onClick={() => handleOpenBackdrop(data.type === "measure" ? "sales" : "technician")}
               helperText={error && error.sales ? error.sales : ""}
             />
           </Grid>

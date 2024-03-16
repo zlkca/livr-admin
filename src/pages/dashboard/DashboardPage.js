@@ -55,13 +55,13 @@ export default function DashboardPage() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const { salesDaily, salesMonthly, tasks } = reportData;
+  // const { salesDaily, salesMonthly, tasks } = reportData;
 
   // const branches = useSelector(selectBranches);
   // const projects = useSelector(selectProjects);
-  const payments = useSelector(selectPayments);
+  // const payments = useSelector(selectPayments);
   // const roles = useSelector(selectRoles);
-  const signedInUser = useSelector(selectSignedInUser);
+  // const signedInUser = useSelector(selectSignedInUser);
 
   const [orderMap, setOrderMap] = useState({});
   // const [totalAmount, setTotalAmount] = useState(0);
@@ -78,7 +78,7 @@ export default function DashboardPage() {
   });
 
   const [projectsByStage, setProjectsByStage] = useState({
-    labels: Object.keys(StageMap),
+    labels: Object.keys(StageMap).map((k) => t(k)),
     datasets: { label: t("Projects this month"), data: [] },
   });
   const [clientsBySource, setClientsBySource] = useState({
@@ -113,18 +113,18 @@ export default function DashboardPage() {
     let total = 0;
     let balance = 0;
     branches.forEach((it) => {
-      totalMap[it] = 0;
-      balanceMap[it] = 0;
+      totalMap[t(it)] = 0;
+      balanceMap[t(it)] = 0;
     });
     for (let d of orders) {
       if (d.taxOpt === "include") {
-        totalMap[d.branch.name] += parseFloat(d.amount);
+        totalMap[t(d.branch.name)] += parseFloat(d.amount);
         total += parseFloat(d.amount);
       } else {
-        totalMap[d.branch.name] += parseFloat(d.amount) * 1.13;
+        totalMap[t(d.branch.name)] += parseFloat(d.amount) * 1.13;
         total += parseFloat(d.amount) * 1.13;
       }
-      balanceMap[d.branch.name] += parseFloat(d.balance);
+      balanceMap[t(d.branch.name)] += parseFloat(d.balance);
       balance += parseFloat(d.balance);
     }
     return { totalMap, balanceMap, total, balance };
@@ -157,6 +157,7 @@ export default function DashboardPage() {
         dispatch(setBranches(r1.data));
       }
     });
+
     projectAPI
       .searchProjects({
         created: { $gte: fd, $lte: ld },
@@ -207,7 +208,7 @@ export default function DashboardPage() {
         arr.sort((a, b) => b.count - a.count);
         const tops = arr.slice(0, 5);
         setClientsBySource({
-          labels: tops.map((it) => it.key),
+          labels: tops.map((it) => t(it.key)),
           datasets: {
             label: t("Top 5 Clients this month"),
             data: tops.map((it) => it.count),
@@ -271,6 +272,7 @@ export default function DashboardPage() {
     if (orderMap && orderMap.balanceMap && Object.keys(orderMap.balanceMap).length) {
       setReceivableMonthly({
         ...receivableMonthly,
+        labels: receivableMonthly.labels.map((k) => t(k)),
         datasets: {
           label: t("Receivable Payments"),
           data: receivableMonthly.labels.map((k) => -parseFloat(orderMap.balanceMap[k])),
@@ -279,6 +281,7 @@ export default function DashboardPage() {
 
       setReceivedMonthly({
         ...receivedMonthly,
+        labels: receivedMonthly.labels.map((k) => t(k)),
         datasets: {
           label: t("Received Payments"),
           data: receivedMonthly.labels.map(
@@ -303,8 +306,8 @@ export default function DashboardPage() {
                 count={nClients}
                 percentage={{
                   color: "success",
-                  amount: "+5%",
-                  label: t("than last week"),
+                  amount: "",
+                  label: t("this month"),
                 }}
               />
             )}
@@ -317,8 +320,8 @@ export default function DashboardPage() {
                 count={numToString(orderMap.total + orderMap.balance)}
                 percentage={{
                   color: "success",
-                  amount: "+3%",
-                  label: t("than last month"),
+                  amount: "",
+                  label: t("this month"),
                 }}
               />
             )}
@@ -332,8 +335,8 @@ export default function DashboardPage() {
                 count={numToString(-orderMap.balance)}
                 percentage={{
                   color: "success",
-                  amount: "+1%",
-                  label: t("than last month"),
+                  amount: "",
+                  label: t("this month"),
                 }}
               />
             )}
@@ -347,8 +350,8 @@ export default function DashboardPage() {
                 count={numToString(orderMap.total)}
                 percentage={{
                   color: "success",
-                  amount: "+1%",
-                  label: t("than last month"),
+                  amount: "",
+                  label: t("this month"),
                 }}
               />
             )}
@@ -374,7 +377,7 @@ export default function DashboardPage() {
               color="#EF5350"
               title={t("Projects")}
               description={t("Monthly projects by stage")}
-              date={t("Monthly")}
+              date={t("this month")}
               chart={projectsByStage}
             />
           </Grid>
@@ -383,7 +386,7 @@ export default function DashboardPage() {
               color="#747b8a"
               title={t("Clients")}
               description={t("Monthly clients by source")}
-              date={t("Monthly")}
+              date={t("this month")}
               chart={clientsBySource}
             />
           </Grid>
@@ -392,7 +395,7 @@ export default function DashboardPage() {
               color="#FFA726"
               title={t("Receivable")}
               description={t("Monthly Receivable by branch")}
-              date={t("Monthly")}
+              date={t("this month")}
               chart={receivableMonthly}
             />
           </Grid>
@@ -403,7 +406,7 @@ export default function DashboardPage() {
               color="#1769aa"
               title={t("Received Payments")}
               description={t("Received Payments")}
-              date={t("Monthly")}
+              date={t("this month")}
               chart={receivedMonthly}
             />
           </Grid>

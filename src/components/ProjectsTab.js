@@ -20,24 +20,7 @@ export default function ProjectsTab(props) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const projects = useSelector(selectProjects);
-  // const [isLoading, setLoading] = useState();
-
-  // useEffect(() => {
-  //   setLoading(true);
-  //   const q = { "branch._id": branch._id };
-
-  //   projectAPI.searchProjects(q).then((r) => {
-  //     if (r.status == 200) {
-  //       dispatch(setProjects(r.data));
-  //       setTimeout(() => {
-  //         setLoading(false);
-  //       }, 500);
-  //     } else if (r.status === 401) {
-  //       dispatch(setSignedInUser());
-  //       logout();
-  //     }
-  //   });
-  // }, []);
+  const [isLoading, setLoading] = useState();
 
   const columns = [
     {
