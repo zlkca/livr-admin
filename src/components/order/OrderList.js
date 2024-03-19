@@ -26,6 +26,7 @@ import {
 } from "utils";
 import exportToExcel from "export/exportToExcel";
 import { isAdmin } from "utils";
+import { BrandName } from "config";
 
 export default function OrderList(props) {
   const { user, rowsPerPage, height, onDateRangeChange } = props;
@@ -93,7 +94,7 @@ export default function OrderList(props) {
       taxOpt: it.taxOpt,
       created: it.created,
     }));
-    exportToExcel(dataList, `shutterlux-orders-${new Date().toISOString()}.xlsx`);
+    exportToExcel(dataList, `${BrandName}-orders-${new Date().toISOString()}.xlsx`);
   };
   const columns = [
     {

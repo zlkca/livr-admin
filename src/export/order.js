@@ -131,7 +131,7 @@
 // export function downloadOrders(orders, onComplete){
 //     getOrdersDocument(orders).then(doc => {
 //         Packer.toBlob(doc).then(blob => {
-//             saveAs(blob, `shutterlux-orders-${(new Date()).toISOString()}.docx`);
+//             saveAs(blob, `${BrandName}-orders-${(new Date()).toISOString()}.docx`);
 //             if(onComplete){
 //                 onComplete();
 //             }

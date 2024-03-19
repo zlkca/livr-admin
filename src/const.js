@@ -1,21 +1,16 @@
-export const JWT_COOKIE = "shutterlux-backoffice-jwt";
-export const LANGUAGE_COOKIE = "shutterlux-backoffice-lang";
-export const ACCOUNT_COOKIE = "shutterlux-backoffice-account";
+import { Cfg } from "config";
+import { BrandName } from "config";
 
-// export const RootApiUrl = `http://192.168.12.17:5001`; // "192.168.12.4";
-// demo
-export const RootApiUrl = "https://ibi2llw781.execute-api.us-east-1.amazonaws.com/dev"; //
-// shutterlux
-// export const RootApiUrl = "https://12pqq5anfh.execute-api.us-east-1.amazonaws.com/dev"; //
-// export const nonsqlApiUrl = `http://${localhost}:5001`;
+export const JWT_COOKIE = `${BrandName.toLowerCase()}-backoffice-jwt`;
+export const LANGUAGE_COOKIE = `${BrandName.toLowerCase()}-backoffice-lang`;
+export const ACCOUNT_COOKIE = `${BrandName.toLowerCase()}-backoffice-account`;
+
+
+export const RootApiUrl = env=='prd' ? `https://${Cfg.dbClusterId}.execute-api.us-east-1.amazonaws.com/dev` 
+  : `http://192.168.12.17:5001`;
 
 export const googleMapApiUrl = "https://maps.googleapis.com/maps/api";
 export const geoPlaceApiUrl = "https://us1.locationiq.com/v1";
-// This key was created specifically for the demo in mui.com.
-// You need to create a new one for your application.
-
-// export const rdbApiUrl = "https://zwmehe3gd2.execute-api.us-east-1.amazonaws.com/dev";
-// export const nonsqlApiUrl = "https://csowmplge0.execute-api.us-east-1.amazonaws.com/dev";
 
 export const emptyUser = { username: "", email: "", phone: "", password: "", status: "I" };
 export const emptyProduct = { name: "", description: "", price: "", status: "I" };
@@ -50,9 +45,9 @@ export const sourceOptions = [
     value: "XiaoHongShu",
   },
   {
-    id: "ShutterLux Web",
-    label: "ShutterLux Website",
-    value: "ShutterLux Web",
+    id: `${BrandName} Web`,
+    label: `${BrandName} Website`,
+    value: `${BrandName} Web`,
   },
   {
     id: "Other Social Media",

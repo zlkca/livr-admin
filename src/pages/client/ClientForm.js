@@ -24,6 +24,7 @@ import { isAdmin } from "utils";
 import AccountSelectBackdrop from "components/AccountSelectBackdrop";
 import CardHead from "components/CardHead";
 import MDSection from "components/MDSection";
+import { BrandName } from "config";
 
 const mStyles = {
   root: {
@@ -75,9 +76,9 @@ export default function ClientForm() {
       value: "XiaoHongShu",
     },
     {
-      id: "ShutterLux Web",
-      label: "ShutterLux Website",
-      value: "ShutterLux Web",
+      id: `${BrandName} Web`,
+      label: `${BrandName} Website`,
+      value: `${BrandName} Web`,
     },
     {
       id: "Other Social Media",

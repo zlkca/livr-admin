@@ -65,6 +65,7 @@ import { useTranslation } from "react-i18next";
 import { selectSignedInUser } from "redux/auth/auth.selector";
 import { MyRoutes } from "routes";
 import { isAdmin } from "utils";
+import { BrandName } from "config";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -196,7 +197,7 @@ export default function App() {
           <Sidenav
             color={sidenavColor}
             brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite} // (transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite
-            brandName="Shutterlux"
+            brandName={BrandName}
             menus={navMenus}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
