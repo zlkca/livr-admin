@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { selectAppointment } from "redux/appointment/appointment.selector";
 import { setAppointment } from "redux/appointment/appointment.slice";
 import { appointmentAPI } from "services/appointmentAPI";
+import { getAddressString } from "utils";
 
 export default function AppointmentDetails() {
   const appointment = useSelector(selectAppointment);
@@ -53,7 +54,10 @@ export default function AppointmentDetails() {
                 <Grid display="flex">
                   <VField label={t("Order #")} value={appointment.id} />
                   <VField label={t("Type")} value={appointment.type} />
-                  {/* <VField label={t("Address")} value={appointment.displayAddress} /> */}
+                  <VField label={t("Address")} value={getAddressString(appointment.address)} />
+                  <VField label={t("Time")} value={`${appointment.start} - ${appointment.end}`} />
+                  <VField label={t("Summary")} value={appointment.summary} />
+                  <VField label={t("Notes")} value={appointment.notes} />
                 </Grid>
               </MDSection>
 
@@ -65,13 +69,14 @@ export default function AppointmentDetails() {
                 </Grid>
               </MDSection>
 
-              {/* <MDSection title={t("Sales")}>
+              <MDSection title={t("Employee")}>
                 <Grid display="flex">
-                  <VField label={t("Username")} value={appointment.sales.username} />
-                  <VField label={t("Email")} value={appointment.sales.email} />
-                  <VField label={t("Phone")} value={appointment.sales.phone} />
+                  <VField label={t("Username")} value={appointment.employee.username} />
+                  <VField label={t("Role")} value={appointment.employee.role} />
+                  <VField label={t("Email")} value={appointment.employee.email} />
+                  <VField label={t("Phone")} value={appointment.employee.phone} />
                 </Grid>
-              </MDSection> */}
+              </MDSection>
 
               <Grid display="flex" justifyContent="flex-end" xs={12} px={2} py={2}>
                 <MDButton

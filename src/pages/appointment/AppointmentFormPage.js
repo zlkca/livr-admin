@@ -74,14 +74,17 @@ export default function AppointmentFormPage() {
 
   useEffect(() => {
     if (appointment) {
-      setData({ ...appointment });
+      setData({
+        ...appointment,
+        timeRange: [new Date(appointment.start), new Date(appointment.end)],
+      });
     } else {
       if (params && params.id) {
         if (!appointment) {
           // refetch if page refreshed
           appointmentAPI.fetchAppointment(params.id).then((r) => {
             if (r.status === 200) {
-              setData({ ...r.data });
+              setData({ ...r.data, timeRange: [new Date(r.data.start), new Date(r.data.end)] });
             }
           });
         }
