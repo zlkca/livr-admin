@@ -15,7 +15,7 @@ import MDInput from "components/MDInput";
 import { orderAPI } from "services/orderAPI";
 import { selectOrder } from "redux/order/order.selector";
 import { setOrder } from "redux/order/order.slice";
-import ProjectSelectBackdrop from "components/ProjectSelectBackdrop";
+import ProjectSelectBackdrop from "components/project/ProjectSelectBackdrop";
 import { projectAPI } from "services/projectAPI";
 import MDSelect from "components/MDSelect";
 import { setSnackbar } from "redux/ui/ui.slice";
@@ -375,7 +375,7 @@ export default function OrderForm() {
                     <Grid item xs={3}>
                       <MDInput
                         name="amount"
-                        label={t("Amount")}
+                        label={t("pre-tax Total")}
                         value={data.amount}
                         onChange={handleAmountChange}
                         helperText={error && error.amount ? error.amount : ""}

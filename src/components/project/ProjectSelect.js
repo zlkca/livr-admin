@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Radio } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-import GridTable from "./common/GridTable";
-import { getAddressString } from "../utils";
+import GridTable from "../common/GridTable";
+import { getAddressString } from "../../utils";
 
 const mStyles = {
   root: {

@@ -35,6 +35,8 @@ import { selectBranches } from "redux/branch/branch.selector";
 import { branchAPI } from "services/branchAPI";
 import { setBranches } from "redux/branch/branch.slice";
 import { numToString } from "utils";
+import { getFirstDayOfMonth } from "utils";
+import { getLastDayOfMonth } from "utils";
 
 const mStyles = {
   root: {
@@ -57,7 +59,7 @@ export default function DashboardPage() {
 
   // const { salesDaily, salesMonthly, tasks } = reportData;
 
-  // const branches = useSelector(selectBranches);
+  const branches = useSelector(selectBranches);
   // const projects = useSelector(selectProjects);
   // const payments = useSelector(selectPayments);
   // const roles = useSelector(selectRoles);
@@ -87,35 +89,22 @@ export default function DashboardPage() {
   });
 
   const d = new Date();
-  const month = d.getMonth();
-  const year = d.getFullYear();
-  const firstDay = new Date(year, month, 1);
-  const fd = `${firstDay.toISOString().split("T")[0]}T00:00:00`;
-  const lastDay = new Date(year, month + 1, 0);
-  const ld = `${lastDay.toISOString().split("T")[0]}T23:59:59`;
+  const firstDay = getFirstDayOfMonth(d.getFullYear(), d.getMonth());
+  const lastDay = getLastDayOfMonth(d.getFullYear(), d.getMonth());
+  const fd = `${firstDay.toISOString()}`;
+  const ld = `${lastDay.toISOString()}`;
 
-  function getTotalKFromMap(map) {
-    let t = 0;
-    if (map) {
-      if (Object.keys(map).length) {
-        Object.keys(map).forEach((k) => (t += map[k]));
-        return parseFloat(t / 1000);
-      } else {
-        return 0;
-      }
-    } else {
-      return t;
-    }
-  }
-  function getOrderMap(orders, branches) {
+  function getOrderMap(orders, labels) {
     let totalMap = {};
     let balanceMap = {};
     let total = 0;
     let balance = 0;
-    branches.forEach((it) => {
-      totalMap[t(it)] = 0;
-      balanceMap[t(it)] = 0;
+
+    labels.forEach((it) => {
+      totalMap[it] = 0;
+      balanceMap[it] = 0;
     });
+
     for (let d of orders) {
       if (d.taxOpt === "include") {
         totalMap[t(d.branch.name)] += parseFloat(d.amount);
@@ -129,25 +118,6 @@ export default function DashboardPage() {
     }
     return { totalMap, balanceMap, total, balance };
   }
-
-  // function calcPaymentMap(payments, branches) {
-  //   let rMap = {};
-  //   let dMap = {};
-
-  //   branches.forEach((it) => {
-  //     rMap[it] = 0;
-  //     dMap[it] = 0;
-  //   });
-
-  //   payments.map((it) => {
-  //     if (it.type === "Deposit") {
-  //       dMap[it.branch.name] += parseFloat(it.amount);
-  //     } else {
-  //       rMap[it.branch.name] += parseFloat(it.amount);
-  //     }
-  //   });
-  //   return { rMap, dMap };
-  // }
 
   useEffect(() => {
     branchAPI.fetchBranches().then((r1) => {
@@ -219,54 +189,18 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (receivableMonthly.labels.length > 0) {
+    if (branches && branches.length > 0) {
+      const labels = branches.map((it) => t(it));
       orderAPI
         .searchOrders({
           created: { $gte: fd, $lte: ld },
         })
         .then((r) => {
-          const t = getOrderMap(r.data, receivableMonthly.labels);
+          const t = getOrderMap(r.data, labels);
           setOrderMap(t);
         });
-
-      // paymentAPI
-      //   .searchPayments({
-      //     created: { $gte: fd, $lte: ld },
-      //   })
-      //   .then((r) => {
-      //     const p = calcPaymentMap(r.data, receivableMonthly.labels);
-      //     setRemainPayMap(p.rMap);
-      //     setDepositMap(p.dMap);
-      //   });
     }
-  }, [receivableMonthly.labels]);
-  // useEffect(() => {
-  //     dispatch(setBreadcrumb([
-  //         {
-  //             id: Path.Dashboard,
-  //             label: t("Dashboard"),
-  //         }
-  //     ]));
-  // }, []);
-
-  // useEffect(() => {
-  //   if (payments && payments.length > 0) {
-  //     // get total received payments
-
-  //     // setNumOfPaidClients(Object.keys(clientMap).length);
-
-  //     // salesMonthly: {
-  //     //     labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-  //     //     datasets: { label: "Mobile apps", data: [50, 40, 300, 320, 500, 350, 200, 230, 500] },
-  //     //   },
-  //     const data = getReceivedPaymentMonthly(payments);
-
-  //     setReceivedMonthly({
-  //       labels: data.months,
-  //       datasets: { label: t("Received Payments"), data: data.payments },
-  //     });
-  //   }
-  // }, [payments]);
+  }, [branches]);
 
   useEffect(() => {
     if (orderMap && orderMap.balanceMap && Object.keys(orderMap.balanceMap).length) {

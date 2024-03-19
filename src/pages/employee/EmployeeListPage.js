@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  */
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,139 +25,116 @@ import Card from "@mui/material/Card";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import GridTable from "components/common/GridTable";
-import MDButton from "components/MDButton";
 
+// Material Dashboard 2 React example components
 import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
 import Footer from "layouts/Footer";
-import { memo } from "react";
-
+import GridTable from "components/common/GridTable";
+import { selectAccounts } from "redux/account/account.selector";
+import { searchAccounts } from "redux/account/account.thunk";
 import { accountAPI } from "services/accountAPI";
-import { setClient } from "redux/account/account.slice";
-import { setAccounts } from "redux/account/account.slice";
-import { setSignedInUser } from "redux/auth/auth.slice";
-import { setSnackbar } from "redux/ui/ui.slice";
-
-import MDSnackbar from "components/MDSnackbar";
-import MDLinearProgress from "components/MDLinearProgress";
-
-import { selectSnackbar } from "redux/ui/ui.selector";
-import { selectSignedInUser } from "redux/auth/auth.selector";
 import { selectAccountHttpStatus } from "redux/account/account.selector";
-import { selectClients } from "redux/account/account.selector";
-
-import { isAdmin, logout } from "utils";
-import { setClients } from "redux/account/account.slice";
+import ActionBar from "components/common/ActionBar";
+import { setEmployee } from "redux/account/account.slice";
+import { setAccounts } from "redux/account/account.slice";
+import MDLinearProgress from "components/MDLinearProgress";
+import { logout } from "utils";
+import { setSignedInUser } from "redux/auth/auth.slice";
+import { selectSignedInUser } from "redux/auth/auth.selector";
+import MDSnackbar from "components/MDSnackbar";
+import MDButton from "components/MDButton";
+import { selectSnackbar } from "redux/ui/ui.selector";
+import { setSnackbar } from "redux/ui/ui.slice";
 import CardHead from "components/CardHead";
+import EmployeeList from "components/account/EmployeeList";
+import { setEmployees } from "redux/account/account.slice";
+import { getMonthRangeQuery } from "utils";
+import { selectEmployees } from "redux/account/account.selector";
 
-export default memo(function ClientList() {
+export default memo(function EmployeeListPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const [selectedRow, setSelectedRow] = useState();
   const [isLoading, setLoading] = useState();
-  const status = useSelector(selectAccountHttpStatus);
-  const rows = useSelector(selectClients);
-  const snackbar = useSelector(selectSnackbar);
+
   const signedInUser = useSelector(selectSignedInUser);
+  const status = useSelector(selectAccountHttpStatus);
+  const snackbar = useSelector(selectSnackbar);
+  const mq = getMonthRangeQuery();
 
-  const columns = [
-    { headerName: t("Username"), field: "username", maxWidth: 200, flex: 1 },
-    {
-      headerName: t("Sales"),
-      field: "sales",
-      width: 150,
-      flex: 1,
-      valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("Unassigned")),
-    },
-    {
-      headerName: t("Branch"),
-      field: "branch",
-      maxWidth: 300,
-      valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("N/A")),
-      flex: 1,
-    },
-    { headerName: t("Email"), field: "email", maxWidth: 320, flex: 1.5 },
-    { headerName: t("Phone"), field: "phone", maxWidth: 200, flex: 1 },
-    // { headerName: t("Status"), field: "status", maxWidth: 150, flex: 1 },
-    { headerName: t("Created Date"), field: "created", maxWidth: 200, flex: 1 },
-    {
-      headerName: t("Actions"),
-      field: "_id",
-      maxWidth: 180,
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <MDButton
-            color="info"
-            size="small"
-            onClick={() => {
-              dispatch(setClient(params.row));
-              navigate(`/clients/${params.row._id}`);
-            }}
-          >
-            {t("View Details")}
-          </MDButton>
-        );
-      },
-    },
-  ];
-
-  const handleEdit = () => {
-    if (selectedRow) {
-      const _id = selectedRow._id;
-      accountAPI.fetchAccount(_id).then((r) => {
-        if (r.status === 200) {
-          dispatch(setClient(r.data));
-        }
-        navigate(`/clients/${_id}/form`);
-      });
-    }
+  const handleEmployeesDateRangeChange = (fd, ld) => {
+    const q = {
+      role: { $in: ["admin", "root", "sales", "technician", "user"] },
+      created: { $gte: fd, $lte: ld },
+    };
+    accountAPI.searchAccounts(q).then((r) => {
+      if (r.status == 200) {
+        dispatch(setEmployees(r.data));
+      } else if (r.status === 401) {
+        dispatch(setSignedInUser());
+        logout();
+      }
+    });
   };
 
-  const handleCreate = () => {
-    if (isAdmin(signedInUser)) {
-      dispatch(setClient({}));
-    } else {
-      dispatch(
-        setClient({
-          branch: signedInUser.branch,
-          sales: {
-            _id: signedInUser._id,
-            username: signedInUser.username,
-            email: signedInUser.email,
-            phone: signedInUser.phone,
-          },
-        })
-      );
-    }
-    navigate("/clients/new/form");
-  };
+  // const handleEdit = () => {
+  //   if (selectedRow) {
+  //     const _id = selectedRow._id;
+  //     accountAPI.fetchAccount(_id).then((r) => {
+  //       if (r.status === 200) {
+  //         dispatch(setEmployee(r.data));
+  //       }
+  //       navigate(`/employees/${_id}/form`);
+  //     });
+  //   }
+  // };
+
+  // const handleDelete = () => {
+  //   if (selectedRow) {
+  //     const _id = selectedRow._id;
+  //     accountAPI.deleteAccount(_id).then((r) => {
+  //       if (r.status === 200) {
+  //         dispatch(setAccounts(rows.filter((it) => it._id !== r.data._id)));
+  //         dispatch(
+  //           setSnackbar({
+  //             color: "success",
+  //             icon: "check",
+  //             title: "",
+  //             content: t("Deleted Successfully!"),
+  //             open: true,
+  //           })
+  //         );
+  //       }
+  //     });
+  //   }
+  // };
+
+  // const handleCreate = () => {
+  //   dispatch(setEmployee({}));
+  //   navigate("/employees/new/form");
+  // };
 
   const handleSelectRow = (row) => {
     setSelectedRow(row);
   };
 
   useEffect(() => {
-    if (signedInUser) {
-      setLoading(true);
-      const q = isAdmin(signedInUser)
-        ? { role: "client" }
-        : { role: "client", "sales._id": signedInUser._id };
-      accountAPI.searchAccounts(q).then((r) => {
+    accountAPI
+      .searchAccounts({
+        role: { $in: ["admin", "technician", "sales", "user"] },
+        ...mq,
+      })
+      .then((r) => {
         if (r.status == 200) {
-          dispatch(setClients(r.data));
-          setTimeout(() => {
-            setLoading(false);
-          }, 500);
+          dispatch(setEmployees(r.data));
         } else if (r.status === 401) {
           dispatch(setSignedInUser());
           logout();
         }
       });
-    }
   }, []);
 
   return (
@@ -167,11 +144,16 @@ export default memo(function ClientList() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <CardHead title={t("Clients")}>
-                <Grid container spacing={2} direction="row" justifyContent="flex-end">
+              <CardHead title={t("Employees")}>
+                {/* <Grid container spacing={2} direction="row" justifyContent="flex-end">
                   <Grid item>
                     <MDButton variant={"outlined"} size="small" onClick={handleEdit}>
                       {t("Edit")}
+                    </MDButton>
+                  </Grid>
+                  <Grid item>
+                    <MDButton variant={"outlined"} size="small" onClick={handleDelete}>
+                      {t("Delete")}
                     </MDButton>
                   </Grid>
                   <Grid item>
@@ -179,10 +161,16 @@ export default memo(function ClientList() {
                       {t("Create")}
                     </MDButton>
                   </Grid>
-                </Grid>
+                </Grid> */}
               </CardHead>
-              <MDBox pt={0} px={2} style={{ height: 600 }}>
-                {isLoading ? (
+              <MDBox pt={2} px={2} style={{ height: 740 }}>
+                <EmployeeList
+                  user={signedInUser}
+                  height={500}
+                  rowsPerPage={8}
+                  onDateRangeChange={handleEmployeesDateRangeChange}
+                />
+                {/* {isLoading ? (
                   <Grid
                     container
                     display="flex"
@@ -200,11 +188,11 @@ export default memo(function ClientList() {
                     data={rows}
                     columns={columns}
                     onRowClick={handleSelectRow}
-                    rowsPerPage={9}
+                    rowsPerPage={10}
                     // styles={mStyles.table}
                     sortModel={[{ field: "created", sort: "desc" }]}
                   />
-                )}
+                )} */}
               </MDBox>
             </Card>
           </Grid>

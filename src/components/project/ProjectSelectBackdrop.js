@@ -3,8 +3,8 @@ import pascalcase from "pascalcase";
 import { useTranslation } from "react-i18next";
 import { Backdrop, Card, CardHeader, Grid } from "@mui/material";
 
-import theme from "../theme";
-import MDButton from "./MDButton";
+import theme from "../../theme";
+import MDButton from "../MDButton";
 import ProjectSelect from "./ProjectSelect";
 
 const mStyles = {

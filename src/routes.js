@@ -51,30 +51,30 @@ import Icon from "@mui/material/Icon";
 import ChangePassword from "pages/auth/ChangePassword";
 import SignIn from "pages/auth/SignIn";
 import SignUp from "pages/auth/SignUp";
-import ClientList from "pages/client/ClientList";
-import EmployeeList from "pages/employee/EmployeeList";
+import EmployeeListPage from "pages/employee/EmployeeListPage";
+import EmployeeForm from "pages/employee/EmployeeForm";
 import PartnerList from "pages/partner/PartnerList";
 import ClientForm from "pages/client/ClientForm";
-import EmployeeForm from "pages/employee/EmployeeForm";
 import BranchList from "pages/branch/BranchList";
 import BranchDetails from "pages/branch/BranchDetails";
 import BranchForm from "pages/branch/BranchForm";
-import ProjectList from "pages/project/ProjectList";
+import ProjectListPage from "pages/project/ProjectListPage";
 import ProjectDetails from "pages/project/ProjectDetails";
 import ProjectForm from "pages/project/ProjectForm";
-import OrderList from "pages/order/OrderList";
 import OrderDetails from "pages/order/OrderDetails";
 import OrderForm from "pages/order/OrderForm";
 import PaymentList from "pages/payment/PaymentList";
 import PaymentForm from "pages/payment/PaymentForm";
 import AppointmentFormPage from "pages/appointment/AppointmentFormPage";
-import AppointmentList from "pages/appointment/AppointmentList";
+import AppointmentListPage from "pages/appointment/AppointmentListPage";
 import DashboardPage from "pages/dashboard/DashboardPage";
 import ClientDetails from "pages/client/ClientDetails";
 import EmployeeDetails from "pages/employee/EmployeeDetails";
 import PaymentDetails from "pages/payment/PaymentDetails";
 import AppointmentDetails from "pages/appointment/AppointmentDetails";
 import { isAdmin } from "utils";
+import OrderListPage from "pages/order/OrderListPage";
+import ClientListPage from "pages/client/ClientListPage";
 
 export const MyRoutes = ({ tokenId, signedInUser }) => {
   return (
@@ -82,11 +82,11 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
       {isAdmin(signedInUser) && (
         <Route exact path="/dashboard" element={<DashboardPage />} key="dashboard" />
       )}
-      <Route exact path="/clients" element={<ClientList />} key="clients" />
+      <Route exact path="/clients" element={<ClientListPage />} key="clients" />
       <Route exact path="/clients/:id" element={<ClientDetails />} key="client" />
       <Route exact path="/clients/:id?/form" element={<ClientForm />} key="client-form" />
       {isAdmin(signedInUser) && (
-        <Route exact path="/employees" element={<EmployeeList />} key="employees" />
+        <Route exact path="/employees" element={<EmployeeListPage />} key="employees" />
       )}
       {isAdmin(signedInUser) && (
         <Route exact path="/employees/:id" element={<EmployeeDetails />} key="employee" />
@@ -104,16 +104,16 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
       {isAdmin(signedInUser) && (
         <Route exact path="/branches/:id?/form" element={<BranchForm />} key="branch-form" />
       )}
-      <Route exact path="/projects" element={<ProjectList />} key="projects" />
+      <Route exact path="/projects" element={<ProjectListPage />} key="projects" />
       <Route exact path="/projects/:id" element={<ProjectDetails />} key="project" />
       <Route exact path="/projects/:id?/form" element={<ProjectForm />} key="project-form" />
-      <Route exact path="/orders" element={<OrderList />} key="orders" />
+      <Route exact path="/orders" element={<OrderListPage />} key="orders" />
       <Route exact path="/orders/:id" element={<OrderDetails />} key="order" />
       <Route exact path="/orders/:id?/form" element={<OrderForm />} key="order-form" />
       <Route exact path="/payments" element={<PaymentList />} key="payments" />
       <Route exact path="/payments/:id" element={<PaymentDetails />} key="payment" />
       <Route exact path="/payments/:id?/form" element={<PaymentForm />} key="payment-form" />
-      <Route exact path="/appointments" element={<AppointmentList />} key="appointments" />
+      <Route exact path="/appointments" element={<AppointmentListPage />} key="appointments" />
       <Route exact path="/appointments/:id" element={<AppointmentDetails />} key="appointment" />
       <Route
         exact
@@ -132,11 +132,13 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
         element={<ChangePassword />}
         key="change-pass"
       />
-      {isAdmin(signedInUser) ? (
+      {signedInUser && isAdmin(signedInUser) && (
         <Route exact path="/" element={<DashboardPage />} key="root" />
-      ) : (
-        <Route exact path="/" element={<ClientList />} key="root" />
       )}
+      {signedInUser && !isAdmin(signedInUser) && (
+        <Route exact path="/" element={<ClientListPage />} key="root" />
+      )}
+      {!signedInUser && <Route path="*" element={<Navigate to="/authentication/sign-in" />} />}
       {/* {tokenId ? (
         <Route
           path="*"

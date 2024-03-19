@@ -18,8 +18,23 @@ import { selectSignedInUser } from "redux/auth/auth.selector";
 import CardHead from "components/CardHead";
 import { generateProjectNumber } from "utils";
 import { setProject } from "redux/project/project.slice";
+import { orderAPI } from "services/orderAPI";
+import { getFirstDayOfMonth } from "utils";
+import { getLastDayOfMonth } from "utils";
+import { getMonthRangeQuery } from "utils";
+import { setSignedInUser } from "redux/auth/auth.slice";
+import { logout } from "utils";
+import { setOrders } from "redux/order/order.slice";
+import LabTabs from "components/common/Tabs";
+import { TabPanel } from "@mui/lab";
+import OrderList from "components/order/OrderList";
+import ProjectsTab from "components/ProjectsTab";
+import { setProjects } from "redux/project/project.slice";
+import { projectAPI } from "services/projectAPI";
 
 export default function ClientDetails() {
+  const mq = getMonthRangeQuery();
+
   const params = useParams();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -28,6 +43,53 @@ export default function ClientDetails() {
   const signedInUser = useSelector(selectSignedInUser);
 
   const [profile, setProfile] = useState();
+  const tabs = [
+    { id: "orders", label: t("Orders") },
+    { id: "projects", label: t("Projects") },
+  ];
+  const [tab, setTab] = useState({ id: "orders" });
+
+  const handleTabChange = (e, id) => {
+    if (id === "orders") {
+      const q = { "client._id": profile._id, ...mq };
+
+      orderAPI.searchOrders(q).then((r) => {
+        if (r.status == 200) {
+          dispatch(setOrders(r.data));
+          setTab({ id });
+        } else if (r.status === 401) {
+          dispatch(setSignedInUser());
+          logout();
+        }
+      });
+    } else if (id === "projects") {
+      const q = { "client._id": profile._id };
+      projectAPI.searchProjects(q).then((r) => {
+        if (r.status == 200) {
+          dispatch(setProjects(r.data));
+          setTab({ id });
+        } else if (r.status === 401) {
+          dispatch(setSignedInUser());
+          logout();
+        }
+      });
+    }
+  };
+
+  const handleOrdersDateRangeChange = (fd, ld) => {
+    if (profile) {
+      const q = { "client._id": profile._id, created: { $gte: fd, $lte: ld } };
+
+      orderAPI.searchOrders(q).then((r) => {
+        if (r.status == 200) {
+          dispatch(setOrders(r.data));
+        } else if (r.status === 401) {
+          dispatch(setSignedInUser());
+          logout();
+        }
+      });
+    }
+  };
 
   const handleEdit = () => {
     if (client) {
@@ -74,12 +136,30 @@ export default function ClientDetails() {
   useEffect(() => {
     if (client) {
       setProfile({ ...client });
+      const q = { "client._id": client._id, ...mq };
+      orderAPI.searchOrders(q).then((r1) => {
+        if (r1.status == 200) {
+          dispatch(setOrders(r1.data));
+        } else if (r1.status === 401) {
+          dispatch(setSignedInUser());
+          logout();
+        }
+      });
     } else {
       if (params && params.id) {
         if (!client) {
           accountAPI.fetchAccount(params.id).then((r) => {
             if (r.status === 200) {
               setProfile({ ...r.data });
+              const q = { "client._id": r.data._id, ...mq };
+              orderAPI.searchOrders(q).then((r1) => {
+                if (r1.status == 200) {
+                  dispatch(setOrders(r1.data));
+                } else if (r1.status === 401) {
+                  dispatch(setSignedInUser());
+                  logout();
+                }
+              });
             }
           });
         }
@@ -136,6 +216,21 @@ export default function ClientDetails() {
                     <VField label={t("Language")} value={profile.language} />
                     <VField label={t("Source")} value={profile.source} />
                   </Grid>
+                </MDSection>
+                <MDSection>
+                  <LabTabs tabs={tabs} id={tab.id} onChange={handleTabChange}>
+                    <TabPanel value={"orders"} style={{ width: "100%" }}>
+                      <OrderList
+                        user={signedInUser}
+                        height={300}
+                        rowsPerPage={6}
+                        onDateRangeChange={handleOrdersDateRangeChange}
+                      />
+                    </TabPanel>
+                    <TabPanel value={"projects"}>
+                      <ProjectsTab />
+                    </TabPanel>
+                  </LabTabs>
                 </MDSection>
                 <Grid display="flex" justifyContent="flex-end" xs={12} px={2} py={2}>
                   <MDButton variant="outlined" color="secondary" onClick={() => navigate(-1)}>

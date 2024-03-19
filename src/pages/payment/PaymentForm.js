@@ -15,7 +15,6 @@ import Footer from "layouts/Footer";
 
 import { setPayment } from "redux/payment/payment.slice";
 import { selectSignedInUser } from "redux/auth/auth.selector";
-import ProjectSelectBackdrop from "components/ProjectSelectBackdrop";
 import { paymentAPI } from "services/paymentAPI";
 import { selectPayment } from "redux/payment/payment.selector";
 import { projectAPI } from "services/projectAPI";

@@ -1,82 +1,90 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { Grid } from "@mui/material";
 import { gridFilteredSortedRowEntriesSelector, useGridApiRef } from "@mui/x-data-grid";
+
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
-import MDDateRangePicker from "components/MDDateRangePicker";
-import MDLinearProgress from "components/MDLinearProgress";
-// import MDSection from "components/MDSection";
-import VField from "components/VField";
 import GridTable from "components/common/GridTable";
-// import { set } from "date-fns";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { selectOrders } from "redux/order/order.selector";
-import { setOrders } from "redux/order/order.slice";
-import { setOrder } from "redux/order/order.slice";
-import { on } from "rsuite/esm/DOMHelper";
-import { orderAPI } from "services/orderAPI";
-import { numToString } from "utils";
-import { calcSummary } from "utils";
-import { logout } from "utils";
-import MDMonthPicker from "./MDMonthPicker";
-import MDYearPicker from "./MDYearPicker";
-import DateRangeFilter from "./DateRangeFilter";
-import { isValidDate } from "utils";
-import { getFirstDayOfYear } from "utils";
-import { getLastDayOfYear } from "utils";
-import { set } from "date-fns";
-import { getFirstDayOfMonth } from "utils";
-import { getLastDayOfMonth } from "utils";
+import MDLinearProgress from "components/MDLinearProgress";
+import { selectProjects } from "redux/project/project.selector";
+import { setProject } from "redux/project/project.slice";
+import { projectAPI } from "services/projectAPI";
+import DateRangeFilter from "../DateRangeFilter";
 
-export default function OrdersTab(props) {
-  const d = new Date();
-  const month = d.getMonth();
-  const year = d.getFullYear();
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0, 23, 59, 59);
+import {
+  getFinanceSummary,
+  isValidDate,
+  getFirstDayOfYear,
+  getLastDayOfYear,
+  getFirstDayOfMonth,
+  getLastDayOfMonth,
+} from "utils";
 
-  const { branch, onDateRangeChange } = props;
+import { isAdmin } from "utils";
+import { generateProjectNumber } from "utils";
+import { getAddressString } from "utils";
+
+export default function ProjectList(props) {
+  const { user, rowsPerPage, height, onDateRangeChange } = props;
+
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const gridApiRef = useGridApiRef();
 
-  const orders = useSelector(selectOrders);
+  const projects = useSelector(selectProjects);
   const [isLoading, setLoading] = useState();
   const [selectedRow, setSelectedRow] = useState();
-  const [summary, setSummary] = useState();
-
   const [searchMode, setSearchMode] = useState("month");
-  const [searchMonth, setSearchMonth] = useState(new Date());
-  const [searchYear, setSearchYear] = useState(new Date().getFullYear());
-  const [dateRange, setDateRange] = useState([firstDay, lastDay]);
 
-  const handleFilterModelChange = (newFilterModel) => {
-    const filteredRows = gridFilteredSortedRowEntriesSelector(gridApiRef);
-    setSummary(calcSummary(filteredRows));
-  };
+  const today = new Date();
+  const [searchMonth, setSearchMonth] = useState(today);
+  const [searchYear, setSearchYear] = useState(today.getFullYear());
+  const [dateRange, setDateRange] = useState([
+    getFirstDayOfMonth(today.getFullYear(), today.getMonth()),
+    getLastDayOfMonth(today.getFullYear(), today.getMonth()),
+  ]);
 
   const handleSelectRow = (row) => {
     setSelectedRow(row);
   };
 
-  const handleCreate = () => {
-    dispatch(setOrder({ address: {} }));
-    navigate("/orders/new/form");
-  };
-
   const handleEdit = () => {
     if (selectedRow) {
       const _id = selectedRow._id;
-      orderAPI.fetchOrder(_id).then((r) => {
+      projectAPI.fetchProject(_id).then((r) => {
         if (r.status === 200) {
-          dispatch(setOrder(r.data));
-          navigate(`/orders/${_id}/form`);
+          dispatch(setProject(r.data));
+          navigate(`/projects/${_id}/form`);
         }
       });
     }
+  };
+
+  const handleCreate = () => {
+    const id = generateProjectNumber();
+    if (isAdmin(user)) {
+      dispatch(setProject({ id, address: {} }));
+    } else {
+      dispatch(
+        setProject({
+          id,
+          address: {},
+          branch: user.branch,
+          sales: {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            phone: user.phone,
+            branch: user.branch,
+          },
+        })
+      );
+    }
+    navigate("/projects/new/form");
   };
 
   const columns = [
@@ -84,21 +92,22 @@ export default function OrdersTab(props) {
       headerName: t("ID"),
       field: "id",
       width: 120,
-      flex: 2,
+      flex: 1,
     },
     {
       headerName: t("Branch"),
       field: "branch",
-      width: 180,
+      width: 150,
       flex: 2,
       valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("Unassigned")),
     },
     {
-      headerName: t("Sales"),
-      field: "sales",
-      width: 150,
-      flex: 1,
-      valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("Unassigned")),
+      headerName: t("Address"),
+      field: "address",
+      width: 380,
+      flex: 3,
+      valueGetter: (params) =>
+        params.row?.address ? getAddressString(params.row?.address) : t("Unassigned"),
     },
     {
       headerName: t("Client"),
@@ -108,24 +117,19 @@ export default function OrdersTab(props) {
       valueGetter: (params) => (params.row?.client ? params.row?.client.username : t("Unknown")),
     },
     {
-      headerName: t("Amount"),
-      field: "amount",
-      width: 80,
+      headerName: t("Stage"),
+      field: "stage",
+      width: 160,
       flex: 1,
     },
     {
-      headerName: t("Deposit"),
-      field: "deposit",
-      width: 80,
+      headerName: t("Sales"),
+      field: "sales",
+      width: 150,
       flex: 1,
+      valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("Unassigned")),
     },
-    {
-      headerName: t("Tax"),
-      field: "taxOpt",
-      width: 80,
-      flex: 1,
-    },
-    { headerName: t("Created Date"), field: "created", width: 190, flex: 2 },
+    { headerName: t("Created Date"), field: "created", width: 190, flex: 1 },
     {
       headerName: t("Actions"),
       field: "_id",
@@ -137,9 +141,17 @@ export default function OrdersTab(props) {
             color="info"
             size="small"
             onClick={() => {
-              dispatch(setOrder(params.row));
-              const orderId = params.row._id;
-              navigate(`/orders/${orderId}`);
+              const projectId = params.row._id;
+              dispatch(setProject(params.row));
+
+              projectAPI.searchProjects({ id: params.row.id }).then((r) => {
+                if (r.data && r.data.length > 0) {
+                  dispatch(setProject(r.data[0]));
+                } else {
+                  dispatch(setProject());
+                }
+                navigate(`/projects/${projectId}`);
+              });
             }}
           >
             {t("View Details")}
@@ -193,19 +205,20 @@ export default function OrdersTab(props) {
       const ld = `${range[1].toISOString()}`;
       onDateRangeChange(fd, ld);
     } else {
+      const today = new Date();
+      const firstDay = getFirstDayOfMonth(today.getFullYear(), today.getMonth());
+      const lastDay = getLastDayOfMonth(today.getFullYear(), today.getMonth());
       setDateRange([firstDay, lastDay]);
       const fd = `${firstDay.toISOString()}`;
       const ld = `${lastDay.toISOString()}`;
       onDateRangeChange(fd, ld);
     }
   };
+
   return (
-    <Grid xs={12} style={{ height: 400 }}>
+    <Grid xs={12} style={{ height: height + 100 }}>
       <Grid container display="flex" justifyContent={"flex-start"}>
         <Grid item xs={6}>
-          {/* {dateRange && (
-            <MDDateRangePicker range={dateRange} onChange={handleDateRangeChange} />
-          )} */}
           <DateRangeFilter
             mode={searchMode}
             year={searchYear}
@@ -220,11 +233,13 @@ export default function OrdersTab(props) {
 
         <Grid item xs={6}>
           <Grid container spacing={2} direction="row" justifyContent="flex-end">
-            <Grid item>
-              <MDButton color="info" variant={"outlined"} size="small" onClick={handleEdit}>
-                {t("Edit")}
-              </MDButton>
-            </Grid>
+            {isAdmin(user) && (
+              <Grid item>
+                <MDButton color="info" variant={"outlined"} size="small" onClick={handleEdit}>
+                  {t("Edit")}
+                </MDButton>
+              </Grid>
+            )}
             <Grid item>
               <MDButton color="info" variant={"outlined"} size="small" onClick={handleCreate}>
                 {t("Create")}
@@ -233,7 +248,7 @@ export default function OrdersTab(props) {
           </Grid>
         </Grid>
       </Grid>
-      <MDBox pt={0} px={0} style={{ height: 300, marginTop: 20 }}>
+      <MDBox pt={0} px={0} style={{ height: height, marginTop: 20 }}>
         {isLoading ? (
           <Grid
             container
@@ -250,22 +265,14 @@ export default function OrdersTab(props) {
           <GridTable
             autoPageSize
             apiRef={gridApiRef}
-            data={orders}
+            data={projects}
             columns={columns}
             onRowClick={handleSelectRow}
-            rowsPerPage={6}
+            rowsPerPage={rowsPerPage}
             sortModel={[{ field: "created", sort: "desc" }]}
-            onFilterModelChange={handleFilterModelChange}
           />
         )}
       </MDBox>
-      {summary && (
-        <Grid container spacing={2} direction="row" display="flex" px={2} pt={2}>
-          <VField label={t("Amount")} value={numToString(summary.total)} />
-          <VField label={t("Received")} value={numToString(summary.received)} />
-          <VField label={t("Receivable")} value={numToString(summary.receivable)} />
-        </Grid>
-      )}
     </Grid>
   );
 }

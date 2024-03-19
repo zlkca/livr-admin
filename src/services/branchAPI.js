@@ -1,10 +1,20 @@
+import moment from "moment";
 import { get, post, put, del } from "./http";
 import { buildApiUrl } from "./utils";
 
 export const branchAPI = {
   fetchBranches: async (query) => {
     const url = buildApiUrl("/branches", query);
-    return await get(url);
+    const rsp = await get(url);
+    let data = null;
+    if (rsp.data) {
+      data = rsp.data.map((it) => ({
+        ...it,
+        created: moment.utc(it.created).local().format("yyyy-MM-DD hh:mm:ss"),
+        updated: moment.utc(it.updated).local().format("yyyy-MM-DD hh:mm:ss"),
+      }));
+    }
+    return { ...rsp, data };
   },
 
   fetchBranch: async (params) => {
@@ -29,6 +39,15 @@ export const branchAPI = {
 
   searchBranches: async (query) => {
     const url = buildApiUrl("/search/branches");
-    return await post(url, query);
+    const rsp = await post(url, query);
+    let data = null;
+    if (rsp.data) {
+      data = rsp.data.map((it) => ({
+        ...it,
+        created: moment.utc(it.created).local().format("yyyy-MM-DD hh:mm:ss"),
+        updated: moment.utc(it.updated).local().format("yyyy-MM-DD hh:mm:ss"),
+      }));
+    }
+    return { ...rsp, data };
   },
 };

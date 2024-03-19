@@ -3,15 +3,14 @@ import Tables from "layouts/tables";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
-import ClientList from "pages/client/ClientList";
-import EmployeeList from "pages/employee/EmployeeList";
-import ProjectList from "pages/project/ProjectList";
-import AppointmentList from "pages/appointment/AppointmentList";
+import EmployeeListPage from "pages/employee/EmployeeListPage";
+import ProjectListPage from "pages/project/ProjectListPage";
+import AppointmentListPage from "pages/appointment/AppointmentListPage";
 import Billing from "layouts/billing";
-import PaymentList from "pages/payment/PaymentList";
-import OrderList from "pages/order/OrderList";
 import BranchList from "pages/branch/BranchList";
 import Notifications from "./notifications";
+import OrderListPage from "pages/order/OrderListPage";
+import ClientListPage from "pages/client/ClientListPage";
 
 const menus = [
   {
@@ -36,7 +35,7 @@ const menus = [
     key: "employees",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/employees",
-    component: <EmployeeList />,
+    component: <EmployeeListPage />,
   },
   {
     type: "collapse",
@@ -44,7 +43,7 @@ const menus = [
     key: "clients",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/clients",
-    component: <ClientList />,
+    component: <ClientListPage />,
   },
   // {
   //   type: "collapse",
@@ -60,7 +59,7 @@ const menus = [
     key: "projects",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/projects",
-    component: <ProjectList />,
+    component: <ProjectListPage />,
   },
   {
     type: "collapse",
@@ -68,7 +67,7 @@ const menus = [
     key: "appointments",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/appointments",
-    component: <AppointmentList />,
+    component: <AppointmentListPage />,
   },
   {
     type: "collapse",
@@ -76,7 +75,7 @@ const menus = [
     key: "orders",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/orders",
-    component: <OrderList />,
+    component: <OrderListPage />,
   },
   // {
   //   type: "collapse",

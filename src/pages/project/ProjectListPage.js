@@ -39,9 +39,8 @@ import { selectAccountHttpStatus } from "redux/account/account.selector";
 import { fetchAccount } from "redux/account/account.thunk";
 import { setClient } from "redux/account/account.slice";
 
-import { projectAPI } from "services/projectAPI";
 import { selectSignedInUser } from "redux/auth/auth.selector";
-import { debounce, isAdmin, isDrawingEngineer, getAddressString } from "utils";
+import { debounce, isAdmin } from "utils";
 import { selectProjects } from "redux/project/project.selector";
 import { setProjects } from "redux/project/project.slice";
 import { generateProjectNumber } from "utils";
@@ -54,11 +53,11 @@ import { setSnackbar } from "redux/ui/ui.slice";
 import { selectSnackbar } from "redux/ui/ui.selector";
 import MDSnackbar from "components/MDSnackbar";
 import CardHead from "components/CardHead";
-import { orderAPI } from "services/orderAPI";
-import { setOrder } from "redux/order/order.slice";
+import { projectAPI } from "services/projectAPI";
+import ProjectList from "components/project/ProjectList";
 // Data
 
-export default function ProjectList() {
+export default function ProjectListPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -71,113 +70,19 @@ export default function ProjectList() {
   const signedInUser = useSelector(selectSignedInUser);
   const snackbar = useSelector(selectSnackbar);
 
-  const columns = [
-    {
-      headerName: t("ID"),
-      field: "id",
-      width: 120,
-      flex: 1,
-    },
-    {
-      headerName: t("Branch"),
-      field: "branch",
-      width: 150,
-      flex: 2,
-      valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("Unassigned")),
-    },
-    {
-      headerName: t("Address"),
-      field: "address",
-      width: 380,
-      flex: 3,
-      valueGetter: (params) =>
-        params.row?.address ? getAddressString(params.row?.address) : t("Unassigned"),
-    },
-    {
-      headerName: t("Client"),
-      field: "client",
-      width: 150,
-      flex: 1,
-      valueGetter: (params) => (params.row?.client ? params.row?.client.username : t("Unknown")),
-    },
-    {
-      headerName: t("Stage"),
-      field: "stage",
-      width: 160,
-      flex: 1,
-    },
-    {
-      headerName: t("Sales"),
-      field: "sales",
-      width: 150,
-      flex: 1,
-      valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("Unassigned")),
-    },
-    { headerName: t("Created Date"), field: "created", width: 190, flex: 1 },
-    {
-      headerName: t("Actions"),
-      field: "_id",
-      width: 170,
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <MDButton
-            color="info"
-            size="small"
-            onClick={() => {
-              const projectId = params.row._id;
-              dispatch(setProject(params.row));
+  const handleProjectsDateRangeChange = (fd, ld) => {
+    const q = isAdmin(signedInUser)
+      ? { created: { $gte: fd, $lte: ld } }
+      : { [`${signedInUser.role}._id`]: signedInUser._id, created: { $gte: fd, $lte: ld } };
 
-              orderAPI.searchOrders({ id: params.row.id }).then((r) => {
-                if (r.data && r.data.length > 0) {
-                  dispatch(setOrder(r.data[0]));
-                } else {
-                  dispatch(setOrder());
-                }
-                navigate(`/projects/${projectId}`);
-              });
-            }}
-          >
-            {t("View Details")}
-          </MDButton>
-        );
-      },
-    },
-  ];
-
-  const handleEdit = () => {
-    if (selectedRow) {
-      const _id = selectedRow._id;
-      projectAPI.fetchProject(_id).then((r) => {
-        if (r.status === 200) {
-          dispatch(setProject(r.data));
-          navigate(`/projects/${_id}/form`);
-        }
-      });
-    }
-  };
-
-  const handleCreate = () => {
-    const id = generateProjectNumber();
-    if (isAdmin(signedInUser)) {
-      dispatch(setProject({ id, address: {} }));
-    } else {
-      dispatch(
-        setProject({
-          id,
-          address: {},
-          branch: signedInUser.branch,
-          sales: {
-            _id: signedInUser._id,
-            username: signedInUser.username,
-            email: signedInUser.email,
-            phone: signedInUser.phone,
-            branch: signedInUser.branch,
-          },
-        })
-      );
-    }
-    navigate("/projects/new/form");
+    projectAPI.searchProjects(q).then((r) => {
+      if (r.status == 200) {
+        dispatch(setProjects(r.data));
+      } else if (r.status === 401) {
+        dispatch(setSignedInUser());
+        logout();
+      }
+    });
   };
 
   const handleSelectRow = (row) => {
@@ -249,53 +154,14 @@ export default function ProjectList() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <CardHead title={t("Projects")}>
-                <Grid container spacing={2} direction="row" justifyContent="flex-end">
-                  {isAdmin(signedInUser) && (
-                    <Grid item>
-                      <MDButton variant={"outlined"} size="small" onClick={handleEdit}>
-                        {t("Edit")}
-                      </MDButton>
-                    </Grid>
-                  )}
-                  <Grid item>
-                    <MDButton size="small" variant={"outlined"} onClick={handleCreate}>
-                      {t("Create")}
-                    </MDButton>
-                  </Grid>
-                </Grid>
-              </CardHead>
-              <MDBox pt={0} px={2} style={{ height: 600 }}>
-                {/* <DataTable
-                   table={{ columns, projects }}
-                   isSorted={false}
-                   entriesPerPage={false}
-                   showTotalEntries={false}
-                   noEndBorder
-                 /> */}
-                {isLoading ? (
-                  <Grid
-                    container
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    style={{ height: 400 }}
-                  >
-                    <Grid item xs={6}>
-                      <MDLinearProgress color="info" />
-                    </Grid>
-                  </Grid>
-                ) : (
-                  <GridTable
-                    autoPageSize
-                    data={projects}
-                    columns={columns}
-                    onRowClick={handleSelectRow}
-                    rowsPerPage={15}
-                    // styles={mStyles.table}
-                    sortModel={[{ field: "created", sort: "desc" }]}
-                  />
-                )}
+              <CardHead title={t("Projects")} />
+              <MDBox pt={2} px={2} style={{ height: 740 }}>
+                <ProjectList
+                  user={signedInUser}
+                  height={500}
+                  rowsPerPage={8}
+                  onDateRangeChange={handleProjectsDateRangeChange}
+                />
               </MDBox>
             </Card>
           </Grid>

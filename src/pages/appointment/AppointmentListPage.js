@@ -49,9 +49,10 @@ import { selectSnackbar } from "redux/ui/ui.selector";
 import { setSnackbar } from "redux/ui/ui.slice";
 import { isAdmin } from "utils";
 import CardHead from "components/CardHead";
+import AppointmentList from "components/appointment/AppointmentList";
 // Data
 
-export default function AppointmentList() {
+export default function AppointmentListPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -111,6 +112,21 @@ export default function AppointmentList() {
     },
   ];
 
+  const handleAppointmentsDateRangeChange = (fd, ld) => {
+    const q = isAdmin(signedInUser)
+      ? { created: { $gte: fd, $lte: ld } }
+      : { [`${signedInUser.role}._id`]: signedInUser._id, created: { $gte: fd, $lte: ld } };
+
+    appointmentAPI.searchAppointments(q).then((r) => {
+      if (r.status == 200) {
+        dispatch(setAppointments(r.data));
+      } else if (r.status === 401) {
+        dispatch(setSignedInUser());
+        logout();
+      }
+    });
+  };
+
   const handleEdit = () => {
     if (selectedRow) {
       const _id = selectedRow._id;
@@ -150,23 +166,59 @@ export default function AppointmentList() {
     setSelectedRow(row);
   };
 
-  const getAppointmentListQuery = (keyword, signedInUser) => {
-    return keyword ? { keyword } : null;
-    // if (isAdmin(signedInUser) || isDrawingEngineer(signedInUser)) {
-    //   return keyword ? { keyword } : null;
-    // } else if (isEmployee(signedInUser)) {
-    //   const query = { [`${signedInUser.role}Id`]: signedInUser.id };
-    //   return keyword ? { keyword, ...query } : query;
-    // } else {
-    //   return null;
-    // }
+  const handleSearchModeChange = (mode) => {
+    if (mode === "year") {
+      setSearchMode("year");
+      handleSearchYear(searchYear);
+    } else if (mode === "month") {
+      setSearchMode("month");
+      handleSearchMonth(searchMonth);
+    } else {
+      setSearchMode("range");
+      handleDateRangeChange(dateRange);
+    }
   };
 
-  // const loadAppointments = (keyword, signedInUser) => {
+  const handleSearchMonth = (d) => {
+    if (d && isValidDate(d)) {
+      const m = d.getMonth();
+      const y = d.getFullYear();
+      const firstDay = getFirstDayOfMonth(y, m);
+      const lastDay = getLastDayOfMonth(y, m);
+      const fd = `${firstDay.toISOString()}`;
+      const ld = `${lastDay.toISOString()}`;
+      setSearchMonth(d);
+      onDateRangeChange(fd, ld);
+    }
+  };
 
-  // };
+  const handleSearchYear = (year) => {
+    if (year && year < 10000 && year > 1900) {
+      const firstDay = getFirstDayOfYear(year);
+      const lastDay = getLastDayOfYear(year);
+      const fd = `${firstDay.toISOString()}`;
+      const ld = `${lastDay.toISOString()}`;
+      setSearchYear(year);
+      onDateRangeChange(fd, ld);
+    }
+  };
 
-  // const fetchAppointmentsDelay = debounce(loadAppointments, 500);
+  const handleDateRangeChange = (range) => {
+    if (range) {
+      setDateRange(range);
+      const fd = `${range[0].toISOString()}`;
+      const ld = `${range[1].toISOString()}`;
+      onDateRangeChange(fd, ld);
+    } else {
+      const today = new Date();
+      const firstDay = getFirstDayOfMonth(today.getFullYear(), today.getMonth());
+      const lastDay = getLastDayOfMonth(today.getFullYear(), today.getMonth());
+      setDateRange([firstDay, lastDay]);
+      const fd = `${firstDay.toISOString()}`;
+      const ld = `${lastDay.toISOString()}`;
+      onDateRangeChange(fd, ld);
+    }
+  };
 
   useEffect(() => {
     if (signedInUser) {
@@ -187,26 +239,6 @@ export default function AppointmentList() {
     }
   }, [signedInUser]);
 
-  // const handleSearch = (keyword) => {
-  //   if (signedInUser) {
-  //     loadAppointments(keyword, signedInUser);
-  //   }
-  // };
-
-  // const handleClearSearch = () => {
-  //   setKeyword();
-  // };
-
-  // const handleKeywordChange = (v) => {
-  //   setKeyword(v);
-  // };
-
-  const handleRefresh = () => {
-    if (signedInUser) {
-      loadAppointments(keyword, signedInUser);
-    }
-  };
-
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -215,7 +247,7 @@ export default function AppointmentList() {
           <Grid item xs={12}>
             <Card>
               <CardHead title={t("Appointments")}>
-                <Grid container spacing={2} direction="row" justifyContent="flex-end">
+                {/* <Grid container spacing={2} direction="row" justifyContent="flex-end">
                   <Grid item>
                     <MDButton variant={"outlined"} size="small" onClick={handleEdit}>
                       {t("Edit")}
@@ -231,10 +263,17 @@ export default function AppointmentList() {
                       {t("Create")}
                     </MDButton>
                   </Grid>
-                </Grid>
+                </Grid> */}
               </CardHead>
-
-              <MDBox pt={0} px={2} style={{ height: 600 }}>
+              <MDBox pt={2} px={2} style={{ height: 740 }}>
+                <AppointmentList
+                  user={signedInUser}
+                  height={500}
+                  rowsPerPage={8}
+                  onDateRangeChange={handleAppointmentsDateRangeChange}
+                />
+              </MDBox>
+              {/* <MDBox pt={0} px={2} style={{ height: 600 }}>
                 {isLoading ? (
                   <Grid
                     container
@@ -258,7 +297,7 @@ export default function AppointmentList() {
                     sortModel={[{ field: "created", sort: "desc" }]}
                   />
                 )}
-              </MDBox>
+              </MDBox> */}
             </Card>
           </Grid>
         </Grid>

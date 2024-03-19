@@ -2,7 +2,6 @@ import { Card, Grid } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDSection from "components/MDSection";
 import VField from "components/VField";
-import ActionBar from "components/common/ActionBar";
 import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
 import Footer from "layouts/Footer";
@@ -10,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { accountAPI } from "services/accountAPI";
+import { TabPanel } from "@mui/lab";
 
 import { selectEmployee } from "redux/account/account.selector";
 import { setEmployee } from "redux/account/account.slice";
@@ -26,10 +26,11 @@ import { projectAPI } from "services/projectAPI";
 import { setProjects } from "redux/project/project.slice";
 import { setClients } from "redux/account/account.slice";
 import LabTabs from "components/common/Tabs";
-import ClientsTab from "components/ClientsTab";
-import OrdersTab from "components/OrdersTab";
 import ProjectsTab from "components/ProjectsTab";
-import { TabPanel } from "@mui/lab";
+import { selectSignedInUser } from "redux/auth/auth.selector";
+import { getFirstDayOfMonth, getLastDayOfMonth } from "utils";
+import OrderList from "components/order/OrderList";
+import ClientList from "components/account/ClientList";
 
 export default function EmployeeDetails() {
   const { t } = useTranslation();
@@ -37,27 +38,28 @@ export default function EmployeeDetails() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const employee = useSelector(selectEmployee);
+  const signedInUser = useSelector(selectSignedInUser);
   const [profile, setProfile] = useState();
 
-  // const [data, setData] = useState();
   const tabs = [
     { id: "orders", label: t("Orders") },
     { id: "clients", label: t("Clients") },
     { id: "projects", label: t("Projects") },
-    // { id: ClientDetailsTabId.Appointment, label: t("Employee") },
-    // { id: "6", label: t("Quote") },
   ];
   const [tab, setTab] = useState({ id: "orders" });
 
   const handleTabChange = (e, id) => {
     if (id === "orders") {
-      const q =
-        profile.role === "sales" ? { "sales._id": profile._id } : { "technician._id": profile._id };
+      const today = new Date();
+      const firstDay = getFirstDayOfMonth(today.getFullYear(), today.getMonth());
+      const lastDay = getLastDayOfMonth(today.getFullYear(), today.getMonth());
+      const fd = `${firstDay.toISOString()}`;
+      const ld = `${lastDay.toISOString()}`;
+      const q = { [`${profile.role}._id`]: profile._id, created: { $gte: fd, $lte: ld } };
 
       orderAPI.searchOrders(q).then((r) => {
         if (r.status == 200) {
           dispatch(setOrders(r.data));
-          // setSummary(calcSummary(r.data));
           setTab({ id });
         } else if (r.status === 401) {
           dispatch(setSignedInUser());
@@ -90,16 +92,24 @@ export default function EmployeeDetails() {
       });
     }
   };
-  const handleOrdersDataRangeChange = (fd, ld) => {
-    const q =
-      profile.role === "sales" ? { "sales._id": profile._id } : { "technician._id": profile._id };
-    q.created = { $gte: fd, $lte: ld };
+
+  const handleOrdersDateRangeChange = (fd, ld) => {
+    const q = { [`${profile.role}._id`]: profile._id, created: { $gte: fd, $lte: ld } };
 
     orderAPI.searchOrders(q).then((r) => {
       if (r.status == 200) {
         dispatch(setOrders(r.data));
-        // setSummary(calcSummary(r.data));
-        // setTab({ id });
+      } else if (r.status === 401) {
+        dispatch(setSignedInUser());
+        logout();
+      }
+    });
+  };
+  const handleClientsDateRangeChange = (fd, ld) => {
+    const q = { role: "client", created: { $gte: fd, $lte: ld } };
+    accountAPI.searchAccounts(q).then((r) => {
+      if (r.status == 200) {
+        dispatch(setClients(r.data));
       } else if (r.status === 401) {
         dispatch(setSignedInUser());
         logout();
@@ -129,7 +139,7 @@ export default function EmployeeDetails() {
               color: "success",
               icon: "check",
               title: "",
-              content: t(t("Deleted Successfully!")),
+              content: t("Deleted Successfully!"),
               open: true,
             })
           );
@@ -141,17 +151,19 @@ export default function EmployeeDetails() {
 
   // handle refresh
   useEffect(() => {
+    const today = new Date();
+    const firstDay = getFirstDayOfMonth(today.getFullYear(), today.getMonth());
+    const lastDay = getLastDayOfMonth(today.getFullYear(), today.getMonth());
+    const fd = `${firstDay.toISOString()}`;
+    const ld = `${lastDay.toISOString()}`;
     if (employee) {
       setProfile({ ...employee });
-      const q =
-        employee.role === "sales"
-          ? { "sales._id": employee._id }
-          : { "technician._id": employee._id };
+      const q = { [`${employee.role}._id`]: employee._id, created: { $gte: fd, $lte: ld } };
 
       orderAPI.searchOrders(q).then((r) => {
         if (r.status == 200) {
           dispatch(setOrders(r.data));
-          // setSummary(calcSummary(r.data));
+          // setSummary(getFinanceSummary(r.data));
           // setTab({ id });
         } else if (r.status === 401) {
           dispatch(setSignedInUser());
@@ -164,15 +176,12 @@ export default function EmployeeDetails() {
           accountAPI.fetchAccount(params.id).then((r1) => {
             if (r1.status === 200) {
               setProfile({ ...r1.data });
-              const q =
-                r1.data.role === "sales"
-                  ? { "sales._id": r1.data._id }
-                  : { "technician._id": r1.data._id };
+              const q = { [`${r1.data.role}._id`]: r1.data._id, created: { $gte: fd, $lte: ld } };
 
               orderAPI.searchOrders(q).then((r) => {
                 if (r.status == 200) {
                   dispatch(setOrders(r.data));
-                  // setSummary(calcSummary(r.data));
+                  // setSummary(getFinanceSummary(r.data));
                   // setTab({ id });
                 } else if (r.status === 401) {
                   dispatch(setSignedInUser());
@@ -193,7 +202,7 @@ export default function EmployeeDetails() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             {profile && (
-              <Card style={{ height: 800 }}>
+              <Card style={{ height: 920 }}>
                 <CardHead title={t("Employee")}>
                   <Grid container spacing={2} direction="row" justifyContent="flex-end">
                     <Grid item>
@@ -213,11 +222,6 @@ export default function EmployeeDetails() {
                       value={profile.branch ? profile.branch.name : "N/A"}
                     />
                     <VField label={t("Role")} value={profile.role} />
-                  </Grid>
-                </MDSection>
-
-                <MDSection title={t("Contact")}>
-                  <Grid display="flex">
                     <VField label={t("Email")} value={profile.email} />
                     <VField label={t("Phone")} value={profile.phone} />
                   </Grid>
@@ -226,10 +230,20 @@ export default function EmployeeDetails() {
                 <MDSection>
                   <LabTabs tabs={tabs} id={tab.id} onChange={handleTabChange}>
                     <TabPanel value={"orders"} style={{ width: "100%" }}>
-                      <OrdersTab onDateRangeChange={handleOrdersDataRangeChange} />
+                      <OrderList
+                        user={signedInUser}
+                        height={300}
+                        rowsPerPage={6}
+                        onDateRangeChange={handleOrdersDateRangeChange}
+                      />
                     </TabPanel>
                     <TabPanel value={"clients"}>
-                      <ClientsTab />
+                      <ClientList
+                        user={signedInUser}
+                        height={300}
+                        rowsPerPage={6}
+                        onDateRangeChange={handleClientsDateRangeChange}
+                      />
                     </TabPanel>
                     <TabPanel value={"projects"}>
                       <ProjectsTab />

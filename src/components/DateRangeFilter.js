@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { DatePicker, DateRangePicker, Grid, InputNumber, Radio, RadioGroup } from "rsuite";
+import "rsuite/dist/rsuite-no-reset.min.css";
 
 export default function DateRangeFilter({
   mode,
@@ -47,7 +48,15 @@ export default function DateRangeFilter({
         <Radio value="range" style={{ width: 118, fontSize: 14 }}>
           {t("By Range")}
         </Radio>
-        <DateRangePicker value={range} onChange={onRangeChange} />
+        <DateRangePicker
+          value={range}
+          onChange={(r) => {
+            if (r && r.length > 1) {
+              r[1].setHours(23, 59, 59);
+            }
+            onRangeChange(r);
+          }}
+        />
       </Grid>
     </RadioGroup>
   );

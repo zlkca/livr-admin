@@ -237,14 +237,21 @@ export function numToString(num) {
   }
 }
 
-export function calcSummary(rows) {
+export function getFinanceSummary(orders) {
+  let preTax = 0;
   let total = 0;
   let balance = 0;
-  for (let i in rows) {
-    total += parseFloat(rows[i].amount);
-    balance += parseFloat(rows[i].balance);
+  for (let i in orders) {
+    const d = orders[i];
+    if (d.taxOpt === "include") {
+      total += parseFloat(d.amount);
+    } else {
+      total += parseFloat(d.amount) * 1.13;
+    }
+    balance += parseFloat(d.balance);
+    preTax += parseFloat(d.amount);
   }
-  return { total, receivable: -balance, received: total + balance };
+  return { preTax, total, receivable: -balance, received: total + balance };
 }
 
 export function isValidDate(d) {
@@ -261,4 +268,12 @@ export function getFirstDayOfYear(year) {
 }
 export function getLastDayOfYear(year) {
   return new Date(year, 13, 0, 23, 59, 59);
+}
+export function getMonthRangeQuery() {
+  const today = new Date();
+  const firstDay = getFirstDayOfMonth(today.getFullYear(), today.getMonth());
+  const lastDay = getLastDayOfMonth(today.getFullYear(), today.getMonth());
+  const fd = `${firstDay.toISOString()}`;
+  const ld = `${lastDay.toISOString()}`;
+  return { created: { $gte: fd, $lte: ld } };
 }

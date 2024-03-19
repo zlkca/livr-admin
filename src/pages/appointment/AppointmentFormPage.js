@@ -2,26 +2,26 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Card, Grid } from "@mui/material";
+import { Card, Checkbox, FormControlLabel, FormGroup, Grid } from "@mui/material";
 
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
-import MDSnackbar from "components/MDSnackbar";
 import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
 import Footer from "layouts/Footer";
 
 import { setAppointment } from "redux/appointment/appointment.slice";
 import { selectSignedInUser } from "redux/auth/auth.selector";
-import ProjectSelectBackdrop from "components/ProjectSelectBackdrop";
+import ProjectSelectBackdrop from "components/project/ProjectSelectBackdrop";
 import { appointmentAPI } from "services/appointmentAPI";
 import { selectAppointment } from "redux/appointment/appointment.selector";
 import { projectAPI } from "services/projectAPI";
-import AppointmentForm from "components/AppointmentForm";
+import AppointmentForm from "components/appointment/AppointmentForm";
 import { setSnackbar } from "redux/ui/ui.slice";
 import MDSection from "components/MDSection";
 import CardHead from "components/CardHead";
+import AddressForm from "components/AddressForm";
 
 const mStyles = {
   root: {
@@ -60,6 +60,7 @@ export default function AppointmentFormPage() {
     end: "",
     creator: null,
   });
+  const [sameAddress, setSameAddress] = useState();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -111,6 +112,39 @@ export default function AppointmentFormPage() {
     return errs;
   };
 
+  const handleAddressChange = (obj) => {
+    setData({
+      ...data,
+      address: { ...data.address, ...obj },
+    });
+  };
+
+  const handleSameAddrCheckboxChange = (event) => {
+    const newV = !sameAddress;
+    setSameAddress(newV);
+
+    if (newV) {
+      // if (data) {
+      //   setData({
+      //     ...data,
+      //     address: { ...data.address },
+      //   });
+      // }
+    } else {
+      setData({
+        ...data,
+        address: {
+          unitNumber: "",
+          streetNumber: "",
+          streetName: "",
+          city: "",
+          province: "",
+          country: "",
+          postcode: "",
+        },
+      });
+    }
+  };
   const handleOpenBackdrop = () => {
     projectAPI.fetchProjects().then((r) => {
       setProjects(r.data);
@@ -129,11 +163,11 @@ export default function AppointmentFormPage() {
       return;
     }
     if (!data.start) {
-      setError({ start: "Please select start data time" });
+      setError({ timeRange: "Please select start and end date time" });
       return;
     }
     if (!data.end) {
-      setError({ end: "Please add end date time" });
+      setError({ timeRange: "Please select start and end date time" });
       return;
     }
     if (data._id) {
@@ -187,7 +221,7 @@ export default function AppointmentFormPage() {
         project: { _id: project._id },
         address: project.address,
         client: project.client,
-        employee: data.type === "measurement" ? project.sales : project.technician,
+        employee: data.type === "measure" ? project.sales : project.technician,
       });
       setError({ ...error, project: "" });
     }
@@ -218,6 +252,32 @@ export default function AppointmentFormPage() {
                   />
                 </Grid>
               </Grid>
+              <Grid container xs={12} spacing={2}>
+                {/* {data && !data._id && (
+                  <Grid item xs={12} sm={10} md={10} lg={8} xl={8} pt={2}>
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={sameAddress}
+                            onChange={handleSameAddrCheckboxChange}
+                            inputProps={{ "aria-label": "controlled" }}
+                          />
+                        }
+                        label={t("Same as Client's Home Address")}
+                      />
+                    </FormGroup>
+                  </Grid>
+                )} */}
+                <Grid item xs={12} sm={10} md={10} lg={8} xl={8}>
+                  <AddressForm
+                    readOnly={true}
+                    address={data ? data.address : {}}
+                    onChange={handleAddressChange}
+                  />
+                </Grid>
+              </Grid>
+
               {data.client && (
                 <Grid container xs={12} spacing={2} style={{ marginTop: 25 + "px" }}>
                   <Grid item xs={3}>
