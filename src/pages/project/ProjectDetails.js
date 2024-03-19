@@ -4,25 +4,42 @@ import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDSection from "components/MDSection";
 import VField from "components/VField";
+import AppointmentList from "components/appointment/AppointmentList";
 import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
 import Footer from "layouts/Footer";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setAppointments } from "redux/appointment/appointment.slice";
 import { setAppointment } from "redux/appointment/appointment.slice";
+import { selectSignedInUser } from "redux/auth/auth.selector";
 import { selectOrder } from "redux/order/order.selector";
 import { setOrder } from "redux/order/order.slice";
 import { selectProject } from "redux/project/project.selector";
 import { setProject } from "redux/project/project.slice";
+import { appointmentAPI } from "services/appointmentAPI";
 import { projectAPI } from "services/projectAPI";
 
 export default function ProjectDetails() {
   const project = useSelector(selectProject);
   const order = useSelector(selectOrder);
+  const signedInUser = useSelector(selectSignedInUser);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (project) {
+      const _id = project._id;
+      appointmentAPI.searchAppointments({ "project._id": _id }).then((r) => {
+        if (r.status === 200) {
+          dispatch(setAppointments(r.data));
+        }
+      });
+    }
+  }, []);
 
   const handleEdit = () => {
     if (project) {
@@ -146,7 +163,15 @@ export default function ProjectDetails() {
                   <VField label={t("Phone")} value={project.sales.phone} />
                 </Grid>
               </MDSection>
-
+              <MDSection title={t("Appointments")}>
+                <AppointmentList
+                  hideFilter={true}
+                  user={signedInUser}
+                  height={300}
+                  rowsPerPage={6}
+                  onDateRangeChange={() => {}}
+                />
+              </MDSection>
               <Grid display="flex" justifyContent="flex-end" xs={12} px={2} py={2}>
                 <MDButton
                   variant="outlined"

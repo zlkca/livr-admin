@@ -27,7 +27,7 @@ import {
 import { isAdmin } from "utils";
 
 export default function AppointmentList(props) {
-  const { user, rowsPerPage, height, onDateRangeChange } = props;
+  const { user, rowsPerPage, height, onDateRangeChange, hideFilter } = props;
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -173,20 +173,22 @@ export default function AppointmentList(props) {
   return (
     <Grid xs={12} style={{ height: height + 100 }}>
       <Grid container display="flex" justifyContent={"flex-start"}>
-        <Grid item xs={6}>
-          <DateRangeFilter
-            mode={searchMode}
-            year={searchYear}
-            month={searchMonth}
-            range={dateRange}
-            onModeChange={handleSearchModeChange}
-            onYearChange={handleSearchYear}
-            onMonthChange={handleSearchMonth}
-            onRangeChange={handleDateRangeChange}
-          />
-        </Grid>
+        {!hideFilter && (
+          <Grid item xs={6}>
+            <DateRangeFilter
+              mode={searchMode}
+              year={searchYear}
+              month={searchMonth}
+              range={dateRange}
+              onModeChange={handleSearchModeChange}
+              onYearChange={handleSearchYear}
+              onMonthChange={handleSearchMonth}
+              onRangeChange={handleDateRangeChange}
+            />
+          </Grid>
+        )}
 
-        <Grid item xs={6}>
+        <Grid item xs={hideFilter ? 12 : 6}>
           <Grid container spacing={2} direction="row" justifyContent="flex-end">
             {isAdmin(user) && (
               <Grid item>

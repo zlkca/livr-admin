@@ -31,6 +31,11 @@ import { selectSignedInUser } from "redux/auth/auth.selector";
 import { getFirstDayOfMonth, getLastDayOfMonth } from "utils";
 import OrderList from "components/order/OrderList";
 import ClientList from "components/account/ClientList";
+import { getMonthRangeQuery } from "utils";
+import { appointmentAPI } from "services/appointmentAPI";
+import { setAppointments } from "redux/appointment/appointment.slice";
+import ProjectList from "components/project/ProjectList";
+import AppointmentList from "components/appointment/AppointmentList";
 
 export default function EmployeeDetails() {
   const { t } = useTranslation();
@@ -40,22 +45,18 @@ export default function EmployeeDetails() {
   const employee = useSelector(selectEmployee);
   const signedInUser = useSelector(selectSignedInUser);
   const [profile, setProfile] = useState();
-
+  const mq = getMonthRangeQuery();
   const tabs = [
     { id: "orders", label: t("Orders") },
     { id: "clients", label: t("Clients") },
     { id: "projects", label: t("Projects") },
+    { id: "appointments", label: t("Appointments") },
   ];
   const [tab, setTab] = useState({ id: "orders" });
 
   const handleTabChange = (e, id) => {
     if (id === "orders") {
-      const today = new Date();
-      const firstDay = getFirstDayOfMonth(today.getFullYear(), today.getMonth());
-      const lastDay = getLastDayOfMonth(today.getFullYear(), today.getMonth());
-      const fd = `${firstDay.toISOString()}`;
-      const ld = `${lastDay.toISOString()}`;
-      const q = { [`${profile.role}._id`]: profile._id, created: { $gte: fd, $lte: ld } };
+      const q = { [`${profile.role}._id`]: profile._id, ...mq };
 
       orderAPI.searchOrders(q).then((r) => {
         if (r.status == 200) {
@@ -67,7 +68,7 @@ export default function EmployeeDetails() {
         }
       });
     } else if (id === "clients") {
-      const qClient = { "sales._id": profile._id, role: "client" };
+      const qClient = { "sales._id": profile._id, role: "client", ...mq };
 
       accountAPI.searchAccounts(qClient).then((r) => {
         if (r.status == 200) {
@@ -79,11 +80,23 @@ export default function EmployeeDetails() {
         }
       });
     } else if (id === "projects") {
-      const q = { "sales._id": profile._id };
+      const q = { "sales._id": profile._id, ...mq };
 
       projectAPI.searchProjects(q).then((r) => {
         if (r.status == 200) {
           dispatch(setProjects(r.data));
+          setTab({ id });
+        } else if (r.status === 401) {
+          dispatch(setSignedInUser());
+          logout();
+        }
+      });
+    } else if (id === "appointments") {
+      const q = { "employee._id": profile._id, ...mq };
+
+      appointmentAPI.searchAppointments(q).then((r) => {
+        if (r.status == 200) {
+          dispatch(setAppointments(r.data));
           setTab({ id });
         } else if (r.status === 401) {
           dispatch(setSignedInUser());
@@ -115,6 +128,36 @@ export default function EmployeeDetails() {
         logout();
       }
     });
+  };
+
+  const handleProjectsDateRangeChange = (fd, ld) => {
+    if (profile) {
+      const q = { [`${profile.role}._id`]: profile._id, created: { $gte: fd, $lte: ld } };
+
+      projectAPI.searchProjects(q).then((r) => {
+        if (r.status == 200) {
+          dispatch(setProjects(r.data));
+        } else if (r.status === 401) {
+          dispatch(setSignedInUser());
+          logout();
+        }
+      });
+    }
+  };
+
+  const handleAppointmentsDateRangeChange = (fd, ld) => {
+    if (profile) {
+      const q = { "employee._id": profile._id, created: { $gte: fd, $lte: ld } };
+
+      appointmentAPI.searchAppointments(q).then((r) => {
+        if (r.status == 200) {
+          dispatch(setAppointments(r.data));
+        } else if (r.status === 401) {
+          dispatch(setSignedInUser());
+          logout();
+        }
+      });
+    }
   };
   const handleEdit = () => {
     if (employee) {
@@ -246,7 +289,20 @@ export default function EmployeeDetails() {
                       />
                     </TabPanel>
                     <TabPanel value={"projects"}>
-                      <ProjectsTab />
+                      <ProjectList
+                        user={signedInUser}
+                        height={300}
+                        rowsPerPage={6}
+                        onDateRangeChange={handleProjectsDateRangeChange}
+                      />
+                    </TabPanel>
+                    <TabPanel value={"appointments"}>
+                      <AppointmentList
+                        user={signedInUser}
+                        height={300}
+                        rowsPerPage={6}
+                        onDateRangeChange={handleAppointmentsDateRangeChange}
+                      />
                     </TabPanel>
                   </LabTabs>
                 </MDSection>

@@ -1,13 +1,14 @@
-import { Cfg } from "config";
+import { env, Cfg } from "config";
 import { BrandName } from "config";
 
 export const JWT_COOKIE = `${BrandName.toLowerCase()}-backoffice-jwt`;
 export const LANGUAGE_COOKIE = `${BrandName.toLowerCase()}-backoffice-lang`;
 export const ACCOUNT_COOKIE = `${BrandName.toLowerCase()}-backoffice-account`;
 
-
-export const RootApiUrl = env=='prd' ? `https://${Cfg.dbClusterId}.execute-api.us-east-1.amazonaws.com/dev` 
-  : `http://192.168.12.17:5001`;
+export const RootApiUrl =
+  env == "prd"
+    ? `https://${Cfg.dbClusterId}.execute-api.us-east-1.amazonaws.com/dev`
+    : `http://192.168.12.17:5001`;
 
 export const googleMapApiUrl = "https://maps.googleapis.com/maps/api";
 export const geoPlaceApiUrl = "https://us1.locationiq.com/v1";

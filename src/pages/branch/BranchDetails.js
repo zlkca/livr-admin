@@ -34,6 +34,9 @@ import { projectAPI } from "services/projectAPI";
 import OrderList from "components/order/OrderList";
 import ClientList from "components/account/ClientList";
 import ProjectList from "components/project/ProjectList";
+import { appointmentAPI } from "services/appointmentAPI";
+import { setAppointments } from "redux/appointment/appointment.slice";
+import AppointmentList from "components/appointment/AppointmentList";
 
 export default function BranchDetails() {
   const mq = getMonthRangeQuery();
@@ -52,6 +55,7 @@ export default function BranchDetails() {
     { id: "orders", label: t("Orders") },
     { id: "clients", label: t("Clients") },
     { id: "projects", label: t("Projects") },
+    { id: "appointments", label: t("Appointments") },
   ];
   const [tab, setTab] = useState({ id: "orders" });
 
@@ -84,6 +88,18 @@ export default function BranchDetails() {
       projectAPI.searchProjects(q).then((r) => {
         if (r.status == 200) {
           dispatch(setProjects(r.data));
+          setTab({ id });
+        } else if (r.status === 401) {
+          dispatch(setSignedInUser());
+          logout();
+        }
+      });
+    } else if (id === "appointments") {
+      const q = { "employee.branch._id": branch._id, ...mq };
+
+      appointmentAPI.searchAppointments(q).then((r) => {
+        if (r.status == 200) {
+          dispatch(setAppointments(r.data));
           setTab({ id });
         } else if (r.status === 401) {
           dispatch(setSignedInUser());
@@ -131,7 +147,20 @@ export default function BranchDetails() {
       }
     });
   };
+  const handleAppointmentsDateRangeChange = (fd, ld) => {
+    if (profile) {
+      const q = { "employee.branch._id": branch._id, created: { $gte: fd, $lte: ld } };
 
+      appointmentAPI.searchAppointments(q).then((r) => {
+        if (r.status == 200) {
+          dispatch(setAppointments(r.data));
+        } else if (r.status === 401) {
+          dispatch(setSignedInUser());
+          logout();
+        }
+      });
+    }
+  };
   // handle refresh
   useEffect(() => {
     if (branch) {
@@ -258,6 +287,14 @@ export default function BranchDetails() {
                         height={448}
                         rowsPerPage={6}
                         onDateRangeChange={handleProjectDateRangeChange}
+                      />
+                    </TabPanel>
+                    <TabPanel value={"appointments"}>
+                      <AppointmentList
+                        user={signedInUser}
+                        height={300}
+                        rowsPerPage={6}
+                        onDateRangeChange={handleAppointmentsDateRangeChange}
                       />
                     </TabPanel>
                   </LabTabs>
