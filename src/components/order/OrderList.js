@@ -25,8 +25,10 @@ import {
   getLastDayOfMonth,
 } from "utils";
 import exportToExcel from "export/exportToExcel";
-import { isAdmin } from "utils";
+import { isAdmin } from "permission";
 import { BrandName } from "config";
+import { setOrders } from "redux/order/order.slice";
+import { setSnackbar } from "redux/ui/ui.slice";
 
 export default function OrderList(props) {
   const { user, rowsPerPage, height, onDateRangeChange } = props;
@@ -82,6 +84,25 @@ export default function OrderList(props) {
     }
   };
 
+  const handleDelete = () => {
+    if (selectedRow) {
+      const _id = selectedRow._id;
+      orderAPI.deleteOrder(_id).then((r) => {
+        if (r.status === 200) {
+          dispatch(setOrders(orders.filter((it) => it._id !== r.data._id)));
+          dispatch(
+            setSnackbar({
+              color: "success",
+              icon: "check",
+              title: "",
+              content: "Deleted Successfully!",
+              open: true,
+            })
+          );
+        }
+      });
+    }
+  };
   const handleExport = () => {
     const dataToExport = gridFilteredSortedRowEntriesSelector(gridApiRef);
     const dataList = dataToExport.map((it) => ({
@@ -256,6 +277,13 @@ export default function OrderList(props) {
                 {t("Create")}
               </MDButton>
             </Grid>
+            {isAdmin(user) && (
+              <Grid item>
+                <MDButton color="info" variant={"outlined"} size="small" onClick={handleDelete}>
+                  {t("Delete")}
+                </MDButton>
+              </Grid>
+            )}
             <Grid item>
               <MDButton color="info" variant={"outlined"} size="small" onClick={handleExport}>
                 {t("Export")}

@@ -3,27 +3,11 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import BarChartCard from "../../components/dashboard/BarChartCard";
-import LineChartCard from "../../components/dashboard/LineChartCard";
 import StatisticsCard from "../../components/dashboard/StatisticsCard";
-
-// import { Path } from "../../const";
-// import Content from "../../layout/Content";
-import { selectClients } from "../../redux/account/account.selector";
-import { setClients } from "../../redux/account/account.slice";
-// import { selectBreadcrumb } from "../../redux/layout/layout.selector";
-// import { setBreadcrumb } from "../../redux/layout/layout.slice";
-import { selectProjects } from "../../redux/project/project.selector";
-import { setProjects } from "../../redux/project/project.slice";
-import { selectPayments } from "../../redux/payment/payment.selector";
 
 // import { fetchProjects } from "../../services/api";
 import { accountAPI } from "../../services/accountAPI";
-import reportData from "./reportData";
-import { getReceivedPaymentMonthly } from "./utils";
 import { projectAPI } from "services/projectAPI";
-import { selectSignedInUser } from "redux/auth/auth.selector";
-import { setPayments } from "redux/payment/payment.slice";
-import { paymentAPI } from "services/paymentAPI";
 import Footer from "layouts/Footer";
 import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
@@ -190,7 +174,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (branches && branches.length > 0) {
-      const labels = branches.map((it) => t(it));
+      const labels = branches.map((it) => t(it.name));
       orderAPI
         .searchOrders({
           created: { $gte: fd, $lte: ld },

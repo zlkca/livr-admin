@@ -20,11 +20,13 @@ import { selectBranches } from "redux/branch/branch.selector";
 import { setSnackbar } from "redux/ui/ui.slice";
 import MDInput from "components/MDInput";
 import AddressForm from "components/AddressForm";
-import { isAdmin } from "utils";
-import AccountSelectBackdrop from "components/AccountSelectBackdrop";
+import { isAdmin } from "permission";
 import CardHead from "components/CardHead";
 import MDSection from "components/MDSection";
 import { BrandName } from "config";
+import AccountSelectBackdrop from "components/account/AccountSelectBackdrop";
+import { getEmployeesQueryByRole } from "permission";
+import { selectBranch } from "redux/branch/branch.selector";
 
 const mStyles = {
   root: {
@@ -137,6 +139,7 @@ export default function ClientForm() {
   const signedInUser = useSelector(selectSignedInUser);
   const client = useSelector(selectClient);
   const branches = useSelector(selectBranches);
+  const branch = useSelector(selectBranch);
 
   useEffect(() => {
     branchAPI.fetchBranches().then((r1) => {
@@ -251,7 +254,7 @@ export default function ClientForm() {
   };
 
   const handleSelectAccount = (account) => {
-    if (account && account.role === "sales") {
+    if (account && ["sales", "store manager", "admin"].includes(account.role)) {
       const sales = account;
       setProfile({
         ...profile,
@@ -315,14 +318,13 @@ export default function ClientForm() {
   };
 
   const handleOpenBackdrop = (role) => {
-    if (isAdmin(signedInUser)) {
-      accountAPI.fetchAccounts({ role }).then((r) => {
-        const d = r.status === 200 ? r.data : [];
-        setAccounts(d);
-        let account = profile.sales;
-        setBackdrop({ opened: true, role, account });
-      });
-    }
+    const q = getEmployeesQueryByRole(signedInUser, branch ? branch._id : "", "sales");
+
+    accountAPI.searchAccounts(q).then((r) => {
+      const d = r.status === 200 ? r.data : [];
+      setAccounts(d);
+      setBackdrop({ opened: true, role, account: profile.sales });
+    });
   };
 
   return (

@@ -3,12 +3,9 @@ import pascalcase from "pascalcase";
 import { useTranslation } from "react-i18next";
 import { Backdrop, Card, CardHeader, Grid } from "@mui/material";
 
-import HorizontalStack from "./common/HorizontalStack";
-// import CardWidget from "../layout/Card";
-import theme from "../theme";
-import MDButton from "./MDButton";
+import theme from "../../theme";
+import MDButton from "../MDButton";
 import AccountSelect from "./AccountSelect";
-import MDBox from "./MDBox";
 
 const mStyles = {
   card: { root: { width: 1800, height: 700 } },

@@ -37,48 +37,6 @@ export const isPartner = (account) => {
   return account && account.role === "partner";
 };
 
-export const isAdmin = (account) => {
-  return account && (account.role === "admin" || account.role === "root");
-};
-
-export const isDrawingEngineer = (account) => {
-  return account && account.role === "engineer";
-};
-
-export const isSales = (account) => {
-  return account && account.role === "sales";
-};
-
-export const isTechnician = (account) => {
-  return account && account.role === "technician";
-};
-
-export const getEmployeeRoleQuery = (signedInUser) => {
-  if (isAdmin(signedInUser)) {
-    return { role: { $in: ["sales", "technician", "admin"] } }; // "engineer", "accountant",
-  } else {
-    return { role: { $in: ["sales", "technician"] } }; // "engineer", "accountant"
-  }
-};
-
-export const getMyClientListQuery = (keyword, roles, signedInUser) => {
-  const clientRole = roles.find((r) => r.name === "client");
-  if (clientRole) {
-    if (isAdmin(signedInUser) || isDrawingEngineer(signedInUser)) {
-      return keyword ? { keyword, roleId: clientRole._id } : { roleId: clientRole._id };
-    } else if (isSales(signedInUser) || isPartner(signedInUser)) {
-      const q = {
-        roleId: clientRole._id,
-        recommenderId: signedInUser._id,
-      };
-      return keyword ? { keyword, ...q } : q;
-    } else {
-      return null;
-    }
-  } else {
-    return null;
-  }
-};
 // emplyee Id is 4 digital string
 export const isValidEmployeeId = (s) => {
   let isDigitalString = /^\d+$/.test(s);

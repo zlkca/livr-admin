@@ -23,9 +23,13 @@ import {
   getLastDayOfMonth,
 } from "utils";
 
-import { isAdmin } from "utils";
+import { isAdmin } from "permission";
 import { generateProjectNumber } from "utils";
 import { getAddressString } from "utils";
+import { setProjects } from "redux/project/project.slice";
+import { setSnackbar } from "redux/ui/ui.slice";
+import { orderAPI } from "services/orderAPI";
+import { setOrder } from "redux/order/order.slice";
 
 export default function ProjectList(props) {
   const { user, rowsPerPage, height, onDateRangeChange } = props;
@@ -63,7 +67,26 @@ export default function ProjectList(props) {
       });
     }
   };
-
+  const handleDelete = () => {
+    if (selectedRow) {
+      const _id = selectedRow._id;
+      projectAPI.deleteProject(_id).then((r) => {
+        if (r.status === 200) {
+          dispatch(setProjects(projects.filter((it) => it._id !== r.data._id)));
+          dispatch(
+            setSnackbar({
+              color: "success",
+              icon: "check",
+              title: "",
+              content: t("Deleted Successfully!"),
+              open: true,
+            })
+          );
+          navigate(`/projects`);
+        }
+      });
+    }
+  };
   const handleCreate = () => {
     const id = generateProjectNumber();
     if (isAdmin(user)) {
@@ -141,16 +164,14 @@ export default function ProjectList(props) {
             color="info"
             size="small"
             onClick={() => {
-              const projectId = params.row._id;
               dispatch(setProject(params.row));
-
-              projectAPI.searchProjects({ id: params.row.id }).then((r) => {
+              orderAPI.searchOrders({ id: params.row.id }).then((r) => {
                 if (r.data && r.data.length > 0) {
-                  dispatch(setProject(r.data[0]));
+                  dispatch(setOrder(r.data[0]));
                 } else {
-                  dispatch(setProject());
+                  dispatch(setOrder());
                 }
-                navigate(`/projects/${projectId}`);
+                navigate(`/projects/${params.row._id}`);
               });
             }}
           >
@@ -245,6 +266,13 @@ export default function ProjectList(props) {
                 {t("Create")}
               </MDButton>
             </Grid>
+            {isAdmin(user) && (
+              <Grid item>
+                <MDButton color="info" variant={"outlined"} size="small" onClick={handleDelete}>
+                  {t("Delete")}
+                </MDButton>
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </Grid>

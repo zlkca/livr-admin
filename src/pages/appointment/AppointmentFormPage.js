@@ -22,6 +22,8 @@ import { setSnackbar } from "redux/ui/ui.slice";
 import MDSection from "components/MDSection";
 import CardHead from "components/CardHead";
 import AddressForm from "components/AddressForm";
+import { getItemsQuery } from "permission";
+import { selectBranch } from "redux/branch/branch.selector";
 
 const mStyles = {
   root: {
@@ -71,6 +73,7 @@ export default function AppointmentFormPage() {
   const [projects, setProjects] = useState([]);
   const signedInUser = useSelector(selectSignedInUser);
   const appointment = useSelector(selectAppointment);
+  const branch = useSelector(selectBranch);
 
   useEffect(() => {
     if (appointment) {
@@ -149,7 +152,8 @@ export default function AppointmentFormPage() {
     }
   };
   const handleOpenBackdrop = () => {
-    projectAPI.fetchProjects().then((r) => {
+    const q = getItemsQuery(signedInUser, branch ? branch._id : "");
+    projectAPI.searchProjects(q).then((r) => {
       setProjects(r.data);
       const p = data.project ? r.data.find((it) => it._id === data.project._id) : null;
       setBackdrop({ opened: true, project: p });

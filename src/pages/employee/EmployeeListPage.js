@@ -50,7 +50,8 @@ import CardHead from "components/CardHead";
 import EmployeeList from "components/account/EmployeeList";
 import { setEmployees } from "redux/account/account.slice";
 import { getMonthRangeQuery } from "utils";
-import { selectEmployees } from "redux/account/account.selector";
+import { getEmployeesQuery } from "permission";
+import { selectBranch } from "redux/branch/branch.selector";
 
 export default memo(function EmployeeListPage() {
   const dispatch = useDispatch();
@@ -58,19 +59,15 @@ export default memo(function EmployeeListPage() {
   const { t } = useTranslation();
 
   const [selectedRow, setSelectedRow] = useState();
-  const [isLoading, setLoading] = useState();
 
   const signedInUser = useSelector(selectSignedInUser);
-  const status = useSelector(selectAccountHttpStatus);
   const snackbar = useSelector(selectSnackbar);
+  const branch = useSelector(selectBranch);
   const mq = getMonthRangeQuery();
 
   const handleEmployeesDateRangeChange = (fd, ld) => {
-    const q = {
-      role: { $in: ["admin", "root", "sales", "technician", "user"] },
-      created: { $gte: fd, $lte: ld },
-    };
-    accountAPI.searchAccounts(q).then((r) => {
+    const q = getEmployeesQuery(signedInUser, branch ? branch._id : "");
+    accountAPI.searchAccounts({ ...q, created: { $gte: fd, $lte: ld } }).then((r) => {
       if (r.status == 200) {
         dispatch(setEmployees(r.data));
       } else if (r.status === 401) {
@@ -80,51 +77,11 @@ export default memo(function EmployeeListPage() {
     });
   };
 
-  // const handleEdit = () => {
-  //   if (selectedRow) {
-  //     const _id = selectedRow._id;
-  //     accountAPI.fetchAccount(_id).then((r) => {
-  //       if (r.status === 200) {
-  //         dispatch(setEmployee(r.data));
-  //       }
-  //       navigate(`/employees/${_id}/form`);
-  //     });
-  //   }
-  // };
-
-  // const handleDelete = () => {
-  //   if (selectedRow) {
-  //     const _id = selectedRow._id;
-  //     accountAPI.deleteAccount(_id).then((r) => {
-  //       if (r.status === 200) {
-  //         dispatch(setAccounts(rows.filter((it) => it._id !== r.data._id)));
-  //         dispatch(
-  //           setSnackbar({
-  //             color: "success",
-  //             icon: "check",
-  //             title: "",
-  //             content: t("Deleted Successfully!"),
-  //             open: true,
-  //           })
-  //         );
-  //       }
-  //     });
-  //   }
-  // };
-
-  // const handleCreate = () => {
-  //   dispatch(setEmployee({}));
-  //   navigate("/employees/new/form");
-  // };
-
-  const handleSelectRow = (row) => {
-    setSelectedRow(row);
-  };
-
   useEffect(() => {
+    const q = getEmployeesQuery(signedInUser, branch ? branch._id : "");
     accountAPI
       .searchAccounts({
-        role: { $in: ["admin", "technician", "sales", "user"] },
+        ...q,
         ...mq,
       })
       .then((r) => {
@@ -144,25 +101,7 @@ export default memo(function EmployeeListPage() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <CardHead title={t("Employees")}>
-                {/* <Grid container spacing={2} direction="row" justifyContent="flex-end">
-                  <Grid item>
-                    <MDButton variant={"outlined"} size="small" onClick={handleEdit}>
-                      {t("Edit")}
-                    </MDButton>
-                  </Grid>
-                  <Grid item>
-                    <MDButton variant={"outlined"} size="small" onClick={handleDelete}>
-                      {t("Delete")}
-                    </MDButton>
-                  </Grid>
-                  <Grid item>
-                    <MDButton size="small" variant={"outlined"} onClick={handleCreate}>
-                      {t("Create")}
-                    </MDButton>
-                  </Grid>
-                </Grid> */}
-              </CardHead>
+              <CardHead title={t("Employees")} />
               <MDBox pt={2} px={2} style={{ height: 740 }}>
                 <EmployeeList
                   user={signedInUser}
@@ -170,29 +109,6 @@ export default memo(function EmployeeListPage() {
                   rowsPerPage={8}
                   onDateRangeChange={handleEmployeesDateRangeChange}
                 />
-                {/* {isLoading ? (
-                  <Grid
-                    container
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    style={{ height: 400 }}
-                  >
-                    <Grid item xs={6}>
-                      <MDLinearProgress color="info" />
-                    </Grid>
-                  </Grid>
-                ) : (
-                  <GridTable
-                    autoPageSize
-                    data={rows}
-                    columns={columns}
-                    onRowClick={handleSelectRow}
-                    rowsPerPage={10}
-                    // styles={mStyles.table}
-                    sortModel={[{ field: "created", sort: "desc" }]}
-                  />
-                )} */}
               </MDBox>
             </Card>
           </Grid>

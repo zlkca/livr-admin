@@ -30,7 +30,8 @@ import DashboardNavbar from "layouts/DashboardNavbar";
 import Footer from "layouts/Footer";
 
 import { orderAPI } from "services/orderAPI";
-import { isAdmin, logout } from "utils";
+import { logout } from "utils";
+import { isAdmin } from "permission";
 
 import { setSnackbar } from "redux/ui/ui.slice";
 import { setOrders } from "redux/order/order.slice";
@@ -42,6 +43,8 @@ import MDSnackbar from "components/MDSnackbar";
 import CardHead from "components/CardHead";
 import OrderList from "components/order/OrderList";
 import { getMonthRangeQuery } from "utils";
+import { getItemsQuery } from "permission";
+import { selectBranch } from "redux/branch/branch.selector";
 // Data
 
 export default function OrderListPage() {
@@ -51,13 +54,11 @@ export default function OrderListPage() {
   const { t } = useTranslation();
   const signedInUser = useSelector(selectSignedInUser);
   const snackbar = useSelector(selectSnackbar);
+  const branch = useSelector(selectBranch);
 
   const handleOrdersDateRangeChange = (fd, ld) => {
-    const q = isAdmin(signedInUser)
-      ? { created: { $gte: fd, $lte: ld } }
-      : { [`${signedInUser.role}._id`]: signedInUser._id, created: { $gte: fd, $lte: ld } };
-
-    orderAPI.searchOrders(q).then((r) => {
+    const q = getItemsQuery(signedInUser, branch ? branch._id : "");
+    orderAPI.searchOrders({ ...q, created: { $gte: fd, $lte: ld } }).then((r) => {
       if (r.status == 200) {
         dispatch(setOrders(r.data));
       } else if (r.status === 401) {
@@ -69,8 +70,8 @@ export default function OrderListPage() {
 
   useEffect(() => {
     if (signedInUser) {
-      const q = isAdmin(signedInUser) ? { ...mq } : { "sales._id": signedInUser._id, ...mq };
-      orderAPI.searchOrders(q).then((r) => {
+      const q = getItemsQuery(signedInUser, branch ? branch._id : "");
+      orderAPI.searchOrders({ ...q, ...mq }).then((r) => {
         if (r.status == 200) {
           dispatch(setOrders(r.data));
         } else if (r.status === 401) {

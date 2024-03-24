@@ -118,7 +118,8 @@
         "Recommender":"推荐人",
         "Sales":"销售",
         "Technician":"技术员",
-
+        "Admin":"管理员",
+        "Store Manager":"店长",
         "No. Panels":"面板数",
         "Blade Size": "窗片尺寸",
         "Base Material": "基座材料",
@@ -177,7 +178,7 @@
         "Files": "文件",
         "Layout": "布局",
         "Uploads": "上传",
-
+        "St. Catherines Showroom":"圣凯瑟琳展厅",
         "Photos Before Install":"安装前照片",
         "Photos After Install":"安装后照片",
         "Engineer Drawings":"工程图",

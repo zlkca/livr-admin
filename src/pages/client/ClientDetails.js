@@ -31,6 +31,8 @@ import ProjectList from "components/project/ProjectList";
 import AppointmentList from "components/appointment/AppointmentList";
 import { appointmentAPI } from "services/appointmentAPI";
 import { setAppointments } from "redux/appointment/appointment.slice";
+import { setSnackbar } from "redux/ui/ui.slice";
+import { isAdmin } from "permission";
 
 export default function ClientDetails() {
   const mq = getMonthRangeQuery();
@@ -175,6 +177,26 @@ export default function ClientDetails() {
     }
   };
 
+  const handleDelete = () => {
+    if (profile) {
+      const _id = profile._id;
+      accountAPI.deleteAccount(_id).then((r) => {
+        if (r.status === 200) {
+          dispatch(
+            setSnackbar({
+              color: "success",
+              icon: "check",
+              title: "",
+              content: t("Deleted Successfully!"),
+              open: true,
+            })
+          );
+          navigate("/clients");
+        }
+      });
+    }
+  };
+
   useEffect(() => {
     if (client) {
       setProfile({ ...client });
@@ -217,20 +239,37 @@ export default function ClientDetails() {
           <Grid item xs={12}>
             {profile && (
               <Card>
-                <CardHead title={t("Client")}>
-                  <Grid container spacing={2} direction="row" justifyContent="flex-end">
-                    <Grid item>
-                      <MDButton size="small" variant={"outlined"} onClick={handleEdit}>
-                        {t("Edit")}
-                      </MDButton>
-                    </Grid>
-                    <Grid item>
-                      <MDButton size="small" variant={"outlined"} onClick={handleCreateProject}>
-                        {t("Create Project")}
-                      </MDButton>
-                    </Grid>
+                <CardHead title={t("Client")} />
+                <Grid container spacing={2} direction="row" justifyContent="flex-end" px={2} pt={2}>
+                  <Grid item>
+                    <MDButton color="info" size="small" variant={"outlined"} onClick={handleEdit}>
+                      {t("Edit")}
+                    </MDButton>
                   </Grid>
-                </CardHead>
+                  {isAdmin(signedInUser) && (
+                    <Grid item>
+                      <MDButton
+                        color="info"
+                        size="small"
+                        variant={"outlined"}
+                        onClick={handleDelete}
+                      >
+                        {t("Delete")}
+                      </MDButton>
+                    </Grid>
+                  )}
+                  <Grid item>
+                    <MDButton
+                      color="info"
+                      size="small"
+                      variant={"outlined"}
+                      onClick={handleCreateProject}
+                    >
+                      {t("Create Project")}
+                    </MDButton>
+                  </Grid>
+                </Grid>
+
                 <MDSection title={t("Basic Info")}>
                   <Grid display="flex">
                     <VField label={t("Username")} value={profile.username} />

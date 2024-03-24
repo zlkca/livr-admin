@@ -47,9 +47,12 @@ import { logout } from "utils";
 import MDButton from "components/MDButton";
 import { selectSnackbar } from "redux/ui/ui.selector";
 import { setSnackbar } from "redux/ui/ui.slice";
-import { isAdmin } from "utils";
+import { isAdmin } from "permission";
 import CardHead from "components/CardHead";
 import AppointmentList from "components/appointment/AppointmentList";
+import { getAppointmentsQuery } from "permission";
+import { selectBranch } from "redux/branch/branch.selector";
+import { getMonthRangeQuery } from "utils";
 // Data
 
 export default function AppointmentListPage() {
@@ -65,6 +68,7 @@ export default function AppointmentListPage() {
   const snackbar = useSelector(selectSnackbar);
   const rows = useSelector(selectAppointments);
   const signedInUser = useSelector(selectSignedInUser);
+  const branch = useSelector(selectBranch);
 
   const columns = [
     {
@@ -113,11 +117,8 @@ export default function AppointmentListPage() {
   ];
 
   const handleAppointmentsDateRangeChange = (fd, ld) => {
-    const q = isAdmin(signedInUser)
-      ? { created: { $gte: fd, $lte: ld } }
-      : { [`${signedInUser.role}._id`]: signedInUser._id, created: { $gte: fd, $lte: ld } };
-
-    appointmentAPI.searchAppointments(q).then((r) => {
+    const q = getAppointmentsQuery(signedInUser, branch ? branch._id : "");
+    appointmentAPI.searchAppointments({ ...q, created: { $gte: fd, $lte: ld } }).then((r) => {
       if (r.status == 200) {
         dispatch(setAppointments(r.data));
       } else if (r.status === 401) {
@@ -139,31 +140,9 @@ export default function AppointmentListPage() {
     }
   };
 
-  const handleDelete = () => {
-    if (selectedRow) {
-      const _id = selectedRow._id;
-      appointmentAPI.deleteAppointment(_id).then((r) => {
-        if (r.status === 200) {
-          dispatch(setAppointments(rows.filter((it) => it._id !== r.data._id)));
-          setSnackbar({
-            color: "success",
-            icon: "check",
-            title: "",
-            content: "Deleted Successfully!",
-            open: true,
-          });
-        }
-      });
-    }
-  };
   const handleCreate = () => {
     dispatch(setAppointment({ address: {} }));
     navigate("/appointments/new/form");
-  };
-
-  //   const [rows, setRows] = [];
-  const handleSelectRow = (row) => {
-    setSelectedRow(row);
   };
 
   const handleSearchModeChange = (mode) => {
@@ -223,9 +202,9 @@ export default function AppointmentListPage() {
   useEffect(() => {
     if (signedInUser) {
       setLoading(true);
-      // const query = getAppointmentListQuery(keyword, signedInUser);
-      const q = isAdmin(signedInUser) ? {} : { "employee._id": signedInUser._id };
-      appointmentAPI.searchAppointments(q).then((r) => {
+      const q = getAppointmentsQuery(signedInUser, branch ? branch._id : "");
+      const mq = getMonthRangeQuery();
+      appointmentAPI.searchAppointments({ ...q, ...mq }).then((r) => {
         if (r.status == 200) {
           dispatch(setAppointments(r.data));
           setTimeout(() => {

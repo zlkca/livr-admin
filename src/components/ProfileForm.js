@@ -89,7 +89,7 @@ export default function ProfileForm({
     } else if (role === "root") {
       return [
         { id: "admin", label: t("Admin") },
-        // { id: "client", label: t("Client") },
+        { id: "store manager", label: t("Store Manager") },
         // { id: "partner", label: "Partner" },
         { id: "sales", label: t("Sales") },
         { id: "technician", label: t("Technician") },
@@ -100,14 +100,14 @@ export default function ProfileForm({
     } else if (role === "admin") {
       return [
         // { id: "client", label: t("Client") },
-        // { id: "partner", label: "Partner" },
+        { id: "store manager", label: t("Store Manager") },
         { id: "sales", label: t("Sales") },
         { id: "technician", label: t("Technician") },
         // { id: "engineer", label: "Engineer" },
         // { id: "accountant", label: "Accountant" },
         // {id:"temp", label: "Temp"}
       ];
-    } else if (role === "accountant") {
+    } else if (role === "store manager") {
       return [
         // { id: "client", label: t("Client") },
         // { id: "partner", label: "Partner" },

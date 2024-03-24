@@ -14,7 +14,6 @@ Coded by www.creative-tim.com
  */
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -38,34 +37,27 @@ import MDSnackbar from "components/MDSnackbar";
 
 import { selectSnackbar } from "redux/ui/ui.selector";
 import { selectSignedInUser } from "redux/auth/auth.selector";
-import { selectAccountHttpStatus } from "redux/account/account.selector";
-import { selectClients } from "redux/account/account.selector";
 
-import { isAdmin, logout } from "utils";
 import { setClients } from "redux/account/account.slice";
 import CardHead from "components/CardHead";
-import { getMonthRangeQuery } from "utils";
 import ClientList from "components/account/ClientList";
+import { selectBranch } from "redux/branch/branch.selector";
+import { getClientsQuery } from "permission";
+import { logout, getMonthRangeQuery } from "utils";
 
 export default memo(function ClientListPage() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const [selectedRow, setSelectedRow] = useState();
-  const [isLoading, setLoading] = useState();
-  const status = useSelector(selectAccountHttpStatus);
-  const rows = useSelector(selectClients);
   const snackbar = useSelector(selectSnackbar);
   const signedInUser = useSelector(selectSignedInUser);
+  const branch = useSelector(selectBranch);
 
   const mq = getMonthRangeQuery();
 
   const handleClientsDateRangeChange = (fd, ld) => {
-    const q = isAdmin(signedInUser)
-      ? { role: "client", created: { $gte: fd, $lte: ld } }
-      : { role: "client", "sales._id": signedInUser._id, created: { $gte: fd, $lte: ld } };
-    accountAPI.searchAccounts(q).then((r) => {
+    const q = getClientsQuery(signedInUser, branch ? branch._id : "");
+    accountAPI.searchAccounts({ ...q, created: { $gte: fd, $lte: ld } }).then((r) => {
       if (r.status == 200) {
         dispatch(setClients(r.data));
       } else if (r.status === 401) {
@@ -75,53 +67,12 @@ export default memo(function ClientListPage() {
     });
   };
 
-  // const handleEdit = () => {
-  //   if (selectedRow) {
-  //     const _id = selectedRow._id;
-  //     accountAPI.fetchAccount(_id).then((r) => {
-  //       if (r.status === 200) {
-  //         dispatch(setClient(r.data));
-  //       }
-  //       navigate(`/clients/${_id}/form`);
-  //     });
-  //   }
-  // };
-
-  // const handleCreate = () => {
-  //   if (isAdmin(signedInUser)) {
-  //     dispatch(setClient({}));
-  //   } else {
-  //     dispatch(
-  //       setClient({
-  //         branch: signedInUser.branch,
-  //         sales: {
-  //           _id: signedInUser._id,
-  //           username: signedInUser.username,
-  //           email: signedInUser.email,
-  //           phone: signedInUser.phone,
-  //         },
-  //       })
-  //     );
-  //   }
-  //   navigate("/clients/new/form");
-  // };
-
-  const handleSelectRow = (row) => {
-    setSelectedRow(row);
-  };
-
   useEffect(() => {
     if (signedInUser) {
-      // setLoading(true);
-      const q = isAdmin(signedInUser)
-        ? { role: "client", ...mq }
-        : { role: "client", "sales._id": signedInUser._id, ...mq };
-      accountAPI.searchAccounts(q).then((r) => {
+      const q = getClientsQuery(signedInUser, branch ? branch._id : "");
+      accountAPI.searchAccounts({ ...q, ...mq }).then((r) => {
         if (r.status == 200) {
           dispatch(setClients(r.data));
-          // setTimeout(() => {
-          //   setLoading(false);
-          // }, 500);
         } else if (r.status === 401) {
           dispatch(setSignedInUser());
           logout();

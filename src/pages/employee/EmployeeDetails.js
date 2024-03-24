@@ -119,7 +119,7 @@ export default function EmployeeDetails() {
     });
   };
   const handleClientsDateRangeChange = (fd, ld) => {
-    const q = { role: "client", created: { $gte: fd, $lte: ld } };
+    const q = { "sales._id": profile._id, role: "client", created: { $gte: fd, $lte: ld } };
     accountAPI.searchAccounts(q).then((r) => {
       if (r.status == 200) {
         dispatch(setClients(r.data));
@@ -176,7 +176,6 @@ export default function EmployeeDetails() {
       const _id = employee._id;
       accountAPI.deleteAccount(_id).then((r) => {
         if (r.status === 200) {
-          dispatch(setAccounts(rows.filter((it) => it._id !== r.data._id)));
           dispatch(
             setSnackbar({
               color: "success",
@@ -245,16 +244,20 @@ export default function EmployeeDetails() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             {profile && (
-              <Card style={{ height: 920 }}>
-                <CardHead title={t("Employee")}>
-                  <Grid container spacing={2} direction="row" justifyContent="flex-end">
-                    <Grid item>
-                      <MDButton size="small" variant={"outlined"} onClick={handleEdit}>
-                        {t("Edit")}
-                      </MDButton>
-                    </Grid>
+              <Card style={{ height: 940 }}>
+                <CardHead title={t("Employee")} />
+                <Grid container spacing={2} direction="row" justifyContent="flex-end" px={2} pt={2}>
+                  <Grid item>
+                    <MDButton color="info" size="small" variant={"outlined"} onClick={handleEdit}>
+                      {t("Edit")}
+                    </MDButton>
                   </Grid>
-                </CardHead>
+                  <Grid item>
+                    <MDButton color="info" size="small" variant={"outlined"} onClick={handleDelete}>
+                      {t("Delete")}
+                    </MDButton>
+                  </Grid>
+                </Grid>
                 <MDSection title={t("Basic Info")}>
                   <Grid display="flex">
                     <VField label={t("Username")} value={profile.username} />

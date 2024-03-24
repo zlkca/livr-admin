@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Checkbox, Radio } from "@mui/material";
+import { Radio } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-import GridTable from "./common/GridTable";
-
-import { accountAPI } from "../services/accountAPI";
+import GridTable from "../common/GridTable";
 
 const mStyles = {
   root: {
@@ -28,7 +25,6 @@ const mStyles = {
 export default function AccountSelect({ accounts, selected, onSelect }) {
   const { t } = useTranslation();
 
-  //   const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
   const [highlightedItem, setHighlightedItem] = useState();
 
   const [selectedRow, setSelectedRow] = useState();
@@ -79,14 +75,6 @@ export default function AccountSelect({ accounts, selected, onSelect }) {
 
   const handleHighlightRow = (row) => {
     setHighlightedItem(row);
-  };
-
-  const handleSearch = (keyword) => {
-    // const q = getEmployeeRoleIdQuery(roles);
-    // const q = keyword ? { roleId: role._id, keyword } : { roleId: role._id};
-    // fetchAccounts(q).then((r) => {
-    //   dispatch(setEmployees(r.status === 200 ? r.data : []));
-    // });
   };
 
   return (

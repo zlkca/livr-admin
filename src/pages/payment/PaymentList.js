@@ -46,7 +46,7 @@ import { setSignedInUser } from "redux/auth/auth.slice";
 import { logout } from "utils";
 import { selectSnackbar } from "redux/ui/ui.selector";
 import { setSnackbar } from "redux/ui/ui.slice";
-import { isAdmin } from "utils";
+import { isAdmin } from "permission";
 
 export default function PaymentList() {
   const dispatch = useDispatch();

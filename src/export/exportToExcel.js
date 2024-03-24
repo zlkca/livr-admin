@@ -1,6 +1,8 @@
 import * as XLSX from "xlsx";
+// import * as fs from "fs";
 
 export default function exportToExcel(data, filename) {
+  // XLSX.set_fs(fs);
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.json_to_sheet(data);
 

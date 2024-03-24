@@ -6,8 +6,13 @@ import { Grid } from "@mui/material";
 import MDSelect from "../MDSelect";
 import MDInput from "../MDInput";
 import { accountAPI } from "services/accountAPI";
-import AccountSelectBackdrop from "../AccountSelectBackdrop";
 import { DateRangePicker } from "rsuite";
+import AccountSelectBackdrop from "components/account/AccountSelectBackdrop";
+import { getAccountsQuery } from "permission";
+import { useSelector } from "react-redux";
+import { selectBranch } from "redux/branch/branch.selector";
+import { selectSignedInUser } from "redux/auth/auth.selector";
+import { getEmployeesQuery } from "permission";
 
 const mStyles = {
   root: {
@@ -50,6 +55,8 @@ export default function AppointmentForm({ data, error, onChange }) {
   const { t } = useTranslation();
   const [accounts, setAccounts] = useState([]);
   const [backdrop, setBackdrop] = useState({ opened: false });
+  const branch = useSelector(selectBranch);
+  const signedInUser = useSelector(selectSignedInUser);
 
   const typeOptions = [
     { id: "measure", label: t("Measure") },
@@ -79,13 +86,15 @@ export default function AppointmentForm({ data, error, onChange }) {
   };
 
   const handleOpenBackdrop = (role) => {
-    accountAPI.fetchAccounts({ role }).then((r) => {
+    const q = getEmployeesQuery(signedInUser, branch ? branch._id : "", role);
+    accountAPI.searchAccounts(q).then((r) => {
       const d = r.status === 200 ? r.data : [];
       setAccounts(d);
-      let account = data.employee;
-      setBackdrop({ opened: true, role, account });
+      // set the selected item
+      setBackdrop({ opened: true, role, account: data.employee });
     });
   };
+
   const handleSelectAccount = (account) => {
     if (account) {
       onChange(
@@ -97,7 +106,6 @@ export default function AppointmentForm({ data, error, onChange }) {
             username: account.username,
             email: account.email,
             phone: account.phone,
-            branch: account.branch,
             role: account.role,
           },
         },
@@ -109,10 +117,10 @@ export default function AppointmentForm({ data, error, onChange }) {
   };
   const handleRangeChange = (r) => {
     if (r) {
-      const a = { ...data, start: r[0].toISOString(), end: r[1].toISOString() };
+      const a = { ...data, start: r[0].toISOString(), end: r[1].toISOString(), timeRange: r };
       onChange(a, "timeRange");
     } else {
-      const a = { ...data, start: "", end: "" };
+      const a = { ...data, start: "", end: "", timeRange: null };
       onChange(a, "timeRange");
     }
   };

@@ -72,9 +72,10 @@ import ClientDetails from "pages/client/ClientDetails";
 import EmployeeDetails from "pages/employee/EmployeeDetails";
 import PaymentDetails from "pages/payment/PaymentDetails";
 import AppointmentDetails from "pages/appointment/AppointmentDetails";
-import { isAdmin } from "utils";
+import { isAdmin } from "permission";
 import OrderListPage from "pages/order/OrderListPage";
 import ClientListPage from "pages/client/ClientListPage";
+import { isStoreManager } from "permission";
 
 export const MyRoutes = ({ tokenId, signedInUser }) => {
   return (
@@ -85,13 +86,13 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
       <Route exact path="/clients" element={<ClientListPage />} key="clients" />
       <Route exact path="/clients/:id" element={<ClientDetails />} key="client" />
       <Route exact path="/clients/:id?/form" element={<ClientForm />} key="client-form" />
-      {isAdmin(signedInUser) && (
+      {(isAdmin(signedInUser) || isStoreManager(signedInUser)) && (
         <Route exact path="/employees" element={<EmployeeListPage />} key="employees" />
       )}
-      {isAdmin(signedInUser) && (
+      {(isAdmin(signedInUser) || isStoreManager(signedInUser)) && (
         <Route exact path="/employees/:id" element={<EmployeeDetails />} key="employee" />
       )}
-      {isAdmin(signedInUser) && (
+      {(isAdmin(signedInUser) || isStoreManager(signedInUser)) && (
         <Route exact path="/employees/:id?/form" element={<EmployeeForm />} key="employee-form" />
       )}
       <Route exact path="/partners" element={<PartnerList />} key="partners" />

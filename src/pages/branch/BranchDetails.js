@@ -240,20 +240,19 @@ export default function BranchDetails() {
           <Grid item xs={12}>
             {data && (
               <Card>
-                <CardHead title={t("Branches")}>
-                  <Grid container spacing={2} direction="row" justifyContent="flex-end">
-                    <Grid item>
-                      <MDButton size="small" variant={"outlined"} onClick={handleEdit}>
-                        {t("Edit")}
-                      </MDButton>
-                    </Grid>
-                    <Grid item>
-                      <MDButton size="small" variant={"outlined"} onClick={handleDelete}>
-                        {t("Delete")}
-                      </MDButton>
-                    </Grid>
+                <CardHead title={t("Branches")} />
+                <Grid container spacing={2} direction="row" justifyContent="flex-end" px={2} pt={2}>
+                  <Grid item>
+                    <MDButton color="info" size="small" variant={"outlined"} onClick={handleEdit}>
+                      {t("Edit")}
+                    </MDButton>
                   </Grid>
-                </CardHead>
+                  <Grid item>
+                    <MDButton color="info" size="small" variant={"outlined"} onClick={handleDelete}>
+                      {t("Delete")}
+                    </MDButton>
+                  </Grid>
+                </Grid>
                 {/* title={t("Basic Info")} */}
                 <MDSection>
                   <Grid display="flex">

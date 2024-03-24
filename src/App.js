@@ -64,8 +64,11 @@ import { LANGUAGE_COOKIE } from "const";
 import { useTranslation } from "react-i18next";
 import { selectSignedInUser } from "redux/auth/auth.selector";
 import { MyRoutes } from "routes";
-import { isAdmin } from "utils";
+import { isAdmin } from "permission";
 import { BrandName } from "config";
+import { isStoreManager } from "permission";
+import { branchAPI } from "services/branchAPI";
+import { setBranch } from "redux/branch/branch.slice";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -106,13 +109,30 @@ export default function App() {
 
   useEffect(() => {
     if (accountCookie) {
-      dispatch(setSignedInUser(JSON.parse(accountCookie)));
+      const user = JSON.parse(accountCookie);
+      dispatch(setSignedInUser(user));
+      if (user.branch) {
+        branchAPI.fetchBranch(user.branch._id).then((r) => {
+          if (r && r.data) {
+            dispatch(setBranch(r.data));
+          }
+        });
+      }
     }
   }, [accountCookie]);
 
   useEffect(() => {
     if (isAdmin(signedInUser)) {
       setNavMenus(menus);
+    } else if (isStoreManager(signedInUser)) {
+      const newMenus = menus.filter((it) => {
+        if (["dashboard", "branches"].includes(it.key)) {
+          return false;
+        } else {
+          return true;
+        }
+      });
+      setNavMenus(newMenus);
     } else {
       const newMenus = menus.filter((it) => {
         if (["dashboard", "branches", "employees"].includes(it.key)) {

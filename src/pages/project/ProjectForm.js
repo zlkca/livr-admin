@@ -12,18 +12,19 @@ import Footer from "layouts/Footer";
 import { accountAPI } from "services/accountAPI";
 import { selectSignedInUser } from "redux/auth/auth.selector";
 import MDButton from "components/MDButton";
-import MDSnackbar from "components/MDSnackbar";
 import MDInput from "components/MDInput";
 import AddressForm from "components/AddressForm";
 import { projectAPI } from "services/projectAPI";
 import { selectProject } from "redux/project/project.selector";
-import AccountSelectBackdrop from "components/AccountSelectBackdrop";
 import { setProject } from "redux/project/project.slice";
 import { setSnackbar } from "redux/ui/ui.slice";
-import { isAdmin } from "utils";
+import { isAdmin } from "permission";
 import CardHead from "components/CardHead";
 import MDSection from "components/MDSection";
 import { setClient } from "redux/account/account.slice";
+import AccountSelectBackdrop from "components/account/AccountSelectBackdrop";
+import { getAccountsQuery } from "permission";
+import { selectBranch } from "redux/branch/branch.selector";
 
 const mStyles = {
   root: {
@@ -80,10 +81,8 @@ export default function ProjectForm() {
 
   const signedInUser = useSelector(selectSignedInUser);
   const project = useSelector(selectProject);
-  //   const clientRole = useSelector(selectClientRole);
-  //   const breadcrumb = useSelector(selectBreadcrumb);
-  // const id = generateProjectNumber();
-  // dispatch(setData({ id }));
+  const branch = useSelector(selectBranch);
+
   useEffect(() => {
     if (project) {
       setData({ ...project });
@@ -148,7 +147,7 @@ export default function ProjectForm() {
   };
 
   const handleSelectAccount = (account) => {
-    if (account && account.role === "sales") {
+    if (account && ["sales", "store manager", "admin"].includes(account.role)) {
       const sales = account;
       setData({
         ...data,
@@ -158,7 +157,6 @@ export default function ProjectForm() {
           username: sales.username,
           email: sales.email,
           phone: sales.phone,
-          branch: sales.branch,
         },
       });
       setError({ ...error, sales: "" });
@@ -250,19 +248,19 @@ export default function ProjectForm() {
   };
 
   const handleOpenBackdrop = (role) => {
-    if (isAdmin(signedInUser) || role === "client") {
-      accountAPI.fetchAccounts({ role }).then((r) => {
-        const d = r.status === 200 ? r.data : [];
-        setAccounts(d);
-        let account;
-        if (role === "client") {
-          account = data.client;
-        } else if (role === "sales") {
-          account = data.sales;
-        }
-        setBackdrop({ opened: true, role, account });
-      });
-    }
+    const q = getAccountsQuery(signedInUser, branch ? branch._id : "", role);
+    accountAPI.searchAccounts(q).then((r) => {
+      const d = r.status === 200 ? r.data : [];
+      setAccounts(d);
+
+      let account;
+      if (role === "client") {
+        account = data.client;
+      } else if (role === "sales") {
+        account = data.sales;
+      }
+      setBackdrop({ opened: true, role, account });
+    });
   };
 
   return (

@@ -26,7 +26,7 @@ import { selectSnackbar } from "redux/ui/ui.selector";
 import { setSnackbar } from "redux/ui/ui.slice";
 import { orderAPI } from "services/orderAPI";
 import { paymentAPI } from "services/paymentAPI";
-import { isAdmin } from "utils";
+import { isAdmin } from "permission";
 import { logout } from "utils";
 
 export default function OrderDetails() {
@@ -80,6 +80,26 @@ export default function OrderDetails() {
         if (r.status === 200) {
           dispatch(setOrder(r.data));
           navigate(`/orders/${_id}/form`);
+        }
+      });
+    }
+  };
+
+  const handleDelete = () => {
+    if (order) {
+      const _id = order._id;
+      orderAPI.deleteOrder(_id).then((r) => {
+        if (r.status === 200) {
+          dispatch(
+            setSnackbar({
+              color: "success",
+              icon: "check",
+              title: "",
+              content: "Deleted Successfully!",
+              open: true,
+            })
+          );
+          navigate("/orders");
         }
       });
     }
@@ -148,22 +168,28 @@ export default function OrderDetails() {
           <Grid item xs={12}>
             {order && (
               <Card>
-                <CardHead title={t("Order")}>
-                  <Grid container spacing={2} direction="row" justifyContent="flex-end">
-                    {isAdmin(signedInUser) && (
-                      <Grid item>
-                        <MDButton size="small" variant={"outlined"} onClick={handleEdit}>
-                          {t("Edit")}
-                        </MDButton>
-                      </Grid>
-                    )}
+                <CardHead title={t("Order")} />
+                <Grid container spacing={2} direction="row" justifyContent="flex-end" px={2} pt={2}>
+                  {isAdmin(signedInUser) && (
                     <Grid item>
-                      <MDButton size="small" variant={"outlined"} onClick={handleAddPayment}>
-                        {t("Add Payment")}
+                      <MDButton color="info" size="small" variant={"outlined"} onClick={handleEdit}>
+                        {t("Edit")}
                       </MDButton>
                     </Grid>
-                  </Grid>
-                </CardHead>
+                  )}
+                  {isAdmin(signedInUser) && (
+                    <Grid item>
+                      <MDButton
+                        color="info"
+                        size="small"
+                        variant={"outlined"}
+                        onClick={handleDelete}
+                      >
+                        {t("Delete")}
+                      </MDButton>
+                    </Grid>
+                  )}
+                </Grid>
 
                 <MDSection title={t("Orders")}>
                   <Grid display="flex">
@@ -211,6 +237,16 @@ export default function OrderDetails() {
                       <Grid>
                         {isAdmin(signedInUser) && (
                           <Grid container spacing={2} direction="row" justifyContent="flex-end">
+                            <Grid item pb={1}>
+                              <MDButton
+                                color="info"
+                                size="small"
+                                variant={"outlined"}
+                                onClick={handleAddPayment}
+                              >
+                                {t("Add Payment")}
+                              </MDButton>
+                            </Grid>
                             <Grid item pb={1}>
                               <MDButton
                                 color="info"

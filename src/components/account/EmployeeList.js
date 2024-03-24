@@ -4,7 +4,6 @@ import DateRangeFilter from "components/DateRangeFilter";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDLinearProgress from "components/MDLinearProgress";
-import MDSection from "components/MDSection";
 import GridTable from "components/common/GridTable";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,7 +15,7 @@ import { setEmployee } from "redux/account/account.slice";
 import { selectSignedInUser } from "redux/auth/auth.selector";
 import { setSnackbar } from "redux/ui/ui.slice";
 import { accountAPI } from "services/accountAPI";
-import { isAdmin } from "utils";
+import { isAdmin } from "permission";
 import { isValidDate } from "utils";
 import { getFirstDayOfYear } from "utils";
 import { getLastDayOfYear } from "utils";
@@ -174,6 +173,26 @@ export default function EmployeeList(props) {
     navigate("/employees/new/form");
   };
 
+  const handleDelete = () => {
+    if (selectedRow) {
+      const _id = selectedRow._id;
+      accountAPI.deleteAccount(_id).then((r) => {
+        if (r.status === 200) {
+          dispatch(setEmployees(employees.filter((it) => it._id !== r.data._id)));
+          dispatch(
+            setSnackbar({
+              color: "success",
+              icon: "check",
+              title: "",
+              content: t("Deleted Successfully!"),
+              open: true,
+            })
+          );
+        }
+      });
+    }
+  };
+
   const handleSearchModeChange = (mode) => {
     if (mode === "year") {
       setSearchMode("year");
@@ -271,6 +290,11 @@ export default function EmployeeList(props) {
             <Grid item>
               <MDButton color="info" variant={"outlined"} size="small" onClick={handleCreate}>
                 {t("Create")}
+              </MDButton>
+            </Grid>
+            <Grid item>
+              <MDButton color="info" variant={"outlined"} size="small" onClick={handleDelete}>
+                {t("Delete")}
               </MDButton>
             </Grid>
           </Grid>

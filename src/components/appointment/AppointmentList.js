@@ -24,7 +24,9 @@ import {
   getLastDayOfMonth,
 } from "utils";
 
-import { isAdmin } from "utils";
+import { isAdmin } from "permission";
+import { setAppointments } from "redux/appointment/appointment.slice";
+import { setSnackbar } from "redux/ui/ui.slice";
 
 export default function AppointmentList(props) {
   const { user, rowsPerPage, height, onDateRangeChange, hideFilter } = props;
@@ -67,7 +69,25 @@ export default function AppointmentList(props) {
       });
     }
   };
-
+  const handleDelete = () => {
+    if (selectedRow) {
+      const _id = selectedRow._id;
+      appointmentAPI.deleteAppointment(_id).then((r) => {
+        if (r.status === 200) {
+          dispatch(setAppointments(appointments.filter((it) => it._id !== r.data._id)));
+          dispatch(
+            setSnackbar({
+              color: "success",
+              icon: "check",
+              title: "",
+              content: "Deleted Successfully!",
+              open: true,
+            })
+          );
+        }
+      });
+    }
+  };
   const columns = [
     {
       headerName: t("Order #"),
@@ -200,6 +220,11 @@ export default function AppointmentList(props) {
             <Grid item>
               <MDButton color="info" variant={"outlined"} size="small" onClick={handleCreate}>
                 {t("Create")}
+              </MDButton>
+            </Grid>
+            <Grid item>
+              <MDButton color="info" variant={"outlined"} size="small" onClick={handleDelete}>
+                {t("Delete")}
               </MDButton>
             </Grid>
           </Grid>

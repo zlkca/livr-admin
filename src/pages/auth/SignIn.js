@@ -50,7 +50,8 @@ import { ACCOUNT_COOKIE } from "const";
 import { branchAPI } from "services/branchAPI";
 import { setBranches } from "redux/branch/branch.slice";
 import { setLayout } from "redux/ui/ui.slice";
-import { isAdmin } from "utils";
+import { isAdmin } from "permission";
+import { setBranch } from "redux/branch/branch.slice";
 
 export default function SignIn() {
   const { t } = useTranslation();
@@ -77,6 +78,13 @@ export default function SignIn() {
             dispatch(setBranches(r1.data));
           }
         });
+        if (data.account.branch) {
+          branchAPI.fetchBranch(data.account.branch._id).then((r2) => {
+            if (r2 && r2.data) {
+              dispatch(setBranch(r2.data));
+            }
+          });
+        }
         if (isAdmin(data.account)) {
           // window.location.href = "/dashboard";
           navigate("/dashboard");

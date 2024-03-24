@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,37 +24,28 @@ import Card from "@mui/material/Card";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
 import GridTable from "components/common/GridTable";
 import MDButton from "components/MDButton";
-import ActionBar from "components/common/ActionBar";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
 import Footer from "layouts/Footer";
 
-import { selectAccounts } from "redux/account/account.selector";
-import { fetchAccounts } from "redux/account/account.thunk";
 import { selectAccountHttpStatus } from "redux/account/account.selector";
-import { fetchAccount } from "redux/account/account.thunk";
-import { setClient } from "redux/account/account.slice";
-
 import { branchAPI } from "services/branchAPI";
 import { selectSignedInUser } from "redux/auth/auth.selector";
-import { debounce, isAdmin, isDrawingEngineer, getAddressString } from "utils";
+import { debounce, getAddressString } from "utils";
 import { selectBranches } from "redux/branch/branch.selector";
 import { setBranches } from "redux/branch/branch.slice";
 import { setBranch } from "redux/branch/branch.slice";
 import MDLinearProgress from "components/MDLinearProgress";
 import { setSignedInUser } from "redux/auth/auth.slice";
 import { logout } from "utils";
-import ButtonWidget from "components/common/Button";
 import { setSnackbar } from "redux/ui/ui.slice";
 import { selectSnackbar } from "redux/ui/ui.selector";
 import MDSnackbar from "components/MDSnackbar";
 import CardHead from "components/CardHead";
-// Data
 
 export default function BranchList() {
   const dispatch = useDispatch();
@@ -124,32 +115,40 @@ export default function BranchList() {
     navigate("/branches/new/form");
   };
 
-  //   const [rows, setRows] = [];
+  const handleDelete = () => {
+    if (selectedRow) {
+      const _id = selectedRow._id;
+      branchAPI.deleteBranch(_id).then((r) => {
+        if (r.status === 200) {
+          dispatch(setBranches(rows.filter((it) => it._id !== r.data._id)));
+          dispatch(
+            setSnackbar({
+              color: "success",
+              icon: "check",
+              title: "",
+              content: t("Deleted Successfully!"),
+              open: true,
+            })
+          );
+          navigate("/branches");
+        }
+      });
+    }
+  };
+
   const handleSelectRow = (row) => {
     setSelectedRow(row);
   };
 
   const getBranchListQuery = (keyword, signedInUser) => {
     return keyword ? { keyword } : null;
-    // if (isAdmin(signedInUser) || isDrawingEngineer(signedInUser)) {
-    //   return keyword ? { keyword } : null;
-    // } else if (isEmployee(signedInUser)) {
-    //   const query = { [`${signedInUser.role}Id`]: signedInUser.id };
-    //   return keyword ? { keyword, ...query } : query;
-    // } else {
-    //   return null;
-    // }
   };
 
   const loadBranches = (keyword, signedInUser) => {
-    setLoading(true);
     const query = getBranchListQuery(keyword, signedInUser);
     branchAPI.fetchBranches(query).then((r) => {
       if (r.status == 200) {
         dispatch(setBranches(r.data));
-        setTimeout(() => {
-          setLoading(false);
-        }, 500);
       } else if (r.status === 401) {
         dispatch(setSignedInUser());
         logout();
@@ -164,26 +163,6 @@ export default function BranchList() {
       fetchBranchesDelay(keyword, signedInUser);
     }
   }, [signedInUser, keyword]);
-
-  const handleSearch = (keyword) => {
-    if (signedInUser) {
-      loadBranches(keyword, signedInUser);
-    }
-  };
-
-  const handleClearSearch = () => {
-    setKeyword();
-  };
-
-  const handleKeywordChange = (v) => {
-    setKeyword(v);
-  };
-
-  const handleRefresh = () => {
-    if (signedInUser) {
-      loadBranches(keyword, signedInUser);
-    }
-  };
 
   return (
     <DashboardLayout>
@@ -203,6 +182,11 @@ export default function BranchList() {
                   <Grid item>
                     <MDButton color="info" size="small" variant={"outlined"} onClick={handleCreate}>
                       {t("Create")}
+                    </MDButton>
+                  </Grid>
+                  <Grid item>
+                    <MDButton color="info" size="small" variant={"outlined"} onClick={handleDelete}>
+                      {t("Delete")}
                     </MDButton>
                   </Grid>
                 </Grid>

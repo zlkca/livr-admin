@@ -14,8 +14,9 @@ import { selectClients } from "redux/account/account.selector";
 import { setClients } from "redux/account/account.slice";
 import { setClient } from "redux/account/account.slice";
 import { selectSignedInUser } from "redux/auth/auth.selector";
+import { setSnackbar } from "redux/ui/ui.slice";
 import { accountAPI } from "services/accountAPI";
-import { isAdmin } from "utils";
+import { isAdmin } from "permission";
 import { isValidDate } from "utils";
 import { getFirstDayOfYear } from "utils";
 import { getLastDayOfYear } from "utils";
@@ -110,6 +111,26 @@ export default function ClientList(props) {
     navigate("/clients/new/form");
   };
 
+  const handleDelete = () => {
+    if (selectedRow) {
+      const _id = selectedRow._id;
+      accountAPI.deleteAccount(_id).then((r) => {
+        if (r.status === 200) {
+          dispatch(setClients(clients.filter((it) => it._id !== r.data._id)));
+          dispatch(
+            setSnackbar({
+              color: "success",
+              icon: "check",
+              title: "",
+              content: t("Deleted Successfully!"),
+              open: true,
+            })
+          );
+        }
+      });
+    }
+  };
+
   const handleSearchModeChange = (mode) => {
     if (mode === "year") {
       setSearchMode("year");
@@ -194,6 +215,13 @@ export default function ClientList(props) {
                 {t("Create")}
               </MDButton>
             </Grid>
+            {isAdmin(signedInUser) && (
+              <Grid item>
+                <MDButton color="info" variant={"outlined"} size="small" onClick={handleDelete}>
+                  {t("Delete")}
+                </MDButton>
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </Grid>
