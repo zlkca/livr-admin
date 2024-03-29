@@ -375,6 +375,7 @@ export default function OrderForm() {
                     <Grid item xs={3}>
                       <MDInput
                         name="amount"
+                        type="number"
                         label={t("pre-tax Total")}
                         value={data.amount}
                         onChange={handleAmountChange}
@@ -413,6 +414,7 @@ export default function OrderForm() {
                     <Grid item xs={3}>
                       <MDInput
                         name="deposit"
+                        type="number"
                         label={t("Deposit")}
                         value={data.deposit}
                         onChange={handleDepositChange}

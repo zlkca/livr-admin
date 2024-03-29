@@ -94,7 +94,7 @@ export default function ClientList(props) {
 
   const handleCreate = () => {
     if (isAdmin(signedInUser)) {
-      dispatch(setClient({}));
+      dispatch(setClient({ languages: [] }));
     } else {
       dispatch(
         setClient({
@@ -105,6 +105,7 @@ export default function ClientList(props) {
             email: signedInUser.email,
             phone: signedInUser.phone,
           },
+          languages: [],
         })
       );
     }

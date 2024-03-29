@@ -51,10 +51,10 @@ export default function CalendarWidget({
 }) {
   const today = new Date();
   // start time 8:00am
-  const min = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 8);
+  const min = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 7);
 
   // end time 5:00pm
-  const max = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 19);
+  const max = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23);
 
   return (
     <Calendar

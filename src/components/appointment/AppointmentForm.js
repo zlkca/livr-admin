@@ -124,40 +124,12 @@ export default function AppointmentForm({ data, error, onChange }) {
       onChange(a, "timeRange");
     }
   };
-  const handleSummaryChange = (event) => {
-    const a = { ...data, summary: event.target.value };
-    onChange(a, "summary");
-  };
+  // const handleSummaryChange = (event) => {
+  //   const a = { ...data, summary: event.target.value };
+  //   onChange(a, "summary");
+  // };
   return (
     <Grid container title={t("Appointment")} styles={mStyles.root}>
-      <Grid container item xs={12} spacing={2} display="flex" pb={2}>
-        <Grid item xs={5} pb={2}>
-          <DateRangePicker
-            size="lg"
-            format="yyyy-MM-dd HH:mm"
-            value={data.timeRange}
-            onChange={(r) => {
-              // if (r && r.length > 1) {
-              //   r[1].setHours(23, 59, 59);
-              // }
-              handleRangeChange(r);
-            }}
-          />
-          {error && error.timeRange && <div style={mStyles.error}>{error.timeRange}</div>}
-        </Grid>
-      </Grid>
-
-      <Grid container xs={12} spacing={2} style={{ marginBottom: 30 }}>
-        <Grid item xs={6}>
-          <MDInput
-            name="summary"
-            label={t("Summary")}
-            value={data.summary} // controlled
-            onChange={handleSummaryChange}
-          />
-        </Grid>
-      </Grid>
-
       <Grid container item xs={12} spacing={2} display="flex">
         <Grid item xs={3}>
           <MDSelect
@@ -179,6 +151,22 @@ export default function AppointmentForm({ data, error, onChange }) {
             />
           </Grid>
         )}
+      </Grid>
+      <Grid container item xs={12} spacing={2} display="flex" pt={2}>
+        <Grid item xs={5} pb={2}>
+          <DateRangePicker
+            size="lg"
+            format="yyyy-MM-dd HH:mm"
+            value={data.timeRange}
+            onChange={(r) => {
+              // if (r && r.length > 1) {
+              //   r[1].setHours(23, 59, 59);
+              // }
+              handleRangeChange(r);
+            }}
+          />
+          {error && error.timeRange && <div style={mStyles.error}>{error.timeRange}</div>}
+        </Grid>
       </Grid>
       <Grid container xs={12} spacing={2} style={{ marginTop: 15 }}>
         <Grid item xs={6}>
@@ -210,7 +198,18 @@ export default function AppointmentForm({ data, error, onChange }) {
 }
 
 {
-  /* <Grid item xs={3}>
+  /* 
+        <Grid container xs={12} spacing={2} style={{ marginBottom: 30 }}>
+        <Grid item xs={6}>
+          <MDInput
+            name="summary"
+            label={t("Summary")}
+            value={data.summary} // controlled
+            onChange={handleSummaryChange}
+          />
+        </Grid>
+      </Grid>
+      <Grid item xs={3}>
           <MDDateTimePicker
             label={t("Start Time")}
             value={data.start}

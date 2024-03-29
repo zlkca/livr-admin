@@ -2,27 +2,32 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { CheckboxGroup, Checkbox } from "rsuite";
+import { Card, Grid } from "@mui/material";
 
-import MDBox from "components/MDBox";
 import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
-import { Card, Grid } from "@mui/material";
 import Footer from "layouts/Footer";
+
+import MDBox from "components/MDBox";
+import MDButton from "components/MDButton";
+import MDSelect from "components/MDSelect";
+import MDInput from "components/MDInput";
+import MDSection from "components/MDSection";
+import MDTypography from "components/MDTypography";
+
 import { selectClient } from "redux/account/account.selector";
 import { accountAPI } from "services/accountAPI";
 import { setClient } from "redux/account/account.slice";
 import { selectSignedInUser } from "redux/auth/auth.selector";
-import MDButton from "components/MDButton";
 import { branchAPI } from "services/branchAPI";
 import { setBranches } from "redux/branch/branch.slice";
-import MDSelect from "components/MDSelect";
 import { selectBranches } from "redux/branch/branch.selector";
 import { setSnackbar } from "redux/ui/ui.slice";
-import MDInput from "components/MDInput";
+
 import AddressForm from "components/AddressForm";
 import { isAdmin } from "permission";
 import CardHead from "components/CardHead";
-import MDSection from "components/MDSection";
 import { BrandName } from "config";
 import AccountSelectBackdrop from "components/account/AccountSelectBackdrop";
 import { getEmployeesQueryByRole } from "permission";
@@ -93,10 +98,10 @@ export default function ClientForm() {
     { id: "Other", label: t("Other"), value: "Other" },
   ];
   const languages = [
-    { id: "English", label: t("English") },
-    { id: "French", label: t("French") },
-    { id: "Mandarin", label: t("Mandarin") },
-    { id: "Cantonese", label: t("Cantonese") },
+    { id: "english", label: t("English") },
+    { id: "french", label: t("French") },
+    { id: "mandarin", label: t("Mandarin") },
+    { id: "cantonese", label: t("Cantonese") },
   ];
 
   const bestTimeToCallOptions = [
@@ -115,6 +120,7 @@ export default function ClientForm() {
   ];
 
   const preferredContactOptions = [
+    { id: "none", label: t("N/A"), value: "none" },
     { id: "phone", label: t("Phone"), value: "phone" },
     { id: "email", label: t("Email"), value: "email" },
   ];
@@ -195,9 +201,8 @@ export default function ClientForm() {
     setProfile({ ...profile, source: source.id });
   };
 
-  const handleLanguageChange = (event) => {
-    const language = languages.find((r) => r.id === event.target.value);
-    setProfile({ ...profile, language: language.id });
+  const handleToggleLanguages = (v) => {
+    setProfile({ ...profile, languages: v });
   };
 
   const handleBestTimeToCallChange = (event) => {
@@ -410,6 +415,43 @@ export default function ClientForm() {
                         FormHelperTextProps={error && error.phone ? { error: true } : null}
                       />
                     </Grid>
+                  </Grid>
+                  <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                    <Grid item xs={12}>
+                      <MDTypography variant="caption" color="text" fontWeight="regular">
+                        {t("Language")}
+                      </MDTypography>
+                      <CheckboxGroup
+                        inline
+                        name="checkbox-group"
+                        value={profile.languages}
+                        onChange={handleToggleLanguages}
+                      >
+                        <Checkbox value="english" style={{ marginRight: 40, fontSize: 15 }}>
+                          {t("English")}
+                        </Checkbox>
+                        <Checkbox value="french" style={{ marginRight: 40, fontSize: 15 }}>
+                          {t("French")}
+                        </Checkbox>
+                        <Checkbox value="mandarin" style={{ marginRight: 40, fontSize: 15 }}>
+                          {t("Mandarin")}
+                        </Checkbox>
+                        <Checkbox value="cantonese" style={{ marginRight: 40, fontSize: 15 }}>
+                          {t("Cantonese")}
+                        </Checkbox>
+                      </CheckboxGroup>
+                    </Grid>
+                  </Grid>
+                  <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                    <Grid item xs={3}>
+                      <MDSelect
+                        name="source"
+                        label={t("Source")}
+                        value={profile && profile.source ? profile.source : ""} // controlled
+                        options={sourceOptions}
+                        onChange={handleSourceChange}
+                      />
+                    </Grid>
                     <Grid item xs={3}>
                       <MDSelect
                         name="bestTimeToCall"
@@ -425,27 +467,6 @@ export default function ClientForm() {
                         options={preferredContactOptions}
                         value={profile && profile.preferredContact ? profile.preferredContact : ""}
                         onChange={handlePreferredContactChange}
-                      />
-                    </Grid>
-                  </Grid>
-
-                  <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                    <Grid item xs={3}>
-                      <MDSelect
-                        name="language"
-                        label={t("Language")}
-                        value={profile && profile.language ? profile.language : ""} // controlled
-                        options={languages}
-                        onChange={handleLanguageChange}
-                      />
-                    </Grid>
-                    <Grid item xs={3}>
-                      <MDSelect
-                        name="source"
-                        label={t("Source")}
-                        value={profile && profile.source ? profile.source : ""} // controlled
-                        options={sourceOptions}
-                        onChange={handleSourceChange}
                       />
                     </Grid>
                   </Grid>

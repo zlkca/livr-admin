@@ -24,11 +24,12 @@ import {
   getFirstDayOfMonth,
   getLastDayOfMonth,
 } from "utils";
-import exportToExcel from "export/exportToExcel";
 import { isAdmin } from "permission";
 import { BrandName } from "config";
 import { setOrders } from "redux/order/order.slice";
 import { setSnackbar } from "redux/ui/ui.slice";
+import exportToCsv from "export/exportToCSV";
+// import exportToExcel from "export/exportToExcel";
 
 export default function OrderList(props) {
   const { user, rowsPerPage, height, onDateRangeChange } = props;
@@ -105,17 +106,30 @@ export default function OrderList(props) {
   };
   const handleExport = () => {
     const dataToExport = gridFilteredSortedRowEntriesSelector(gridApiRef);
-    const dataList = dataToExport.map((it) => ({
-      id: it.id,
-      branch: it.branch?.name,
-      sales: it.sales?.username,
-      client: it.client?.username,
-      amount: it.amount,
-      deposit: it.deposit,
-      taxOpt: it.taxOpt,
-      created: it.created,
-    }));
-    exportToExcel(dataList, `${BrandName}-orders-${new Date().toISOString()}.xlsx`);
+    const dataList = dataToExport.map(({ model }) => [
+      model.id,
+      model.branch?.name,
+      model.sales?.username,
+      model.client?.username,
+      model.amount,
+      model.deposit,
+      model.balance,
+      model.created,
+    ]);
+
+    dataList.unshift([
+      "Order #",
+      "Branch",
+      "Sales",
+      "Client",
+      "Amount Pre-Tax",
+      "Deposit",
+      "Balance",
+      "Date",
+    ]);
+
+    exportToCsv(`${BrandName}-orders-${new Date().toISOString()}.csv`, dataList);
+    // exportToExcel(`${BrandName}-orders-${new Date().toISOString()}.xlsx`, dataList);
   };
   const columns = [
     {

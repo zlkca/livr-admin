@@ -66,7 +66,7 @@ import OrderForm from "pages/order/OrderForm";
 import PaymentList from "pages/payment/PaymentList";
 import PaymentForm from "pages/payment/PaymentForm";
 import AppointmentFormPage from "pages/appointment/AppointmentFormPage";
-import AppointmentListPage from "pages/appointment/AppointmentListPage";
+import AppointmentsPage from "pages/appointment/AppointmentsPage";
 import DashboardPage from "pages/dashboard/DashboardPage";
 import ClientDetails from "pages/client/ClientDetails";
 import EmployeeDetails from "pages/employee/EmployeeDetails";
@@ -114,7 +114,7 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
       <Route exact path="/payments" element={<PaymentList />} key="payments" />
       <Route exact path="/payments/:id" element={<PaymentDetails />} key="payment" />
       <Route exact path="/payments/:id?/form" element={<PaymentForm />} key="payment-form" />
-      <Route exact path="/appointments" element={<AppointmentListPage />} key="appointments" />
+      <Route exact path="/appointments" element={<AppointmentsPage />} key="appointments" />
       <Route exact path="/appointments/:id" element={<AppointmentDetails />} key="appointment" />
       <Route
         exact

@@ -1,29 +1,29 @@
-import * as XLSX from "xlsx";
-// import * as fs from "fs";
+// import * as XLSX from "xlsx";
+// // import * as fs from "fs";
 
-export default function exportToExcel(data, filename) {
-  // XLSX.set_fs(fs);
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.json_to_sheet(data);
+// export default function exportToExcel(filename, data) {
+//   // XLSX.set_fs(fs);
+//   const wb = XLSX.utils.book_new();
+//   const ws = XLSX.utils.aoa_to_sheet(data);
 
-  XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+//   XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
 
-  const wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
+//   const wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
 
-  const downloadExcelFile = (content, fileName) => {
-    const blob = new Blob([content], { type: "application/octet-stream" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName;
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-    }, 100);
-  };
+//   const downloadExcelFile = (content, fileName) => {
+//     const blob = new Blob([content], { type: "application/octet-stream" });
+//     const url = URL.createObjectURL(blob);
+//     const a = document.createElement("a");
+//     a.href = url;
+//     a.download = fileName;
+//     a.click();
+//     setTimeout(() => {
+//       URL.revokeObjectURL(url);
+//     }, 100);
+//   };
 
-  downloadExcelFile(wbout, filename);
-}
+//   downloadExcelFile(wbout, filename);
+// }
 
 // Example usage:
 // const dataList = [

@@ -171,19 +171,22 @@ export default function PaymentForm() {
 
   const handleSubmit = () => {
     if (!data.id) {
-      setError({ id: "Please select a project" });
+      setError({ id: t("Please select a project") });
       return;
     }
     if (!data.type) {
-      setError({ type: "Please select a type" });
+      setError({ type: t("Please select a type") });
       return;
     }
     if (!data.method) {
-      setError({ method: "Please select method" });
+      setError({ method: t("Please select method") });
       return;
     }
     if (!data.amount) {
-      setError({ amount: "Please input amount" });
+      setError({ amount: t("Please input amount") });
+      return;
+    } else if (isNaN(data.amount)) {
+      setError({ amount: t("Please input a number") });
       return;
     }
     if (data._id) {
@@ -305,6 +308,7 @@ export default function PaymentForm() {
                 <Grid item xs={3}>
                   <MDInput
                     name="amount"
+                    type="number"
                     label={t("Amount")}
                     value={data.amount} // controlled
                     onChange={handleAmountChange}

@@ -9,6 +9,13 @@ export const isStoreManager = (account) => {
   return account && account.role === "store manager";
 };
 
+export const isManager = (account) => {
+  return (
+    account &&
+    (account.role === "admin" || account.role === "root" || account.role === "store manager")
+  );
+};
+
 export const isDrawingEngineer = (account) => {
   return account && account.role === "engineer";
 };
@@ -55,6 +62,22 @@ export function getEmployeesQuery(user, branchId) {
     return {
       "branch._id": branchId,
       role: { $in: ["store manager", "sales", "technician", "user"] },
+    };
+  }
+}
+
+export function getActiveEmployeesQuery(user, branchId) {
+  if (isAdmin(user)) {
+    return { role: { $in: ["admin", "store manager", "sales", "technician"] } };
+  } else if (isStoreManager(user)) {
+    return {
+      "branch._id": branchId,
+      role: { $in: ["store manager", "sales", "technician"] },
+    };
+  } else {
+    return {
+      "branch._id": branchId,
+      role: { $in: ["store manager", "sales", "technician"] },
     };
   }
 }

@@ -294,7 +294,7 @@ export default function ClientDetails() {
 
                 <MDSection title={t("Profile")}>
                   <Grid display="flex">
-                    <VField label={t("Language")} value={profile.language} />
+                    <VField label={t("Language")} value={profile.languages.join(",")} />
                     <VField label={t("Source")} value={profile.source} />
                   </Grid>
                 </MDSection>
