@@ -87,11 +87,11 @@ export default function ProjectListPage() {
           <Grid item xs={12}>
             <Card>
               <CardHead title={t("Projects")} />
-              <MDBox pt={2} px={2} style={{ height: 740 }}>
+              <MDBox pt={2} px={2} style={{ height: 1240 }}>
                 <ProjectList
                   user={signedInUser}
-                  height={500}
-                  rowsPerPage={8}
+                  height={1000}
+                  rowsPerPage={20}
                   onDateRangeChange={handleProjectsDateRangeChange}
                 />
               </MDBox>

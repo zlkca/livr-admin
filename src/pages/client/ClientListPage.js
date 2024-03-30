@@ -101,39 +101,14 @@ export default memo(function ClientListPage() {
                     </MDButton>
                   </Grid>
                 </Grid> */}
-              <MDBox pt={2} px={2} style={{ height: 740 }}>
+              <MDBox pt={2} px={2} style={{ height: 1240 }}>
                 <ClientList
                   user={signedInUser}
-                  height={500}
-                  rowsPerPage={8}
+                  height={1000}
+                  rowsPerPage={20}
                   onDateRangeChange={handleClientsDateRangeChange}
                 />
               </MDBox>
-              {/* <MDBox pt={0} px={2} style={{ height: 600 }}>
-                {isLoading ? (
-                  <Grid
-                    container
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    style={{ height: 400 }}
-                  >
-                    <Grid item xs={6}>
-                      <MDLinearProgress color="info" />
-                    </Grid>
-                  </Grid>
-                ) : (
-                  <GridTable
-                    autoPageSize
-                    data={rows}
-                    columns={columns}
-                    onRowClick={handleSelectRow}
-                    rowsPerPage={9}
-                    // styles={mStyles.table}
-                    sortModel={[{ field: "created", sort: "desc" }]}
-                  />
-                )}
-              </MDBox> */}
             </Card>
           </Grid>
         </Grid>

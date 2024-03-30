@@ -304,7 +304,7 @@ export default function ClientDetails() {
                       <OrderList
                         user={signedInUser}
                         height={300}
-                        rowsPerPage={6}
+                        rowsPerPage={20}
                         onDateRangeChange={handleOrdersDateRangeChange}
                       />
                     </TabPanel>
@@ -312,7 +312,7 @@ export default function ClientDetails() {
                       <ProjectList
                         user={signedInUser}
                         height={300}
-                        rowsPerPage={6}
+                        rowsPerPage={20}
                         onDateRangeChange={handleProjectsDateRangeChange}
                       />
                     </TabPanel>
@@ -320,7 +320,7 @@ export default function ClientDetails() {
                       <AppointmentList
                         user={signedInUser}
                         height={300}
-                        rowsPerPage={6}
+                        rowsPerPage={20}
                         onDateRangeChange={handleAppointmentsDateRangeChange}
                       />
                     </TabPanel>

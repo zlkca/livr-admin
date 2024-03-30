@@ -108,7 +108,7 @@ export default function ProjectsTab(props) {
             data={projects}
             columns={columns}
             onRowClick={() => {}}
-            rowsPerPage={10}
+            rowsPerPage={20}
             sortModel={[{ field: "created", sort: "desc" }]}
           />
         )}

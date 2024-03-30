@@ -90,11 +90,11 @@ export default function OrderListPage() {
           <Grid item xs={12}>
             <Card>
               <CardHead title={t("Orders")} />
-              <MDBox pt={2} px={2} style={{ height: 740 }}>
+              <MDBox pt={2} px={2} style={{ height: 1240 }}>
                 <OrderList
                   user={signedInUser}
-                  height={500}
-                  rowsPerPage={8}
+                  height={1000}
+                  rowsPerPage={20}
                   onDateRangeChange={handleOrdersDateRangeChange}
                 />
               </MDBox>

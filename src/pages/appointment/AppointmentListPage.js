@@ -248,7 +248,7 @@ export default function AppointmentListPage() {
                 <AppointmentList
                   user={signedInUser}
                   height={500}
-                  rowsPerPage={8}
+                  rowsPerPage={20}
                   onDateRangeChange={handleAppointmentsDateRangeChange}
                 />
               </MDBox>
@@ -271,7 +271,7 @@ export default function AppointmentListPage() {
                     data={rows}
                     columns={columns}
                     onRowClick={handleSelectRow}
-                    rowsPerPage={10}
+                    rowsPerPage={20}
                     // styles={mStyles.table}
                     sortModel={[{ field: "created", sort: "desc" }]}
                   />

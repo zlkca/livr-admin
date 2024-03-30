@@ -224,12 +224,6 @@ export default function AppointmentListPage() {
               <CardHead title={t("Appointments")}></CardHead>
               <LabTabs tabs={tabs} id={tab.id} onChange={handleTabChange}>
                 <TabPanel value={"appointment-calendar"} style={{ width: "100%" }}>
-                  {/* <OrderList
-                        user={signedInUser}
-                        height={448}
-                        rowsPerPage={6}
-                        onDateRangeChange={handleOrdersDateRangeChange}
-                      /> */}
                   <Grid container>
                     <Grid item xs={4}>
                       <EmployeeFilter
