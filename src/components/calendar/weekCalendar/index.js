@@ -11,15 +11,17 @@ import {
   getEventMapByDate,
   toLocalDateString,
 } from "../utils";
+import { useTranslation } from "react-i18next";
 
 const CellHeight = 80;
-const HeaderHeight = 40;
+const HeaderHeight = 60;
 
 export function WeekCalendar({ events, onNextWeek, onPrevWeek }) {
   const [dates, setDates] = useState([]);
   const [eventsByDate, setEventsByDate] = useState({});
   const [cellWidth, setCellWidth] = useState(120);
   const gridRef = useRef();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const dates = getCurrentWeekDates();
@@ -58,15 +60,17 @@ export function WeekCalendar({ events, onNextWeek, onPrevWeek }) {
 
   return (
     <div className="root">
-      <div>
-        <button onClick={handlePrevWeek} style={{ marginRight: 8 }}>
-          Prev Week
+      <div sytle={{ paddingBottom: 8 }}>
+        <button onClick={handlePrevWeek} style={{ marginRight: 8, padding: "5px 10px" }}>
+          {t("Previous Week")}
         </button>
-        <button onClick={handleNextWeek}>Next Week</button>
+        <button onClick={handleNextWeek} style={{ marginRight: 8, padding: "5px 10px" }}>
+          {t("Next Week")}
+        </button>
       </div>
       <div className="calendar-grid" ref={gridRef}>
         <TimeColumn
-          title="Time/Date"
+          title=""
           hours={hours}
           cellStyles={{
             width: cellWidth,

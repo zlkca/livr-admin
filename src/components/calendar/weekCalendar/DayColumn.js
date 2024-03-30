@@ -1,8 +1,10 @@
 import React from "react";
 import { getEventPosition, getWeekdayName } from "../utils";
 import { Event } from "./Event";
+import { useTranslation } from "react-i18next";
 
 export function DayColumn({ date, hours, events, cellStyles, headerStyles }) {
+  const { t } = useTranslation();
   const mStyles = {
     flex: 1,
     padding: "0px",
@@ -11,8 +13,8 @@ export function DayColumn({ date, hours, events, cellStyles, headerStyles }) {
   return (
     <div className="day-column">
       <div className="header">
-        <p>{date.toISOString().split("T")[0]}</p>
-        {/* <p>{getWeekdayName(date)}</p> */}
+        <div style={{ width: "100%" }}>{date.toISOString().split("T")[0]}</div>
+        <div style={{ width: "100%" }}>{t(getWeekdayName(date))}</div>
       </div>
       <div className="hours">
         {hours.map((hour) => (
