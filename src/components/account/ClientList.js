@@ -54,6 +54,13 @@ export default function ClientList(props) {
       valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("N/A")),
       flex: 1,
     },
+    {
+      headerName: t("Sales"),
+      field: "sales",
+      maxWidth: 300,
+      valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("N/A")),
+      flex: 1,
+    },
     { headerName: t("Email"), field: "email", maxWidth: 320, flex: 1.5 },
     { headerName: t("Phone"), field: "phone", maxWidth: 200, flex: 1 },
     // { headerName: t("Status"), field: "status", maxWidth: 150, flex: 1 },

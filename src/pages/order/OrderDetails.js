@@ -235,18 +235,18 @@ export default function OrderDetails() {
                       </Grid>
                     ) : (
                       <Grid>
-                        {isAdmin(signedInUser) && (
-                          <Grid container spacing={2} direction="row" justifyContent="flex-end">
-                            <Grid item pb={1}>
-                              <MDButton
-                                color="info"
-                                size="small"
-                                variant={"outlined"}
-                                onClick={handleAddPayment}
-                              >
-                                {t("Add Payment")}
-                              </MDButton>
-                            </Grid>
+                        <Grid container spacing={2} direction="row" justifyContent="flex-end">
+                          <Grid item pb={1}>
+                            <MDButton
+                              color="info"
+                              size="small"
+                              variant={"outlined"}
+                              onClick={handleAddPayment}
+                            >
+                              {t("Add Payment")}
+                            </MDButton>
+                          </Grid>
+                          {isAdmin(signedInUser) && (
                             <Grid item pb={1}>
                               <MDButton
                                 color="info"
@@ -257,8 +257,8 @@ export default function OrderDetails() {
                                 {t("Delete Payment")}
                               </MDButton>
                             </Grid>
-                          </Grid>
-                        )}
+                          )}
+                        </Grid>
 
                         <GridTable
                           data={payments}

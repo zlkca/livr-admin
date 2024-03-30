@@ -78,26 +78,26 @@ export default function DashboardPage() {
   const fd = `${firstDay.toISOString()}`;
   const ld = `${lastDay.toISOString()}`;
 
-  function getOrderMap(orders, labels) {
+  function getOrderMap(orders, branches) {
     let totalMap = {};
     let balanceMap = {};
     let total = 0;
     let balance = 0;
 
-    labels.forEach((it) => {
-      totalMap[it] = 0;
-      balanceMap[it] = 0;
+    branches.forEach((b) => {
+      totalMap[b._id] = 0;
+      balanceMap[b._id] = 0;
     });
 
     for (let d of orders) {
       if (d.taxOpt === "include") {
-        totalMap[t(d.branch.name)] += parseFloat(d.amount);
+        totalMap[d.branch._id] += parseFloat(d.amount);
         total += parseFloat(d.amount);
       } else {
-        totalMap[t(d.branch.name)] += parseFloat(d.amount) * 1.13;
+        totalMap[d.branch._id] += parseFloat(d.amount) * 1.13;
         total += parseFloat(d.amount) * 1.13;
       }
-      balanceMap[t(d.branch.name)] += parseFloat(d.balance);
+      balanceMap[d.branch._id] += parseFloat(d.balance);
       balance += parseFloat(d.balance);
     }
     return { totalMap, balanceMap, total, balance };
@@ -174,13 +174,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (branches && branches.length > 0) {
-      const labels = branches.map((it) => t(it.name));
       orderAPI
         .searchOrders({
           created: { $gte: fd, $lte: ld },
         })
         .then((r) => {
-          const t = getOrderMap(r.data, labels);
+          const t = getOrderMap(r.data, branches);
           setOrderMap(t);
         });
     }
@@ -193,7 +192,7 @@ export default function DashboardPage() {
         labels: receivableMonthly.labels.map((k) => t(k)),
         datasets: {
           label: t("Receivable Payments"),
-          data: receivableMonthly.labels.map((k) => -parseFloat(orderMap.balanceMap[k])),
+          data: branches.map((b) => -parseFloat(orderMap.balanceMap[b._id])),
         },
       });
 
@@ -202,8 +201,8 @@ export default function DashboardPage() {
         labels: receivedMonthly.labels.map((k) => t(k)),
         datasets: {
           label: t("Received Payments"),
-          data: receivedMonthly.labels.map(
-            (k) => parseFloat(orderMap.totalMap[k]) + parseFloat(orderMap.balanceMap[k])
+          data: branches.map(
+            (b) => parseFloat(orderMap.totalMap[b._id]) + parseFloat(orderMap.balanceMap[b._id])
           ),
         },
       });

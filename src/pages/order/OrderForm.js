@@ -173,8 +173,22 @@ export default function OrderForm() {
 
   const handleDepositChange = (event) => {
     const deposit = event.target.value === "" ? "" : parseFloat(event.target.value); // new amount
-    const a = { ...data, deposit };
-    setData(a);
+
+    if (data.depositPaid) {
+      setData({
+        ...data,
+        deposit,
+        payment: {
+          type: "Deposit",
+          amount: deposit,
+        },
+      });
+    } else {
+      setData({
+        ...data,
+        deposit,
+      });
+    }
 
     setError({ ...error, deposit: "" });
   };
@@ -250,14 +264,21 @@ export default function OrderForm() {
   const handleDepositPaidCheckboxChange = () => {
     const newV = !data.depositPaid;
     if (newV) {
-      setData({
-        ...data,
-        depositPaid: newV,
-        payment: {
-          type: "Deposit",
-          amount: parseFloat(data.deposit),
-        },
-      });
+      if (data.deposit) {
+        setData({
+          ...data,
+          depositPaid: true,
+          payment: {
+            type: "Deposit",
+            amount: parseFloat(data.deposit),
+          },
+        });
+      } else {
+        setData({
+          ...data,
+          depositPaid: true,
+        });
+      }
     } else {
       delete data.payment;
       setData({

@@ -112,7 +112,7 @@ export default function PaymentForm() {
   };
 
   const handleAmountChange = (event) => {
-    const a = { ...data, amount: event.target.value };
+    const a = { ...data, amount: parseFloat(event.target.value) };
     setData(a);
     setError({ ...error, amount: "" });
   };
