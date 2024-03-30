@@ -50,12 +50,8 @@ import AppointmentList from "components/appointment/AppointmentList";
 import { appointmentAPI } from "services/appointmentAPI";
 import { getAppointmentsQuery } from "permission";
 import { getMonthRangeQuery, logout } from "utils";
-import CalendarWidget from "components/common/Calendar";
-import { EmployeeFilter } from "components/account/EmployeeFilter";
 import { accountAPI } from "services/accountAPI";
 import { getActiveEmployeesQuery } from "permission";
-import { setAccounts } from "redux/account/account.slice";
-import { WeekCalendar } from "components/calendar/weekCalendar";
 import { AppointmentCalendar } from "components/appointment/AppointmentCalendar";
 
 export default function AppointmentsPage() {
