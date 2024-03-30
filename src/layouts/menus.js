@@ -5,7 +5,7 @@ import Tables from "layouts/tables";
 import Icon from "@mui/material/Icon";
 import EmployeeListPage from "pages/employee/EmployeeListPage";
 import ProjectListPage from "pages/project/ProjectListPage";
-import AppointmentListPage from "pages/appointment/AppointmentListPage";
+import AppointmentsPage from "pages/appointment/AppointmentsPage";
 import Billing from "layouts/billing";
 import BranchList from "pages/branch/BranchList";
 import Notifications from "./notifications";
@@ -67,7 +67,7 @@ const menus = [
     key: "appointments",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/appointments",
-    component: <AppointmentListPage />,
+    component: <AppointmentsPage />,
   },
   {
     type: "collapse",

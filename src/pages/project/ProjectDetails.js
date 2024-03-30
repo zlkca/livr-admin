@@ -23,11 +23,13 @@ import { setSnackbar } from "redux/ui/ui.slice";
 import { appointmentAPI } from "services/appointmentAPI";
 import { projectAPI } from "services/projectAPI";
 import { isAdmin } from "permission";
+import { selectAppointments } from "redux/appointment/appointment.selector";
 
 export default function ProjectDetails() {
   const project = useSelector(selectProject);
   const order = useSelector(selectOrder);
   const signedInUser = useSelector(selectSignedInUser);
+  const appointments = useSelector(selectAppointments);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -209,6 +211,7 @@ export default function ProjectDetails() {
               )}
               <MDSection title={t("Appointments")}>
                 <AppointmentList
+                  data={appointments}
                   hideFilter={true}
                   user={signedInUser}
                   height={300}

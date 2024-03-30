@@ -1,13 +1,16 @@
 body {
   margin: 0;
 }
-
+.root{
+  width: 100%;
+}
 .calendar-grid {
   display: flex;
   flex-direction: row;
   padding: 0px;
   margin: 0px;
   position: relative;
+  width: 100%;
 }
 
 /* .column {
@@ -26,19 +29,19 @@ body {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
 }
-.cell {
+/* .cell {
   flex: 1;
   padding: 0px;
   width: 160px;
   height: 80px;
   border-bottom: 1px solid #ddd;
-}
+} */
 
 .time-column {
   padding: 0px;
   display: flex;
   flex-direction: column;
-  width: 160px;
+  /* width: 160px; */
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
 }
@@ -52,7 +55,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  width: 160px;
+  /* width: 120px; */
   border-right: 1px solid #ddd;
   position: relative;
 }
@@ -62,6 +65,6 @@ body {
   top: 42px;
   left: 162px;
   right: 0;
-  width: 160px;
+  /* width: 160px; */
   background: #eee;
 }

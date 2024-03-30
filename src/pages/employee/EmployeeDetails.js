@@ -36,6 +36,7 @@ import { appointmentAPI } from "services/appointmentAPI";
 import { setAppointments } from "redux/appointment/appointment.slice";
 import ProjectList from "components/project/ProjectList";
 import AppointmentList from "components/appointment/AppointmentList";
+import { selectAppointments } from "redux/appointment/appointment.selector";
 
 export default function EmployeeDetails() {
   const { t } = useTranslation();
@@ -44,6 +45,8 @@ export default function EmployeeDetails() {
   const navigate = useNavigate();
   const employee = useSelector(selectEmployee);
   const signedInUser = useSelector(selectSignedInUser);
+  const appointments = useSelector(selectAppointments);
+
   const [profile, setProfile] = useState();
   const mq = getMonthRangeQuery();
   const tabs = [
@@ -301,6 +304,7 @@ export default function EmployeeDetails() {
                     </TabPanel>
                     <TabPanel value={"appointments"}>
                       <AppointmentList
+                        data={appointments}
                         user={signedInUser}
                         height={300}
                         rowsPerPage={6}

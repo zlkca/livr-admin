@@ -24,26 +24,16 @@ import Card from "@mui/material/Card";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
 import Footer from "layouts/Footer";
-import GridTable from "components/common/GridTable";
-import { selectAccounts } from "redux/account/account.selector";
-import { searchAccounts } from "redux/account/account.thunk";
 import { accountAPI } from "services/accountAPI";
-import { selectAccountHttpStatus } from "redux/account/account.selector";
-import ActionBar from "components/common/ActionBar";
-import { setEmployee } from "redux/account/account.slice";
-import { setAccounts } from "redux/account/account.slice";
-import MDLinearProgress from "components/MDLinearProgress";
 import { logout } from "utils";
 import { setSignedInUser } from "redux/auth/auth.slice";
 import { selectSignedInUser } from "redux/auth/auth.selector";
 import MDSnackbar from "components/MDSnackbar";
-import MDButton from "components/MDButton";
 import { selectSnackbar } from "redux/ui/ui.selector";
 import { setSnackbar } from "redux/ui/ui.slice";
 import CardHead from "components/CardHead";
@@ -57,8 +47,6 @@ export default memo(function EmployeeListPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
-
-  const [selectedRow, setSelectedRow] = useState();
 
   const signedInUser = useSelector(selectSignedInUser);
   const snackbar = useSelector(selectSnackbar);

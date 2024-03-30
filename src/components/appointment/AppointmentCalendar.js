@@ -1,0 +1,89 @@
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { Grid } from "@mui/material";
+
+import { WeekCalendar } from "components/calendar/weekCalendar";
+import { getEmployeesQuery } from "permission";
+// import { setEmployees } from "redux/account/account.slice";
+import { setSignedInUser } from "redux/auth/auth.slice";
+import { accountAPI } from "services/accountAPI";
+import { logout } from "utils";
+import { EmployeeFilter } from "components/account/EmployeeFilter";
+import { generateColors } from "components/calendar/utils";
+
+export function AppointmentCalendar({ appointments, user, branch }) {
+  const dispatch = useDispatch();
+  const colors = generateColors(12);
+  const [events, setEvents] = useState([]);
+  //   const employees = useSelector(selectEmployees);
+  const [employees, setEmployees] = useState([]);
+  const [employeeColorMap, setEmployeeColorMap] = useState({});
+  useEffect(() => {
+    const q = getEmployeesQuery(user, branch ? branch._id : "");
+    accountAPI
+      .searchAccounts({
+        ...q,
+      })
+      .then((r) => {
+        if (r.status == 200) {
+          const es = r.data.map((it, i) => ({ ...it, color: colors[i] }));
+          setEmployees(es);
+          const map = {};
+          es.forEach((employee) => {
+            if (employee.color) {
+              map[employee._id] = employee.color;
+            }
+          });
+          setEmployeeColorMap(map);
+        } else if (r.status === 401) {
+          dispatch(setSignedInUser());
+          logout();
+        }
+      });
+  }, []);
+
+  useEffect(() => {
+    if (employees && employees.length > 0 && appointments && appointments.length > 0) {
+      const es = filterAppointmentsByEmployees(appointments, employees);
+      setEvents(es);
+    }
+  }, [employees, appointments]);
+
+  function filterAppointmentsByEmployees(appointments, employees) {
+    return appointments.map((appointment) => {
+      // Check if appointment matches employees
+      const matchesEmployees = employees.some((employee) => {
+        return employee._id === appointment.employee._id;
+      });
+
+      if (matchesEmployees) {
+        // Get employee color
+        const color = employeeColorMap[appointment.employee._id];
+
+        // Return a copy of the appointment with color added
+        return {
+          ...appointment,
+          color,
+        };
+      }
+
+      return appointment;
+    });
+  }
+
+  const handleSelectEmployees = (employeeIds) => {
+    const es = filterAppointmentsByEmployees(appointments, employeeIds);
+    setEvents(es);
+  };
+
+  return (
+    <Grid container>
+      <Grid item xs={2}>
+        <EmployeeFilter accounts={employees} user={user} onChange={handleSelectEmployees} />
+      </Grid>
+      <Grid item xs={10} style={{ paddingRight: 15 }}>
+        <WeekCalendar events={events} onNextWeek={() => {}} onPrevWeek={() => {}} />
+      </Grid>
+    </Grid>
+  );
+}

@@ -6,7 +6,7 @@ import { appointmentAPI } from "services/appointmentAPI";
 
 export function EmployeeFilter({ accounts, user, onChange }) {
   const { t } = useTranslation();
-  const [types, setTypes] = useState("all");
+  const [types, setTypes] = useState(["all"]);
   const [candidates, setCandidates] = useState([]);
   const [selected, setSelected] = useState([]);
 
@@ -31,18 +31,19 @@ export function EmployeeFilter({ accounts, user, onChange }) {
     if (accounts && types && types.length > 0) {
       if (types.includes("all")) {
         setCandidates(accounts);
+        setSelected(accounts.map((s) => s._id));
       } else {
-        setCandidates(
-          accounts.filter((a) => {
-            types.includes(a.role);
-          })
-        );
+        const cs = accounts.filter((a) => {
+          types.includes(a.role);
+        });
+        setCandidates(cs);
+        setSelected(cs.map((s) => s._id));
       }
     }
-  }, [types]);
+  }, [accounts, types]);
 
   return (
-    <>
+    <Grid style={{ paddingRight: 10 }}>
       {/* {user && isManager(user) && (
         <Grid>
             <FormGroup>
@@ -90,21 +91,46 @@ export function EmployeeFilter({ accounts, user, onChange }) {
           //   </CheckboxGroup>
           // <Checkbox value={c._id}>{t(c.username)}</Checkbox>
           <FormGroup>
-            {candidates.map((c) => (
-              <FormControlLabel
+            {/* <FormControlLabel
+                key={"all"}
                 control={
                   <Checkbox
-                    checked={selected && selected.includes(c._id)}
+                    checked={selected && selected.includes("all")}
                     onChange={handleToggleEmployee}
-                    name={c._id}
+                    name={"all"}
                   />
                 }
-                label={t(c.username)}
-              />
+                label={t("All")}
+              /> */}
+            {candidates.map((c) => (
+              <Grid display="flex" justifyContent="flex-start">
+                <Grid flex={9}>
+                  <FormControlLabel
+                    key={c._id}
+                    control={
+                      <Checkbox
+                        checked={selected && selected.includes(c._id)}
+                        onChange={handleToggleEmployee}
+                        name={c._id}
+                      />
+                    }
+                    label={t(c.username)}
+                  />
+                </Grid>
+                <Grid flex={1} style={{ paddingTop: 8 }}>
+                  <div
+                    style={{
+                      width: 20,
+                      height: 20,
+                      backgroundColor: c.color ? c.color : "#ddd",
+                    }}
+                  />
+                </Grid>
+              </Grid>
             ))}
           </FormGroup>
         )}
       </Grid>
-    </>
+    </Grid>
   );
 }

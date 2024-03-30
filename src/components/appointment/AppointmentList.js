@@ -3,20 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Grid } from "@mui/material";
-import { gridFilteredSortedRowEntriesSelector, useGridApiRef } from "@mui/x-data-grid";
+import { useGridApiRef } from "@mui/x-data-grid";
 
 import MDBox from "components/MDBox";
-import VField from "components/VField";
 import MDButton from "components/MDButton";
 import GridTable from "components/common/GridTable";
 import MDLinearProgress from "components/MDLinearProgress";
-import { selectAppointments } from "redux/appointment/appointment.selector";
 import { setAppointment } from "redux/appointment/appointment.slice";
 import { appointmentAPI } from "services/appointmentAPI";
 import DateRangeFilter from "../DateRangeFilter";
 
 import {
-  getFinanceSummary,
   isValidDate,
   getFirstDayOfYear,
   getLastDayOfYear,
@@ -25,21 +22,21 @@ import {
 } from "utils";
 
 import { isAdmin } from "permission";
-import { setAppointments } from "redux/appointment/appointment.slice";
 import { setSnackbar } from "redux/ui/ui.slice";
+import moment from "moment";
 
 export default function AppointmentList(props) {
-  const { user, rowsPerPage, height, onDateRangeChange, hideFilter } = props;
+  const { user, data, rowsPerPage, height, onDateRangeChange, hideFilter } = props;
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const gridApiRef = useGridApiRef();
 
-  const appointments = useSelector(selectAppointments);
   const [isLoading, setLoading] = useState();
   const [selectedRow, setSelectedRow] = useState();
   const [searchMode, setSearchMode] = useState("month");
+  const [appointments, setAppointments] = useState([]);
 
   const today = new Date();
   const [searchMonth, setSearchMonth] = useState(today);
@@ -48,6 +45,19 @@ export default function AppointmentList(props) {
     getFirstDayOfMonth(today.getFullYear(), today.getMonth()),
     getLastDayOfMonth(today.getFullYear(), today.getMonth()),
   ]);
+
+  useEffect(() => {
+    if (data) {
+      const rows = data.map((it) => ({
+        ...it,
+        start: moment.utc(it.start).local().format("yyyy-MM-DD hh:mm:ss"),
+        end: moment.utc(it.end).local().format("yyyy-MM-DD hh:mm:ss"),
+        created: moment.utc(it.created).local().format("yyyy-MM-DD hh:mm:ss"),
+        updated: moment.utc(it.updated).local().format("yyyy-MM-DD hh:mm:ss"),
+      }));
+      setAppointments(rows);
+    }
+  }, [data]);
 
   const handleSelectRow = (row) => {
     setSelectedRow(row);

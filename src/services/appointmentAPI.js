@@ -5,18 +5,19 @@ import { buildApiUrl } from "./utils";
 export const appointmentAPI = {
   fetchAppointments: async (query) => {
     const url = buildApiUrl("/appointments", query);
-    const rsp = await get(url);
-    let data = null;
-    if (rsp.data) {
-      data = rsp.data.map((it) => ({
-        ...it,
-        start: moment.utc(it.start).local().format("yyyy-MM-DD hh:mm:ss"),
-        end: moment.utc(it.end).local().format("yyyy-MM-DD hh:mm:ss"),
-        created: moment.utc(it.created).local().format("yyyy-MM-DD hh:mm:ss"),
-        updated: moment.utc(it.updated).local().format("yyyy-MM-DD hh:mm:ss"),
-      }));
-    }
-    return { ...rsp, data };
+    return await get(url);
+    // const rsp = await get(url);
+    // let data = null;
+    // if (rsp.data) {
+    //   data = rsp.data.map((it) => ({
+    //     ...it,
+    //     start: moment.utc(it.start).local().format("yyyy-MM-DD hh:mm:ss"),
+    //     end: moment.utc(it.end).local().format("yyyy-MM-DD hh:mm:ss"),
+    //     created: moment.utc(it.created).local().format("yyyy-MM-DD hh:mm:ss"),
+    //     updated: moment.utc(it.updated).local().format("yyyy-MM-DD hh:mm:ss"),
+    //   }));
+    // }
+    // return { ...rsp, data };
   },
 
   fetchAppointment: async (params) => {
@@ -41,17 +42,18 @@ export const appointmentAPI = {
 
   searchAppointments: async (query) => {
     const url = buildApiUrl("/search/appointments");
-    const rsp = await post(url, query);
-    let data = null;
-    if (rsp.data) {
-      data = rsp.data.map((it) => ({
-        ...it,
-        start: moment.utc(it.start).local().format("yyyy-MM-DD hh:mm:ss"),
-        end: moment.utc(it.end).local().format("yyyy-MM-DD hh:mm:ss"),
-        created: moment.utc(it.created).local().format("yyyy-MM-DD hh:mm:ss"),
-        updated: moment.utc(it.updated).local().format("yyyy-MM-DD hh:mm:ss"),
-      }));
-    }
-    return { ...rsp, data };
+    return await post(url, query);
+    // const rsp = await post(url, query);
+    // let data = null;
+    // if (rsp.data) {
+    //   data = rsp.data.map((it) => ({
+    //     ...it,
+    //     start: moment.utc(it.start).local().format("yyyy-MM-DD hh:mm:ss"),
+    //     end: moment.utc(it.end).local().format("yyyy-MM-DD hh:mm:ss"),
+    //     created: moment.utc(it.created).local().format("yyyy-MM-DD hh:mm:ss"),
+    //     updated: moment.utc(it.updated).local().format("yyyy-MM-DD hh:mm:ss"),
+    //   }));
+    // }
+    // return { ...rsp, data };
   },
 };

@@ -55,9 +55,10 @@ import { EmployeeFilter } from "components/account/EmployeeFilter";
 import { accountAPI } from "services/accountAPI";
 import { getActiveEmployeesQuery } from "permission";
 import { setAccounts } from "redux/account/account.slice";
-// Data
+import { WeekCalendar } from "components/calendar/weekCalendar";
+import { AppointmentCalendar } from "components/appointment/AppointmentCalendar";
 
-export default function AppointmentListPage() {
+export default function AppointmentsPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -70,12 +71,14 @@ export default function AppointmentListPage() {
   const rows = useSelector(selectAppointments);
   const signedInUser = useSelector(selectSignedInUser);
   const branch = useSelector(selectBranch);
+  const appointments = useSelector(selectAppointments);
+
   const tabs = [
     { id: "appointment-calendar", label: t("Calendar") },
     { id: "appointment-list", label: t("Appointments") },
   ];
 
-  const [tab, setTab] = useState({ id: "orders" });
+  const [tab, setTab] = useState({ id: "appointment-calendar" });
   const [employees, setEmployees] = useState([]);
 
   const handleTabChange = (e, id) => {
@@ -174,18 +177,7 @@ export default function AppointmentListPage() {
       onDateRangeChange(fd, ld);
     }
   };
-  const handleSelectEmployees = (employeeIds) => {
-    appointmentAPI.searchAppointments({ "employee._id": { $in: employeeIds } }).then((r) => {
-      setEvents(
-        r.data.map((it) => ({
-          id: it._id,
-          title: it.summary,
-          start: new Date(it.start),
-          end: new Date(it.end),
-        }))
-      );
-    });
-  };
+
   useEffect(() => {
     if (signedInUser) {
       setLoading(true);
@@ -212,7 +204,7 @@ export default function AppointmentListPage() {
         logout();
       }
     });
-  }, [signedInUser]);
+  }, []);
 
   return (
     <DashboardLayout>
@@ -224,26 +216,16 @@ export default function AppointmentListPage() {
               <CardHead title={t("Appointments")}></CardHead>
               <LabTabs tabs={tabs} id={tab.id} onChange={handleTabChange}>
                 <TabPanel value={"appointment-calendar"} style={{ width: "100%" }}>
-                  <Grid container>
-                    <Grid item xs={4}>
-                      <EmployeeFilter
-                        accounts={employees}
-                        user={signedInUser}
-                        onChange={handleSelectEmployees}
-                      />
-                    </Grid>
-                    <Grid item xs={8}>
-                      <CalendarWidget
-                        events={events}
-                        styles={{ width: 900 }}
-                        onSelectSlot={() => {}}
-                      />
-                    </Grid>
-                  </Grid>
+                  <AppointmentCalendar
+                    appointments={appointments}
+                    user={signedInUser}
+                    branch={branch}
+                  />
                 </TabPanel>
                 <TabPanel value={"appointment-list"}>
                   <MDBox pt={2} px={2} style={{ height: 740 }}>
                     <AppointmentList
+                      data={appointments}
                       user={signedInUser}
                       height={500}
                       rowsPerPage={8}

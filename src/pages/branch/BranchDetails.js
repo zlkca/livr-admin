@@ -37,6 +37,7 @@ import ProjectList from "components/project/ProjectList";
 import { appointmentAPI } from "services/appointmentAPI";
 import { setAppointments } from "redux/appointment/appointment.slice";
 import AppointmentList from "components/appointment/AppointmentList";
+import { selectAppointments } from "redux/appointment/appointment.selector";
 
 export default function BranchDetails() {
   const mq = getMonthRangeQuery();
@@ -48,6 +49,7 @@ export default function BranchDetails() {
 
   const branch = useSelector(selectBranch);
   const rows = useSelector(selectBranches);
+  const appointments = useSelector(selectAppointments);
   const signedInUser = useSelector(selectSignedInUser);
   const [data, setData] = useState();
 
@@ -290,6 +292,7 @@ export default function BranchDetails() {
                     </TabPanel>
                     <TabPanel value={"appointments"}>
                       <AppointmentList
+                        data={appointments}
                         user={signedInUser}
                         height={300}
                         rowsPerPage={6}

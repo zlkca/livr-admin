@@ -33,6 +33,7 @@ import { appointmentAPI } from "services/appointmentAPI";
 import { setAppointments } from "redux/appointment/appointment.slice";
 import { setSnackbar } from "redux/ui/ui.slice";
 import { isAdmin } from "permission";
+import { selectAppointments } from "redux/appointment/appointment.selector";
 
 export default function ClientDetails() {
   const mq = getMonthRangeQuery();
@@ -43,6 +44,7 @@ export default function ClientDetails() {
   const navigate = useNavigate();
   const client = useSelector(selectClient);
   const signedInUser = useSelector(selectSignedInUser);
+  const appointments = useSelector(selectAppointments);
 
   const [profile, setProfile] = useState();
 
@@ -318,6 +320,7 @@ export default function ClientDetails() {
                     </TabPanel>
                     <TabPanel value={"appointments"}>
                       <AppointmentList
+                        data={appointments}
                         user={signedInUser}
                         height={300}
                         rowsPerPage={20}
