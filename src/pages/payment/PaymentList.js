@@ -162,24 +162,6 @@ export default function PaymentList() {
     setSelectedRow(row);
   };
 
-  const getPaymentListQuery = (keyword, signedInUser) => {
-    return keyword ? { keyword } : null;
-    // if (isAdmin(signedInUser) || isDrawingEngineer(signedInUser)) {
-    //   return keyword ? { keyword } : null;
-    // } else if (isEmployee(signedInUser)) {
-    //   const query = { [`${signedInUser.role}Id`]: signedInUser.id };
-    //   return keyword ? { keyword, ...query } : query;
-    // } else {
-    //   return null;
-    // }
-  };
-
-  const loadPayments = (keyword, signedInUser) => {
-    // const query = getPaymentListQuery(keyword, signedInUser);
-  };
-
-  // const fetchPaymentsDelay = debounce(loadPayments, 500);
-
   useEffect(() => {
     if (signedInUser) {
       // fetchPaymentsDelay(keyword, signedInUser);

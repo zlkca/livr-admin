@@ -8,7 +8,6 @@ import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
 import { Card, Grid } from "@mui/material";
 import Footer from "layouts/Footer";
-import ProfileForm from "components/ProfileForm";
 import { accountAPI } from "services/accountAPI";
 import { setEmployee } from "redux/account/account.slice";
 import { selectSignedInUser } from "redux/auth/auth.selector";
@@ -21,6 +20,8 @@ import { setBranches } from "redux/branch/branch.slice";
 import { setSnackbar } from "redux/ui/ui.slice";
 import CardHead from "components/CardHead";
 import MDSection from "components/MDSection";
+import MDInput from "components/MDInput";
+import { RoleCheckGroup } from "components/account/RoleCheckGroup";
 
 const mStyles = {
   root: {
@@ -42,6 +43,16 @@ const mStyles = {
     // width: theme.card.width,
     flex: "0 0 100%",
     paddingRight: 10,
+  },
+
+  row: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "start",
+    marginTop: 20,
+  },
+  smallCol: {
+    width: 200,
   },
 };
 
@@ -121,10 +132,46 @@ export default function EmployeeForm() {
     setProfile(v);
   };
 
+  const handleEmailChange = (event) => {
+    setProfile({ ...profile, email: event.target.value });
+  };
+
+  const handlePhoneChange = (event) => {
+    setProfile({ ...profile, phone: event.target.value });
+  };
+
+  const handleUsernameChange = (event) => {
+    setProfile({ ...profile, username: event.target.value });
+  };
+
+  const handlePasswordChange = (event) => {
+    setProfile({ ...profile, password: event.target.value });
+  };
+
+  const handleEmployeeIdChange = (event) => {
+    setProfile({ ...profile, employeeId: event.target.value });
+  };
+
+  const handleFirstNameChange = (event) => {
+    setProfile({ ...profile, firstName: event.target.value });
+  };
+
+  const handleMiddleNameChange = (event) => {
+    setProfile({ ...profile, middleName: event.target.value });
+  };
+
+  const handleLastNameChange = (event) => {
+    setProfile({ ...profile, lastName: event.target.value });
+  };
+
   const handleBranchChange = (event) => {
     const b = branches.find((r) => r._id === event.target.value);
     const v = { _id: b._id, name: b.name, displayAddress: b.displayAddress };
     setProfile({ ...profile, branch: v });
+  };
+
+  const handleRoleToggle = (vs) => {
+    setProfile({ ...profile, roles: vs });
   };
 
   const handleSubmit = () => {
@@ -162,7 +209,15 @@ export default function EmployeeForm() {
       });
     }
   };
-
+  // ProfileForm
+  //   signedInUser={signedInUser}
+  //   mode={"new"}
+  //   type="employee"
+  //   profile={profile}
+  //   onFieldChange={handleFeildChange}
+  //   onSubmit={handleSubmit}
+  //   error={error}
+  //
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -171,20 +226,91 @@ export default function EmployeeForm() {
           <Grid item xs={12}>
             <Card>
               <CardHead title={employee._id ? t("Edit Employee") : t("Create Employee")} />
+              {profile && (
+                <MDSection title={t("Profile")}>
+                  <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                    <Grid item xs={12}>
+                      <RoleCheckGroup roles={profile.roles} onToggle={handleRoleToggle} />
+                    </Grid>
+                  </Grid>
+                  <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                    <Grid item xs={3}>
+                      <MDInput
+                        name="firstName"
+                        label={t("First Name")}
+                        value={profile.firstName}
+                        onChange={handleFirstNameChange}
+                        helperText={error && error.firstName ? error.firstName : ""}
+                        FormHelperTextProps={error && error.firstName ? { error: true } : null}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <MDInput
+                        name="middleName"
+                        label={t("Middle Name")}
+                        value={profile.middleName}
+                        onChange={handleMiddleNameChange}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <MDInput
+                        name="lastName"
+                        label={t("Last Name")}
+                        value={profile.lastName}
+                        onChange={handleLastNameChange}
+                        helperText={error && error.lastName ? error.lastName : ""}
+                        FormHelperTextProps={error && error.lastName ? { error: true } : null}
+                      />
+                    </Grid>
+                  </Grid>
 
-              <MDSection title={t("Profile")}>
-                {profile && (
-                  <ProfileForm
-                    signedInUser={signedInUser}
-                    mode={"new"}
-                    type="employee"
-                    profile={profile}
-                    onFieldChange={handleFeildChange}
-                    onSubmit={handleSubmit}
-                    error={error}
-                  />
-                )}
-              </MDSection>
+                  <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                    {/* <Grid item xs={3}>
+                      <MDInput
+                        name="employeeId"
+                        label={t("Employee Id")}
+                        value={profile && profile.employeeId ? profile.employeeId : ""} // controlled
+                        onChange={handleEmployeeIdChange}
+                        helperText={error && error.employeeId ? error.employeeId : ""}
+                        FormHelperTextProps={error && error.employeeId ? { error: true } : null}
+                      />
+                    </Grid> */}
+                    <Grid item xs={3}>
+                      <MDInput
+                        readOnly={profile._id}
+                        name="email"
+                        label={t("Email")}
+                        type="email"
+                        value={profile.email}
+                        onChange={handleEmailChange}
+                        helperText={error && error.email ? error.email : ""}
+                        FormHelperTextProps={error && error.email ? { error: true } : null}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <MDInput
+                        name="phone"
+                        label={t("Phone")}
+                        type="phone"
+                        value={profile.phone}
+                        onChange={handlePhoneChange}
+                        helperText={error && error.phone ? error.phone : ""}
+                        FormHelperTextProps={error && error.phone ? { error: true } : null}
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                    <Grid item xs={3}>
+                      <MDInput
+                        name="username"
+                        label={t("Username")}
+                        value={profile.username}
+                        onChange={handleUsernameChange}
+                      />
+                    </Grid>
+                  </Grid>
+                </MDSection>
+              )}
               <MDSection title={t("Belong to")}>
                 {profile && (
                   <Grid item xs={5}>

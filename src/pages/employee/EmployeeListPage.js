@@ -65,12 +65,12 @@ export default memo(function EmployeeListPage() {
     });
   };
 
+  // by default get all the employees
   useEffect(() => {
     const q = getEmployeesQuery(signedInUser, branch ? branch._id : "");
     accountAPI
       .searchAccounts({
         ...q,
-        ...mq,
       })
       .then((r) => {
         if (r.status == 200) {

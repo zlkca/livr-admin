@@ -37,6 +37,7 @@ import { setAppointments } from "redux/appointment/appointment.slice";
 import ProjectList from "components/project/ProjectList";
 import AppointmentList from "components/appointment/AppointmentList";
 import { selectAppointments } from "redux/appointment/appointment.selector";
+import { getItemsQuery } from "permission";
 
 export default function EmployeeDetails() {
   const { t } = useTranslation();
@@ -59,7 +60,7 @@ export default function EmployeeDetails() {
 
   const handleTabChange = (e, id) => {
     if (id === "orders") {
-      const q = { [`${profile.role}._id`]: profile._id, ...mq };
+      const q = { "sales._id": profile._id, ...mq };
 
       orderAPI.searchOrders(q).then((r) => {
         if (r.status == 200) {
@@ -71,7 +72,7 @@ export default function EmployeeDetails() {
         }
       });
     } else if (id === "clients") {
-      const qClient = { "sales._id": profile._id, role: "client", ...mq };
+      const qClient = { "sales._id": profile._id, roles: ["client"], ...mq };
 
       accountAPI.searchAccounts(qClient).then((r) => {
         if (r.status == 200) {
@@ -110,7 +111,8 @@ export default function EmployeeDetails() {
   };
 
   const handleOrdersDateRangeChange = (fd, ld) => {
-    const q = { [`${profile.role}._id`]: profile._id, created: { $gte: fd, $lte: ld } };
+    const oq = getItemsQuery(profile, branch ? branch._id : "");
+    const q = { ...oq, created: { $gte: fd, $lte: ld } };
 
     orderAPI.searchOrders(q).then((r) => {
       if (r.status == 200) {
@@ -122,7 +124,7 @@ export default function EmployeeDetails() {
     });
   };
   const handleClientsDateRangeChange = (fd, ld) => {
-    const q = { "sales._id": profile._id, role: "client", created: { $gte: fd, $lte: ld } };
+    const q = { "sales._id": profile._id, roles: ["client"], created: { $gte: fd, $lte: ld } };
     accountAPI.searchAccounts(q).then((r) => {
       if (r.status == 200) {
         dispatch(setClients(r.data));
@@ -135,8 +137,8 @@ export default function EmployeeDetails() {
 
   const handleProjectsDateRangeChange = (fd, ld) => {
     if (profile) {
-      const q = { [`${profile.role}._id`]: profile._id, created: { $gte: fd, $lte: ld } };
-
+      const oq = getItemsQuery(profile, branch ? branch._id : "");
+      const q = { ...oq, created: { $gte: fd, $lte: ld } };
       projectAPI.searchProjects(q).then((r) => {
         if (r.status == 200) {
           dispatch(setProjects(r.data));
@@ -203,8 +205,8 @@ export default function EmployeeDetails() {
     const ld = `${lastDay.toISOString()}`;
     if (employee) {
       setProfile({ ...employee });
-      const q = { [`${employee.role}._id`]: employee._id, created: { $gte: fd, $lte: ld } };
-
+      const oq = getItemsQuery(employee, branch ? branch._id : "");
+      const q = { ...oq, created: { $gte: fd, $lte: ld } };
       orderAPI.searchOrders(q).then((r) => {
         if (r.status == 200) {
           dispatch(setOrders(r.data));
@@ -221,8 +223,8 @@ export default function EmployeeDetails() {
           accountAPI.fetchAccount(params.id).then((r1) => {
             if (r1.status === 200) {
               setProfile({ ...r1.data });
-              const q = { [`${r1.data.role}._id`]: r1.data._id, created: { $gte: fd, $lte: ld } };
-
+              const oq = getItemsQuery(r1.data, branch ? branch._id : "");
+              const q = { ...oq, created: { $gte: fd, $lte: ld } };
               orderAPI.searchOrders(q).then((r) => {
                 if (r.status == 200) {
                   dispatch(setOrders(r.data));
@@ -270,7 +272,7 @@ export default function EmployeeDetails() {
                       label={t("Branch")}
                       value={profile.branch ? profile.branch.name : "N/A"}
                     />
-                    <VField label={t("Role")} value={profile.role} />
+                    <VField label={t("Roles")} value={profile.roles.join(", ")} />
                     <VField label={t("Email")} value={profile.email} />
                     <VField label={t("Phone")} value={profile.phone} />
                   </Grid>

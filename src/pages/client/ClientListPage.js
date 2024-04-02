@@ -67,10 +67,11 @@ export default memo(function ClientListPage() {
     });
   };
 
+  // By default load current and previous month clients
   useEffect(() => {
     if (signedInUser) {
       const q = getClientsQuery(signedInUser, branch ? branch._id : "");
-      accountAPI.searchAccounts({ ...q, ...mq }).then((r) => {
+      accountAPI.searchAccounts({ ...q }).then((r) => {
         if (r.status == 200) {
           dispatch(setClients(r.data));
         } else if (r.status === 401) {

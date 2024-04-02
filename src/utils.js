@@ -28,15 +28,6 @@ export const deepMerge = (x, y) => {
   return merge(x, y ? y : {});
 };
 
-export const isEmployee = (account) => {
-  const role = account ? account.role : null;
-  return role === "sales" || role === "technician" || role === "engineer" || role === "accountant";
-};
-
-export const isPartner = (account) => {
-  return account && account.role === "partner";
-};
-
 // emplyee Id is 4 digital string
 export const isValidEmployeeId = (s) => {
   let isDigitalString = /^\d+$/.test(s);
@@ -234,4 +225,50 @@ export function getMonthRangeQuery() {
   const fd = `${firstDay.toISOString()}`;
   const ld = `${lastDay.toISOString()}`;
   return { created: { $gte: fd, $lte: ld } };
+}
+
+export function getNextMonthRange(date) {
+  let year = date.getFullYear();
+  let month = date.getMonth();
+
+  month++;
+
+  // If month is now past December, increment year
+  if (month > 11) {
+    year++;
+    month = 0;
+  }
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = getLastDayOfMonth(year, month + 1);
+
+  return {
+    firstDay,
+    lastDay,
+    iMonth: month,
+    year,
+  };
+}
+
+export function getPrevMonthRange(date) {
+  let year = date.getFullYear();
+  let month = date.getMonth();
+
+  month--;
+
+  // If month is now past December, decrement year
+  if (month < 0) {
+    year--;
+    month = 11;
+  }
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = getLastDayOfMonth(year, month + 1);
+
+  return {
+    firstDay,
+    lastDay,
+    iMonth: month,
+    year,
+  };
 }

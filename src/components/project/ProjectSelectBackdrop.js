@@ -15,7 +15,6 @@ export default function ProjectSelectBackdrop({
   open,
   projects,
   selected,
-  role,
   onCancel,
   onChoose,
   title,
@@ -57,7 +56,7 @@ export default function ProjectSelectBackdrop({
               onCancel();
             }}
           >
-            {role ? t(`Choose ${pascalcase(role, { pascalCase: true })}`) : t("Choose Project")}
+            {t("Choose Project")}
           </MDButton>
         </Grid>
       </Card>

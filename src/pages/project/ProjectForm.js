@@ -25,6 +25,9 @@ import { setClient } from "redux/account/account.slice";
 import AccountSelectBackdrop from "components/account/AccountSelectBackdrop";
 import { getAccountsQuery } from "permission";
 import { selectBranch } from "redux/branch/branch.selector";
+import { getClientsQuery } from "permission";
+import { SalesRoles } from "permission";
+import { isEmployee } from "permission";
 
 const mStyles = {
   root: {
@@ -147,7 +150,7 @@ export default function ProjectForm() {
   };
 
   const handleSelectAccount = (account) => {
-    if (account && ["sales", "store manager", "admin"].includes(account.role)) {
+    if (account && isEmployee(account)) {
       const sales = account;
       setData({
         ...data,
@@ -161,7 +164,8 @@ export default function ProjectForm() {
       });
       setError({ ...error, sales: "" });
     }
-    if (account && account.role === "client") {
+
+    if (account && account.roles.includes("client")) {
       const client = account;
       setSelectedClient(account);
       // dispatch(setClient(client));
@@ -247,19 +251,24 @@ export default function ProjectForm() {
     });
   };
 
-  const handleOpenBackdrop = (role) => {
-    const q = getAccountsQuery(signedInUser, branch ? branch._id : "", role);
+  // type --- 'sales', 'client'
+  const handleOpenBackdrop = (type) => {
+    const q =
+      type === "client"
+        ? getClientsQuery(signedInUser, branch ? branch._id : "")
+        : getEmployeesQueryByRoles(user, branchId, SalesRoles);
+
     accountAPI.searchAccounts(q).then((r) => {
       const d = r.status === 200 ? r.data : [];
       setAccounts(d);
 
       let account;
-      if (role === "client") {
+      if (type === "client") {
         account = data.client;
-      } else if (role === "sales") {
+      } else if (type === "sales") {
         account = data.sales;
       }
-      setBackdrop({ opened: true, role, account });
+      setBackdrop({ opened: true, type, account });
     });
   };
 
@@ -379,7 +388,7 @@ export default function ProjectForm() {
         accounts={accounts}
         open={backdrop.opened}
         selected={backdrop.account}
-        role={backdrop.role}
+        type={backdrop.type}
         onCancel={() => {
           setBackdrop({ opened: false });
         }}

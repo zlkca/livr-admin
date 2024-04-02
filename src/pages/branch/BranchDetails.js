@@ -75,7 +75,7 @@ export default function BranchDetails() {
         }
       });
     } else if (id === "clients") {
-      const qClient = { "branch._id": branch._id, role: "client" };
+      const qClient = { "branch._id": branch._id, roles: ["client"] };
       accountAPI.searchAccounts(qClient).then((r) => {
         if (r.status == 200) {
           dispatch(setClients(r.data));
@@ -127,7 +127,7 @@ export default function BranchDetails() {
   };
 
   const handleClientsDateRangeChange = (fd, ld) => {
-    const q = { "branch._id": branch._id, role: "client", created: { $gte: fd, $lte: ld } };
+    const q = { "branch._id": branch._id, roles: ["client"], created: { $gte: fd, $lte: ld } };
     accountAPI.searchAccounts(q).then((r) => {
       if (r.status == 200) {
         dispatch(setClients(r.data));

@@ -47,7 +47,7 @@ const alertContent = (message) => (
 export default function SignUp() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [data, setData] = useState({ role: "user" });
+  const [data, setData] = useState({ roles: ["user"] });
   const [error, setError] = useState();
   const [alertMessage, setAlertMessage] = useState();
 

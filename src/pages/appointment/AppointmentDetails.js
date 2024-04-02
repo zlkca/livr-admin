@@ -107,7 +107,7 @@ export default function AppointmentDetails() {
                     <MDSection title={t("Employee")}>
                       <Grid display="flex">
                         <VField label={t("Username")} value={appointment.employee.username} />
-                        <VField label={t("Role")} value={appointment.employee.role} />
+                        {/* <VField label={t("Role")} value={appointment.employee.role} /> */}
                         <VField label={t("Email")} value={appointment.employee.email} />
                         <VField label={t("Phone")} value={appointment.employee.phone} />
                       </Grid>

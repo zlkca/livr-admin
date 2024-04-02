@@ -48,7 +48,13 @@ export default function EmployeeList(props) {
     { headerName: t("Username"), field: "username", maxWidth: 200, flex: 1 },
     { headerName: t("Email"), field: "email", maxWidth: 320, flex: 1.5 },
     { headerName: t("Phone"), field: "phone", maxWidth: 200, flex: 1 },
-    { headerName: t("Role"), field: "role", maxWidth: 200, flex: 1 },
+    {
+      headerName: t("Roles"),
+      field: "roles",
+      maxWidth: 200,
+      flex: 1,
+      valueGetter: (params) => (params.row?.roles ? params.row?.roles.join(", ") : t("Unknown")),
+    },
     { headerName: t("Status"), field: "status", maxWidth: 200, flex: 1 },
     {
       headerName: t("Branch"),

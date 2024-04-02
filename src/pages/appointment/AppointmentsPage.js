@@ -179,7 +179,7 @@ export default function AppointmentsPage() {
       setLoading(true);
       const q = getAppointmentsQuery(signedInUser, branch ? branch._id : "");
       const mq = getMonthRangeQuery();
-      appointmentAPI.searchAppointments({ ...q, ...mq }).then((r) => {
+      appointmentAPI.searchAppointments({ ...q }).then((r) => {
         if (r.status == 200) {
           dispatch(setAppointments(r.data));
           setTimeout(() => {

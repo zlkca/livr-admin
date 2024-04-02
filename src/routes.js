@@ -53,7 +53,6 @@ import SignIn from "pages/auth/SignIn";
 import SignUp from "pages/auth/SignUp";
 import EmployeeListPage from "pages/employee/EmployeeListPage";
 import EmployeeForm from "pages/employee/EmployeeForm";
-import PartnerList from "pages/partner/PartnerList";
 import ClientForm from "pages/client/ClientForm";
 import BranchList from "pages/branch/BranchList";
 import BranchDetails from "pages/branch/BranchDetails";
@@ -95,7 +94,6 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
       {(isAdmin(signedInUser) || isStoreManager(signedInUser)) && (
         <Route exact path="/employees/:id?/form" element={<EmployeeForm />} key="employee-form" />
       )}
-      <Route exact path="/partners" element={<PartnerList />} key="partners" />
       {isAdmin(signedInUser) && (
         <Route exact path="/branches" element={<BranchList />} key="branches" />
       )}

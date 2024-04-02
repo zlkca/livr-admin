@@ -8,11 +8,12 @@ import MDInput from "../MDInput";
 import { accountAPI } from "services/accountAPI";
 import { DateRangePicker } from "rsuite";
 import AccountSelectBackdrop from "components/account/AccountSelectBackdrop";
-import { getAccountsQuery } from "permission";
 import { useSelector } from "react-redux";
 import { selectBranch } from "redux/branch/branch.selector";
 import { selectSignedInUser } from "redux/auth/auth.selector";
 import { getEmployeesQuery } from "permission";
+import { FieldSalesRoles } from "permission";
+import { TechnicianRoles } from "permission";
 
 const mStyles = {
   root: {
@@ -85,13 +86,16 @@ export default function AppointmentForm({ data, error, onChange }) {
     onChange(a, "end");
   };
 
-  const handleOpenBackdrop = (role) => {
-    const q = getEmployeesQuery(signedInUser, branch ? branch._id : "", role);
+  const handleOpenBackdrop = (type) => {
+    const q =
+      type === "measure"
+        ? getEmployeesQuery(signedInUser, branch ? branch._id : "", FieldSalesRoles)
+        : getEmployeesQuery(signedInUser, branch ? branch._id : "", TechnicianRoles);
+
     accountAPI.searchAccounts(q).then((r) => {
       const d = r.status === 200 ? r.data : [];
       setAccounts(d);
-      // set the selected item
-      setBackdrop({ opened: true, role, account: data.employee });
+      setBackdrop({ opened: true, type, account: data.employee });
     });
   };
 
@@ -106,7 +110,6 @@ export default function AppointmentForm({ data, error, onChange }) {
             username: account.username,
             email: account.email,
             phone: account.phone,
-            role: account.role,
           },
         },
         "employee"
@@ -144,9 +147,9 @@ export default function AppointmentForm({ data, error, onChange }) {
           <Grid item xs={3}>
             <MDInput
               readOnly
-              label={data.type === "measure" ? t("Sales") : t("Technician")}
+              label={data.type === "measure" ? t("Field Sales") : t("Technician")}
               value={data.employee ? data.employee.username : ""}
-              onClick={() => handleOpenBackdrop(data.type === "measure" ? "sales" : "technician")}
+              onClick={() => handleOpenBackdrop(data.type)}
               helperText={error && error.sales ? error.sales : ""}
             />
           </Grid>
@@ -187,7 +190,7 @@ export default function AppointmentForm({ data, error, onChange }) {
         accounts={accounts}
         open={backdrop.opened}
         selected={backdrop.account}
-        role={backdrop.role}
+        type={backdrop.type}
         onCancel={() => {
           setBackdrop({ opened: false });
         }}

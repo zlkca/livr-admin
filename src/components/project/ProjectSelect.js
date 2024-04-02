@@ -80,28 +80,8 @@ export default function ProjectSelect({ projects, selected, onSelect }) {
     { headerName: t("Created Date"), field: "created", width: 200 },
   ];
 
-  // Fetch all the projects initialization
-  //   useEffect(() => {
-  //     if (clientProfile) {
-  //       fetchProjects({ clientId: clientProfile.account._id }).then((r) => {
-  //         const projects = r.status === 200 ? r.data : [];
-  //         if (projects && projects.length > 0) {
-  //           setProjects(projects.map((it) => ({ ...it, id: it._id })));
-  //         }
-  //       });
-  //     }
-  //   }, [dispatch, clientProfile]);
-
   const handleHighlightRow = (row) => {
     setHighlightedItem(row);
-  };
-
-  const handleSearch = (keyword) => {
-    // const q = getProjectRoleIdQuery(roles);
-    // const q = keyword ? { roleId: role._id, keyword } : { roleId: role._id};
-    // fetchAccounts(q).then((r) => {
-    //   dispatch(setProjects(r.status === 200 ? r.data : []));
-    // });
   };
 
   return (

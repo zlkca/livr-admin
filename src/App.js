@@ -223,30 +223,9 @@ export default function App() {
             onMouseLeave={handleOnMouseLeave}
           />
           <Configurator />
-          {/* {configsButton} */}
         </>
       )}
       {<MyRoutes tokenId={tokenId} signedInUser={signedInUser} />}
-      {/* {layout === "vr" && <Configurator />} */}
-      {/* <Routes>
-        {signedInUser && getRouteList(signedInUser.role)}
-        {tokenId ? (
-          <Route
-            path="*"
-            element={
-              <Navigate
-                to={
-                  signedInUser.role === "root" || signedInUser.role === "admin"
-                    ? "/dashboard"
-                    : "/clients"
-                }
-              />
-            }
-          />
-        ) : (
-          <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
-        )}
-      </Routes> */}
     </ThemeProvider>
   );
 }

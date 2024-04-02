@@ -68,7 +68,7 @@ export default function ProjectListPage() {
     if (signedInUser) {
       const mq = getMonthRangeQuery();
       const q = getItemsQuery(signedInUser, branch ? branch._id : "");
-      projectAPI.searchProjects({ ...q, ...mq }).then((r) => {
+      projectAPI.searchProjects({ ...q }).then((r) => {
         if (r.status == 200) {
           dispatch(setProjects(r.data));
         } else if (r.status === 401) {

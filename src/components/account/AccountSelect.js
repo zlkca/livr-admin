@@ -66,10 +66,10 @@ export default function AccountSelect({ accounts, selected, onSelect }) {
     // { headerName: t("Email"), field: "email", width: 200 },
     { headerName: t("Phone"), field: "phone", width: 140 },
     {
-      headerName: t("Role"),
-      field: "role",
+      headerName: t("Roles"),
+      field: "roles",
       width: 100,
-      valueGetter: (params) => (params.row?.role ? params.row?.role : t("Unknown")),
+      valueGetter: (params) => (params.row?.roles ? params.row?.roles.join(", ") : t("Unknown")),
     },
   ];
 

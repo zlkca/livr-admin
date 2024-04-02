@@ -71,7 +71,7 @@ export default function OrderListPage() {
   useEffect(() => {
     if (signedInUser) {
       const q = getItemsQuery(signedInUser, branch ? branch._id : "");
-      orderAPI.searchOrders({ ...q, ...mq }).then((r) => {
+      orderAPI.searchOrders({ ...q }).then((r) => {
         if (r.status == 200) {
           dispatch(setOrders(r.data));
         } else if (r.status === 401) {

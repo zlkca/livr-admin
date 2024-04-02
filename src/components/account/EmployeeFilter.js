@@ -29,16 +29,16 @@ export function EmployeeFilter({ accounts, user, onChange }) {
 
   useEffect(() => {
     if (accounts && types && types.length > 0) {
-      if (types.includes("all")) {
-        setCandidates(accounts);
-        setSelected(accounts.map((s) => s._id));
-      } else {
-        const cs = accounts.filter((a) => {
-          types.includes(a.role);
-        });
-        setCandidates(cs);
-        setSelected(cs.map((s) => s._id));
-      }
+      // if (types.includes("all")) {
+      setCandidates(accounts);
+      setSelected(accounts.map((s) => s._id));
+      // } else {
+      //   const cs = accounts.filter((a) => {
+      //     types.includes(a.role);
+      //   });
+      //   setCandidates(cs);
+      //   setSelected(cs.map((s) => s._id));
+      // }
     }
   }, [accounts, types]);
 

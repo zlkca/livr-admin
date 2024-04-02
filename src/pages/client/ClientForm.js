@@ -30,8 +30,9 @@ import { isAdmin } from "permission";
 import CardHead from "components/CardHead";
 import { BrandName } from "config";
 import AccountSelectBackdrop from "components/account/AccountSelectBackdrop";
-import { getEmployeesQueryByRole } from "permission";
+import { getEmployeesQueryByRoles } from "permission";
 import { selectBranch } from "redux/branch/branch.selector";
+import { SalesRoles } from "permission";
 
 const mStyles = {
   root: {
@@ -128,7 +129,7 @@ export default function ClientForm() {
   const [backdrop, setBackdrop] = useState({ opened: false });
   const [error, setError] = useState({});
   const [profile, setProfile] = useState({
-    role: "client",
+    roles: ["client"],
     address: {
       unitNumber: "",
       streetNumber: "",
@@ -259,7 +260,7 @@ export default function ClientForm() {
   };
 
   const handleSelectAccount = (account) => {
-    if (account && ["sales", "store manager", "admin"].includes(account.role)) {
+    if (account) {
       const sales = account;
       setProfile({
         ...profile,
@@ -277,7 +278,7 @@ export default function ClientForm() {
   };
 
   const handleSubmit = () => {
-    profile.role = "client";
+    profile.roles = ["client"];
 
     if (!isAdmin(signedInUser)) {
       profile.sales = {
@@ -322,13 +323,13 @@ export default function ClientForm() {
     }
   };
 
-  const handleOpenBackdrop = (role) => {
-    const q = getEmployeesQueryByRole(signedInUser, branch ? branch._id : "", "sales");
+  const handleOpenBackdrop = (type) => {
+    const q = getEmployeesQueryByRoles(signedInUser, branch ? branch._id : "", SalesRoles);
 
     accountAPI.searchAccounts(q).then((r) => {
       const d = r.status === 200 ? r.data : [];
       setAccounts(d);
-      setBackdrop({ opened: true, role, account: profile.sales });
+      setBackdrop({ opened: true, type, account: profile.sales });
     });
   };
 
@@ -423,7 +424,7 @@ export default function ClientForm() {
                       </MDTypography>
                       <CheckboxGroup
                         inline
-                        name="checkbox-group"
+                        name="language-checkbox-group"
                         value={profile.languages}
                         onChange={handleToggleLanguages}
                       >
@@ -526,7 +527,7 @@ export default function ClientForm() {
         accounts={accounts}
         open={backdrop.opened}
         selected={backdrop.account}
-        role={backdrop.role}
+        type={backdrop.type}
         onCancel={() => {
           setBackdrop({ opened: false });
         }}

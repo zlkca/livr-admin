@@ -45,14 +45,6 @@ const menus = [
     route: "/clients",
     component: <ClientListPage />,
   },
-  // {
-  //   type: "collapse",
-  //   name: "Partners",
-  //   key: "partners",
-  //   icon: <Icon fontSize="small">table_view</Icon>,
-  //   route: "/partners",
-  //   component: <PartnerList />,
-  // },
   {
     type: "collapse",
     name: "Projects",
