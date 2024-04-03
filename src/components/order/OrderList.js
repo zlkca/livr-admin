@@ -29,6 +29,7 @@ import { BrandName } from "config";
 import { setOrders } from "redux/order/order.slice";
 import { setSnackbar } from "redux/ui/ui.slice";
 import exportToCsv from "export/exportToCSV";
+import { getDefaultDateRange } from "utils";
 // import exportToExcel from "export/exportToExcel";
 
 export default function OrderList(props) {
@@ -43,15 +44,12 @@ export default function OrderList(props) {
   const [isLoading, setLoading] = useState();
   const [selectedRow, setSelectedRow] = useState();
   const [summary, setSummary] = useState();
-  const [searchMode, setSearchMode] = useState("month");
+  const [searchMode, setSearchMode] = useState("range");
 
   const today = new Date();
   const [searchMonth, setSearchMonth] = useState(today);
   const [searchYear, setSearchYear] = useState(today.getFullYear());
-  const [dateRange, setDateRange] = useState([
-    getFirstDayOfMonth(today.getFullYear(), today.getMonth()),
-    getLastDayOfMonth(today.getFullYear(), today.getMonth()),
-  ]);
+  const [dateRange, setDateRange] = useState(getDefaultDateRange());
 
   useEffect(() => {
     if (orders) {

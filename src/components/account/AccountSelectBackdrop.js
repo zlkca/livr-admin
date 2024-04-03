@@ -11,11 +11,13 @@ const mStyles = {
   card: { root: { width: 1800, height: 700 } },
   buttonRow: { width: theme.card.maxWidth, flex: "0 0 100%", marginTop: 15, paddingRight: 10 },
 };
+
+// type -- sales, client in ProjectForm, sales in ClientForm, field sales and technician in Appointment
 export default function AccountSelectBackdrop({
   open,
   accounts,
   selected,
-  role,
+  type,
   onCancel,
   onChoose,
   title,
@@ -61,7 +63,7 @@ export default function AccountSelectBackdrop({
               onCancel();
             }}
           >
-            {role ? t(`Choose ${pascalcase(role, { pascalCase: true })}`) : t("Choose Account")}
+            {type ? t(`Choose ${type}`) : t("Choose Account")}
           </MDButton>
         </Grid>
       </Card>

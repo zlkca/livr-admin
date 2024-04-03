@@ -30,6 +30,7 @@ import { setProjects } from "redux/project/project.slice";
 import { setSnackbar } from "redux/ui/ui.slice";
 import { orderAPI } from "services/orderAPI";
 import { setOrder } from "redux/order/order.slice";
+import { getDefaultDateRange } from "utils";
 
 export default function ProjectList(props) {
   const { user, rowsPerPage, height, onDateRangeChange } = props;
@@ -42,15 +43,12 @@ export default function ProjectList(props) {
   const projects = useSelector(selectProjects);
   const [isLoading, setLoading] = useState();
   const [selectedRow, setSelectedRow] = useState();
-  const [searchMode, setSearchMode] = useState("month");
+  const [searchMode, setSearchMode] = useState("range");
 
   const today = new Date();
   const [searchMonth, setSearchMonth] = useState(today);
   const [searchYear, setSearchYear] = useState(today.getFullYear());
-  const [dateRange, setDateRange] = useState([
-    getFirstDayOfMonth(today.getFullYear(), today.getMonth()),
-    getLastDayOfMonth(today.getFullYear(), today.getMonth()),
-  ]);
+  const [dateRange, setDateRange] = useState(getDefaultDateRange());
 
   const handleSelectRow = (row) => {
     setSelectedRow(row);

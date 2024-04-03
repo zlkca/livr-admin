@@ -16,12 +16,14 @@ import { selectSignedInUser } from "redux/auth/auth.selector";
 import { setSnackbar } from "redux/ui/ui.slice";
 import { accountAPI } from "services/accountAPI";
 import { isAdmin } from "permission";
-import { isValidDate } from "utils";
-import { getFirstDayOfYear } from "utils";
-import { getLastDayOfYear } from "utils";
-import { getLastDayOfMonth } from "utils";
-import { getFirstDayOfMonth } from "utils";
-import { logout } from "utils";
+import {
+  isValidDate,
+  getFirstDayOfYear,
+  getLastDayOfYear,
+  getLastDayOfMonth,
+  getFirstDayOfMonth,
+  getDefaultDateRange,
+} from "utils";
 
 export default function EmployeeList(props) {
   const { user, rowsPerPage, height, onDateRangeChange } = props;
@@ -34,15 +36,12 @@ export default function EmployeeList(props) {
   const employees = useSelector(selectEmployees);
   const [isLoading, setLoading] = useState();
   const [selectedRow, setSelectedRow] = useState();
-  const [searchMode, setSearchMode] = useState("month");
+  const [searchMode, setSearchMode] = useState("range");
 
   const today = new Date();
   const [searchMonth, setSearchMonth] = useState(today);
   const [searchYear, setSearchYear] = useState(today.getFullYear());
-  const [dateRange, setDateRange] = useState([
-    getFirstDayOfMonth(today.getFullYear(), today.getMonth()),
-    getLastDayOfMonth(today.getFullYear(), today.getMonth()),
-  ]);
+  const [dateRange, setDateRange] = useState(getDefaultDateRange());
 
   const columns = [
     { headerName: t("Username"), field: "username", maxWidth: 200, flex: 1 },

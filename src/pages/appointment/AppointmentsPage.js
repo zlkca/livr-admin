@@ -53,6 +53,7 @@ import { getMonthRangeQuery, logout } from "utils";
 import { accountAPI } from "services/accountAPI";
 import { getActiveEmployeesQuery } from "permission";
 import { AppointmentCalendar } from "components/appointment/AppointmentCalendar";
+import { getDefaultDateRangeQuery } from "utils";
 
 export default function AppointmentsPage() {
   const dispatch = useDispatch();
@@ -79,7 +80,7 @@ export default function AppointmentsPage() {
 
   const handleTabChange = (e, id) => {
     const q = getAppointmentsQuery(signedInUser, branch ? branch._id : "");
-    const mq = getMonthRangeQuery();
+    const mq = getDefaultDateRangeQuery();
     appointmentAPI.searchAppointments({ ...q, ...mq }).then((r) => {
       if (r.status == 200) {
         dispatch(setAppointments(r.data));
@@ -164,22 +165,20 @@ export default function AppointmentsPage() {
       const ld = `${range[1].toISOString()}`;
       onDateRangeChange(fd, ld);
     } else {
-      const today = new Date();
-      const firstDay = getFirstDayOfMonth(today.getFullYear(), today.getMonth());
-      const lastDay = getLastDayOfMonth(today.getFullYear(), today.getMonth());
-      setDateRange([firstDay, lastDay]);
-      const fd = `${firstDay.toISOString()}`;
-      const ld = `${lastDay.toISOString()}`;
+      const defaultRange = getDefaultDateRange();
+      setDateRange(defaultRange);
+      const fd = `${defaultRange[0].toISOString()}`;
+      const ld = `${defaultRange[1].toISOString()}`;
       onDateRangeChange(fd, ld);
     }
   };
 
   useEffect(() => {
+    const mq = getDefaultDateRangeQuery();
     if (signedInUser) {
       setLoading(true);
       const q = getAppointmentsQuery(signedInUser, branch ? branch._id : "");
-      const mq = getMonthRangeQuery();
-      appointmentAPI.searchAppointments({ ...q }).then((r) => {
+      appointmentAPI.searchAppointments({ ...q, ...mq }).then((r) => {
         if (r.status == 200) {
           dispatch(setAppointments(r.data));
           setTimeout(() => {

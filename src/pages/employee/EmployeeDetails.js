@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Card, Grid } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDSection from "components/MDSection";
@@ -11,33 +12,32 @@ import { useNavigate, useParams } from "react-router-dom";
 import { accountAPI } from "services/accountAPI";
 import { TabPanel } from "@mui/lab";
 
+import MDButton from "components/MDButton";
+import CardHead from "components/CardHead";
+import LabTabs from "components/common/Tabs";
+
 import { selectEmployee } from "redux/account/account.selector";
 import { setEmployee } from "redux/account/account.slice";
-import MDButton from "components/MDButton";
-import { useEffect, useState } from "react";
 import { setSnackbar } from "redux/ui/ui.slice";
-import CardHead from "components/CardHead";
-import { setAccounts } from "redux/account/account.slice";
 import { orderAPI } from "services/orderAPI";
 import { setOrders } from "redux/order/order.slice";
-import { setSignedInUser } from "redux/auth/auth.slice";
-import { logout } from "utils";
 import { projectAPI } from "services/projectAPI";
 import { setProjects } from "redux/project/project.slice";
+import { setSignedInUser } from "redux/auth/auth.slice";
 import { setClients } from "redux/account/account.slice";
-import LabTabs from "components/common/Tabs";
-import ProjectsTab from "components/ProjectsTab";
 import { selectSignedInUser } from "redux/auth/auth.selector";
-import { getFirstDayOfMonth, getLastDayOfMonth } from "utils";
 import OrderList from "components/order/OrderList";
 import ClientList from "components/account/ClientList";
-import { getMonthRangeQuery } from "utils";
 import { appointmentAPI } from "services/appointmentAPI";
 import { setAppointments } from "redux/appointment/appointment.slice";
 import ProjectList from "components/project/ProjectList";
 import AppointmentList from "components/appointment/AppointmentList";
 import { selectAppointments } from "redux/appointment/appointment.selector";
 import { getItemsQuery } from "permission";
+import { logout, getFirstDayOfMonth, getLastDayOfMonth, getDefaultDateRangeQuery } from "utils";
+
+const TabContentHeight = 896;
+const RowsPerPage = 12;
 
 export default function EmployeeDetails() {
   const { t } = useTranslation();
@@ -49,7 +49,7 @@ export default function EmployeeDetails() {
   const appointments = useSelector(selectAppointments);
 
   const [profile, setProfile] = useState();
-  const mq = getMonthRangeQuery();
+
   const tabs = [
     { id: "orders", label: t("Orders") },
     { id: "clients", label: t("Clients") },
@@ -59,6 +59,7 @@ export default function EmployeeDetails() {
   const [tab, setTab] = useState({ id: "orders" });
 
   const handleTabChange = (e, id) => {
+    const mq = getDefaultDateRangeQuery();
     if (id === "orders") {
       const q = { "sales._id": profile._id, ...mq };
 
@@ -283,24 +284,24 @@ export default function EmployeeDetails() {
                     <TabPanel value={"orders"} style={{ width: "100%" }}>
                       <OrderList
                         user={signedInUser}
-                        height={300}
-                        rowsPerPage={6}
+                        height={TabContentHeight}
+                        rowsPerPage={RowsPerPage}
                         onDateRangeChange={handleOrdersDateRangeChange}
                       />
                     </TabPanel>
                     <TabPanel value={"clients"}>
                       <ClientList
                         user={signedInUser}
-                        height={300}
-                        rowsPerPage={6}
+                        height={TabContentHeight}
+                        rowsPerPage={RowsPerPage}
                         onDateRangeChange={handleClientsDateRangeChange}
                       />
                     </TabPanel>
                     <TabPanel value={"projects"}>
                       <ProjectList
                         user={signedInUser}
-                        height={300}
-                        rowsPerPage={6}
+                        height={TabContentHeight}
+                        rowsPerPage={RowsPerPage}
                         onDateRangeChange={handleProjectsDateRangeChange}
                       />
                     </TabPanel>
@@ -308,8 +309,8 @@ export default function EmployeeDetails() {
                       <AppointmentList
                         data={appointments}
                         user={signedInUser}
-                        height={300}
-                        rowsPerPage={6}
+                        height={TabContentHeight}
+                        rowsPerPage={RowsPerPage}
                         onDateRangeChange={handleAppointmentsDateRangeChange}
                       />
                     </TabPanel>

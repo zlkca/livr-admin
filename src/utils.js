@@ -227,6 +227,43 @@ export function getMonthRangeQuery() {
   return { created: { $gte: fd, $lte: ld } };
 }
 
+// the 1st day of last month to last day of next month
+export function getDefaultDateRange() {
+  const today = new Date();
+  let year = today.getFullYear();
+  let month = today.getMonth();
+
+  let startMonth = month - 1;
+  let startYear = year;
+
+  // If month is now past December, decrement year
+  if (startMonth < 0) {
+    startYear = year - 1;
+    startMonth = 11;
+  }
+
+  let endMonth = month + 1;
+  let endYear = year;
+
+  if (endMonth > 11) {
+    endYear = year + 1;
+    endMonth = 0;
+  }
+
+  const firstDay = new Date(startYear, startMonth, 1);
+  const lastDay = getLastDayOfMonth(endYear, endMonth);
+
+  return [firstDay, lastDay];
+}
+
+export function getDefaultDateRangeQuery() {
+  const range = getDefaultDateRange();
+
+  const fd = `${range[0].toISOString()}`;
+  const ld = `${range[1].toISOString()}`;
+  return { created: { $gte: fd, $lte: ld } };
+}
+
 export function getNextMonthRange(date) {
   let year = date.getFullYear();
   let month = date.getMonth();

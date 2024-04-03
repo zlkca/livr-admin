@@ -23,12 +23,11 @@ import { selectBranches } from "redux/branch/branch.selector";
 import { orderAPI } from "services/orderAPI";
 import { setOrders } from "redux/order/order.slice";
 import { setSignedInUser } from "redux/auth/auth.slice";
-import { logout } from "utils";
 import { accountAPI } from "services/accountAPI";
 import { setClients } from "redux/account/account.slice";
 import { setProjects } from "redux/project/project.slice";
 import { selectSignedInUser } from "redux/auth/auth.selector";
-import { getMonthRangeQuery } from "utils";
+import { logout, getDefaultDateRangeQuery } from "utils";
 import { projectAPI } from "services/projectAPI";
 
 import OrderList from "components/order/OrderList";
@@ -39,9 +38,10 @@ import { setAppointments } from "redux/appointment/appointment.slice";
 import AppointmentList from "components/appointment/AppointmentList";
 import { selectAppointments } from "redux/appointment/appointment.selector";
 
-export default function BranchDetails() {
-  const mq = getMonthRangeQuery();
+const TabContentHeight = 896;
+const RowsPerPage = 12;
 
+export default function BranchDetails() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -62,6 +62,7 @@ export default function BranchDetails() {
   const [tab, setTab] = useState({ id: "orders" });
 
   const handleTabChange = (e, id) => {
+    const mq = getDefaultDateRangeQuery();
     if (id === "orders") {
       const q = { "branch._id": branch._id, ...mq };
 
@@ -75,7 +76,7 @@ export default function BranchDetails() {
         }
       });
     } else if (id === "clients") {
-      const qClient = { "branch._id": branch._id, roles: ["client"] };
+      const qClient = { "branch._id": branch._id, roles: ["client"], ...mq };
       accountAPI.searchAccounts(qClient).then((r) => {
         if (r.status == 200) {
           dispatch(setClients(r.data));
@@ -86,7 +87,7 @@ export default function BranchDetails() {
         }
       });
     } else if (id === "projects") {
-      const q = { "branch._id": branch._id };
+      const q = { "branch._id": branch._id, ...mq };
       projectAPI.searchProjects(q).then((r) => {
         if (r.status == 200) {
           dispatch(setProjects(r.data));
@@ -163,10 +164,11 @@ export default function BranchDetails() {
       });
     }
   };
-  // handle refresh
+
   useEffect(() => {
     if (branch) {
       setData({ ...branch });
+      const mq = getDefaultDateRangeQuery();
       const q = { "branch._id": branch._id, ...mq };
       orderAPI.searchOrders(q).then((r1) => {
         if (r1.status == 200) {
@@ -183,6 +185,7 @@ export default function BranchDetails() {
             if (r.status === 200) {
               setData({ ...r.data });
               dispatch(setBranch(r.data));
+              const mq = getDefaultDateRangeQuery();
               const q = { "branch._id": r.data._id, ...mq };
 
               orderAPI.searchOrders(q).then((r1) => {
@@ -269,24 +272,24 @@ export default function BranchDetails() {
                     <TabPanel value={"orders"} style={{ width: "100%" }}>
                       <OrderList
                         user={signedInUser}
-                        height={448}
-                        rowsPerPage={6}
+                        height={TabContentHeight}
+                        rowsPerPage={RowsPerPage}
                         onDateRangeChange={handleOrdersDateRangeChange}
                       />
                     </TabPanel>
                     <TabPanel value={"clients"}>
                       <ClientList
                         user={signedInUser}
-                        height={448}
-                        rowsPerPage={6}
+                        height={TabContentHeight}
+                        rowsPerPage={RowsPerPage}
                         onDateRangeChange={handleClientsDateRangeChange}
                       />
                     </TabPanel>
                     <TabPanel value={"projects"}>
                       <ProjectList
                         user={signedInUser}
-                        height={448}
-                        rowsPerPage={6}
+                        height={TabContentHeight}
+                        rowsPerPage={RowsPerPage}
                         onDateRangeChange={handleProjectDateRangeChange}
                       />
                     </TabPanel>
@@ -294,8 +297,8 @@ export default function BranchDetails() {
                       <AppointmentList
                         data={appointments}
                         user={signedInUser}
-                        height={300}
-                        rowsPerPage={6}
+                        height={TabContentHeight}
+                        rowsPerPage={RowsPerPage}
                         onDateRangeChange={handleAppointmentsDateRangeChange}
                       />
                     </TabPanel>

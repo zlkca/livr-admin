@@ -19,6 +19,8 @@ import {
   getLastDayOfYear,
   getFirstDayOfMonth,
   getLastDayOfMonth,
+  getDefaultDateRange,
+  getDefaultDateRangeQuery,
 } from "utils";
 
 import { isAdmin } from "permission";
@@ -35,16 +37,13 @@ export default function AppointmentList(props) {
 
   const [isLoading, setLoading] = useState();
   const [selectedRow, setSelectedRow] = useState();
-  const [searchMode, setSearchMode] = useState("month");
+  const [searchMode, setSearchMode] = useState("range");
   const [appointments, setAppointments] = useState([]);
 
   const today = new Date();
   const [searchMonth, setSearchMonth] = useState(today);
   const [searchYear, setSearchYear] = useState(today.getFullYear());
-  const [dateRange, setDateRange] = useState([
-    getFirstDayOfMonth(today.getFullYear(), today.getMonth()),
-    getLastDayOfMonth(today.getFullYear(), today.getMonth()),
-  ]);
+  const [dateRange, setDateRange] = useState(getDefaultDateRange());
 
   useEffect(() => {
     if (data) {

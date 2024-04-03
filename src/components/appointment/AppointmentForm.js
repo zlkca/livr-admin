@@ -92,10 +92,12 @@ export default function AppointmentForm({ data, error, onChange }) {
         ? getEmployeesQuery(signedInUser, branch ? branch._id : "", FieldSalesRoles)
         : getEmployeesQuery(signedInUser, branch ? branch._id : "", TechnicianRoles);
 
+    const role = type === "measure" ? "field sales" : "technician";
+
     accountAPI.searchAccounts(q).then((r) => {
       const d = r.status === 200 ? r.data : [];
       setAccounts(d);
-      setBackdrop({ opened: true, type, account: data.employee });
+      setBackdrop({ opened: true, type: role, account: data.employee });
     });
   };
 
