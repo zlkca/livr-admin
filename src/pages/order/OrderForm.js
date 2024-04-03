@@ -24,6 +24,8 @@ import DialogWidget from "components/common/Dialog";
 import { setDialog } from "redux/ui/ui.slice";
 import MDSection from "components/MDSection";
 import CardHead from "components/CardHead";
+import { getItemsQuery } from "permission";
+import { selectBranch } from "redux/branch/branch.selector";
 
 const mStyles = {
   root: {
@@ -99,6 +101,7 @@ export default function OrderForm() {
   const [projects, setProjects] = useState([]);
   const signedInUser = useSelector(selectSignedInUser);
   const order = useSelector(selectOrder);
+  const branch = useSelector(selectBranch);
 
   //   const breadcrumb = useSelector(selectBreadcrumb);
   useEffect(() => {
@@ -242,7 +245,8 @@ export default function OrderForm() {
   };
 
   const handleOpenBackdrop = () => {
-    projectAPI.fetchProjects().then((r) => {
+    const q = getItemsQuery(signedInUser, branch ? branch._id : "");
+    projectAPI.fetchProjects(q).then((r) => {
       setProjects(r.data);
       const p = data.project ? r.data.find((it) => it._id === data.project._id) : null;
       setBackdrop({ opened: true, project: p });
