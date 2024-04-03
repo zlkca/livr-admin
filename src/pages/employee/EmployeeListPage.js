@@ -39,7 +39,6 @@ import { setSnackbar } from "redux/ui/ui.slice";
 import CardHead from "components/CardHead";
 import EmployeeList from "components/account/EmployeeList";
 import { setEmployees } from "redux/account/account.slice";
-import { getMonthRangeQuery } from "utils";
 import { getEmployeesQuery } from "permission";
 import { selectBranch } from "redux/branch/branch.selector";
 
@@ -51,7 +50,6 @@ export default memo(function EmployeeListPage() {
   const signedInUser = useSelector(selectSignedInUser);
   const snackbar = useSelector(selectSnackbar);
   const branch = useSelector(selectBranch);
-  const mq = getMonthRangeQuery();
 
   const handleEmployeesDateRangeChange = (fd, ld) => {
     const q = getEmployeesQuery(signedInUser, branch ? branch._id : "");

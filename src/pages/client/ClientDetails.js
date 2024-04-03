@@ -23,10 +23,8 @@ import { setOrders } from "redux/order/order.slice";
 import LabTabs from "components/common/Tabs";
 import { TabPanel } from "@mui/lab";
 import OrderList from "components/order/OrderList";
-import ProjectsTab from "components/ProjectsTab";
 import { setProjects } from "redux/project/project.slice";
 import { projectAPI } from "services/projectAPI";
-import { generateProjectNumber, getMonthRangeQuery, logout } from "utils";
 import ProjectList from "components/project/ProjectList";
 import AppointmentList from "components/appointment/AppointmentList";
 import { appointmentAPI } from "services/appointmentAPI";
@@ -34,10 +32,9 @@ import { setAppointments } from "redux/appointment/appointment.slice";
 import { setSnackbar } from "redux/ui/ui.slice";
 import { isAdmin } from "permission";
 import { selectAppointments } from "redux/appointment/appointment.selector";
+import { generateProjectNumber, logout, getDefaultDateRangeQuery } from "utils";
 
 export default function ClientDetails() {
-  const mq = getMonthRangeQuery();
-
   const params = useParams();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -56,6 +53,7 @@ export default function ClientDetails() {
   const [tab, setTab] = useState({ id: "orders" });
 
   const handleTabChange = (e, id) => {
+    const mq = getDefaultDateRangeQuery();
     if (id === "orders") {
       const q = { "client._id": profile._id, ...mq };
       orderAPI.searchOrders(q).then((r) => {
@@ -200,6 +198,7 @@ export default function ClientDetails() {
   };
 
   useEffect(() => {
+    const mq = getDefaultDateRangeQuery();
     if (client) {
       setProfile({ ...client });
       const q = { "client._id": client._id, ...mq };

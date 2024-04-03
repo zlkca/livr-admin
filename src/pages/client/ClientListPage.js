@@ -43,7 +43,7 @@ import CardHead from "components/CardHead";
 import ClientList from "components/account/ClientList";
 import { selectBranch } from "redux/branch/branch.selector";
 import { getClientsQuery } from "permission";
-import { logout, getMonthRangeQuery } from "utils";
+import { logout } from "utils";
 
 export default memo(function ClientListPage() {
   const dispatch = useDispatch();
@@ -52,8 +52,6 @@ export default memo(function ClientListPage() {
   const snackbar = useSelector(selectSnackbar);
   const signedInUser = useSelector(selectSignedInUser);
   const branch = useSelector(selectBranch);
-
-  const mq = getMonthRangeQuery();
 
   const handleClientsDateRangeChange = (fd, ld) => {
     const q = getClientsQuery(signedInUser, branch ? branch._id : "");

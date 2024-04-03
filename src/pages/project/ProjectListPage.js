@@ -66,7 +66,6 @@ export default function ProjectListPage() {
 
   useEffect(() => {
     if (signedInUser) {
-      const mq = getMonthRangeQuery();
       const q = getItemsQuery(signedInUser, branch ? branch._id : "");
       projectAPI.searchProjects({ ...q }).then((r) => {
         if (r.status == 200) {

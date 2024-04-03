@@ -48,8 +48,6 @@ import { selectBranch } from "redux/branch/branch.selector";
 // Data
 
 export default function OrderListPage() {
-  const mq = getMonthRangeQuery();
-
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const signedInUser = useSelector(selectSignedInUser);
