@@ -75,17 +75,6 @@ export default function AppointmentForm({ data, error, onChange }) {
     onChange(a, "notes");
   };
 
-  // v --- yyyy-mm-ddThh:mm
-  const handleStartTimeChange = (v) => {
-    const a = { ...data, start: v };
-    onChange(a, "start");
-  };
-
-  const handleEndTimeChange = (v) => {
-    const a = { ...data, end: v };
-    onChange(a, "end");
-  };
-
   const handleOpenBackdrop = (type) => {
     const q =
       type === "measure"

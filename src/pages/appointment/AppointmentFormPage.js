@@ -228,7 +228,7 @@ export default function AppointmentFormPage() {
         project: { _id: project._id },
         address: project.address,
         client: project.client,
-        employee: data.type === "measure" ? project.sales : project.technician,
+        // employee: data.type === "measure" ? project.sales : project.technician,
       });
       setError({ ...error, project: "" });
     }
