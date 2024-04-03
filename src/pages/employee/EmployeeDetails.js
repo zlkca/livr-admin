@@ -38,6 +38,7 @@ import ProjectList from "components/project/ProjectList";
 import AppointmentList from "components/appointment/AppointmentList";
 import { selectAppointments } from "redux/appointment/appointment.selector";
 import { getItemsQuery } from "permission";
+import { selectBranch } from "redux/branch/branch.selector";
 
 export default function EmployeeDetails() {
   const { t } = useTranslation();
@@ -47,6 +48,7 @@ export default function EmployeeDetails() {
   const employee = useSelector(selectEmployee);
   const signedInUser = useSelector(selectSignedInUser);
   const appointments = useSelector(selectAppointments);
+  const branch = useSelector(selectBranch);
 
   const [profile, setProfile] = useState();
   const mq = getMonthRangeQuery();

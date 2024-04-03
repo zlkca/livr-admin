@@ -109,7 +109,7 @@ export function getItemsQuery(user, branchId) {
   if (isAdmin(user)) {
     return {};
   } else if (isStoreManager(user)) {
-    return { "branch._id": branchId };
+    return branchId ? { "branch._id": branchId } : {};
   } else {
     const conditions = [];
     user.roles.forEach((it) => {
