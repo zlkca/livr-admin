@@ -18,6 +18,7 @@ export function AppointmentCalendar({ appointments, user, branch }) {
   //   const employees = useSelector(selectEmployees);
   const [employees, setEmployees] = useState([]);
   const [employeeColorMap, setEmployeeColorMap] = useState({});
+
   useEffect(() => {
     const q = getEmployeesQuery(user, branch ? branch._id : "");
     accountAPI
@@ -50,7 +51,8 @@ export function AppointmentCalendar({ appointments, user, branch }) {
   }, [employees, appointments]);
 
   function filterAppointmentsByEmployees(appointments, employees) {
-    return appointments.map((appointment) => {
+    const ret = [];
+    appointments.forEach((appointment) => {
       // Check if appointment matches employees
       const matchesEmployees = employees.some((employee) => {
         return employee._id === appointment.employee._id;
@@ -61,19 +63,19 @@ export function AppointmentCalendar({ appointments, user, branch }) {
         const color = employeeColorMap[appointment.employee._id];
 
         // Return a copy of the appointment with color added
-        return {
+        ret.push({
           ...appointment,
           color,
-        };
+        });
       }
-
-      return appointment;
     });
+    return ret;
   }
 
   const handleSelectEmployees = (employeeIds) => {
-    const es = filterAppointmentsByEmployees(appointments, employeeIds);
-    setEvents(es);
+    const es = employees.filter((it) => employeeIds.includes(it._id));
+    const evs = filterAppointmentsByEmployees(appointments, es);
+    setEvents(evs);
   };
 
   return (
