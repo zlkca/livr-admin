@@ -68,7 +68,7 @@ export default function AccountSelect({ accounts, selected, onSelect }) {
     {
       headerName: t("Roles"),
       field: "roles",
-      width: 100,
+      width: 200,
       valueGetter: (params) => (params.row?.roles ? params.row?.roles.join(", ") : t("Unknown")),
     },
   ];

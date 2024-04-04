@@ -150,6 +150,22 @@ export default function ProjectList(props) {
       flex: 1,
       valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("Unassigned")),
     },
+    {
+      headerName: t("Measure"),
+      field: "measure",
+      width: 150,
+      flex: 1,
+      valueGetter: (params) =>
+        params.row?.measure ? params.row?.measure.username : t("Unassigned"),
+    },
+    {
+      headerName: t("Install"),
+      field: "install",
+      width: 150,
+      flex: 1,
+      valueGetter: (params) =>
+        params.row?.install ? params.row?.install.username : t("Unassigned"),
+    },
     { headerName: t("Created Date"), field: "created", width: 190, flex: 1 },
     {
       headerName: t("Actions"),

@@ -198,13 +198,43 @@ export default function ProjectDetails() {
 
                   <MDSection title={t("Sales")}>
                     <Grid display="flex">
-                      <VField
-                        label={t("Branch")}
-                        value={project.branch ? project.branch.name : "N/A"}
-                      />
                       <VField label={t("Username")} value={project.sales.username} />
                       <VField label={t("Email")} value={project.sales.email} />
                       <VField label={t("Phone")} value={project.sales.phone} />
+                    </Grid>
+                  </MDSection>
+
+                  <MDSection title={t("Measure")}>
+                    <Grid display="flex">
+                      <VField
+                        label={t("Username")}
+                        value={project.measure ? project.measure.username : t("Unassigned")}
+                      />
+                      <VField
+                        label={t("Email")}
+                        value={project.measure ? project.measure.email : t("Unassigned")}
+                      />
+                      <VField
+                        label={t("Phone")}
+                        value={project.measure ? project.measure.phone : t("Unassigned")}
+                      />
+                    </Grid>
+                  </MDSection>
+
+                  <MDSection title={t("Install")}>
+                    <Grid display="flex">
+                      <VField
+                        label={t("Username")}
+                        value={project.install ? project.install.username : t("Unassigned")}
+                      />
+                      <VField
+                        label={t("Email")}
+                        value={project.install ? project.install.email : t("Unassigned")}
+                      />
+                      <VField
+                        label={t("Phone")}
+                        value={project.install ? project.install.phone : t("Unassigned")}
+                      />
                     </Grid>
                   </MDSection>
                 </>
