@@ -1,12 +1,8 @@
 import React, { memo } from "react";
 import { Box } from "@mui/material";
 import { DataGrid, GridLogicOperator, GridToolbarQuickFilter } from "@mui/x-data-grid";
-// import { AgGridReact } from 'ag-grid-react';
-
-// import 'ag-grid-community/dist/styles/ag-grid.css';
-// import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-
-// import { deepMerge } from "../../utils";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 const baseStyles = {
   root: {
@@ -16,6 +12,7 @@ const baseStyles = {
     // flex: 1,
   },
 };
+
 function QuickSearchToolbar() {
   return (
     <Box
@@ -36,6 +33,9 @@ function QuickSearchToolbar() {
   );
 }
 export default memo(function GridTable(props) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.up("xs"));
+
   const {
     data,
     columns,
@@ -47,8 +47,10 @@ export default memo(function GridTable(props) {
     getRowId,
     sortModel,
   } = props;
+
   const mStyles = baseStyles; // deepMerge(baseStyles, styles);
   const nRows = rowsPerPage ? rowsPerPage : 5;
+
   const handleRowClick = (param, event) => {
     onRowClick(param.row);
   };
@@ -71,16 +73,6 @@ export default memo(function GridTable(props) {
   };
 
   return (
-    //    <div className="ag-theme-alpine" style={mStyles.root}>
-    //        <AgGridReact
-    //            rowData={data}
-    //            columnDefs={columns}
-    //            rowSelection='single'
-    //             onSelectionChanged={onSelect}
-    //         >
-    //        </AgGridReact>
-    //    </div>
-    // <Box sx={mStyles.root}>
     <DataGrid
       {...props}
       initialState={{
@@ -97,26 +89,11 @@ export default memo(function GridTable(props) {
       rowHeight={42}
       rows={data}
       columns={columns}
-      // checkboxSelection={checkboxSelection}
-      // disableSelectionOnClick={disableSelectionOnClick}
-      // pageSize={nRows}
-      // rowsPerPageOptions={[nRows]}
       pagination={{ paginationModel: { pageSize: nRows } }}
       experimentalFeatures={{ newEditingApi: true }}
       onRowClick={handleRowClick}
       getRowClassName={getRowClassName}
       getRowId={getRowId ? getRowId : (it) => it._id}
-      // sortModel={sortModel}
-      // autoHeight={true}
-      // sx={{
-      //   // boxShadow: 2,
-      //   // border: 2,
-      //   // borderColor: "primary.light",
-      //   // "& .MuiDataGrid-cell:hover": {
-      //   //   color: "primary.main",
-      //   // },
-      // }}
     />
-    // </Box>
   );
 });

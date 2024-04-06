@@ -1,29 +1,12 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-// react-router-dom components
 import { useLocation } from "react-router-dom";
-
-// prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
 
-// Material Dashboard 2 React components
-import MDBox from "components/MDBox";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+
+import Box from "../components/common/Box";
 import { setLayout } from "../redux/ui/ui.slice";
 import { selectUI } from "../redux/ui/ui.selector";
 
@@ -32,14 +15,20 @@ function DashboardLayout({ children }) {
   const { miniSidenav } = useSelector(selectUI);
   const { pathname } = useLocation();
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.up("xs"));
+
   useEffect(() => {
     dispatch(setLayout, "dashboard");
   }, [pathname]);
 
   return (
-    <MDBox
+    <Box
+      pt={3}
+      pb={1}
+      px={isMobile ? 0 : 3}
       sx={({ breakpoints, transitions, functions: { pxToRem } }) => ({
-        p: 3,
+        // p: 3,
         position: "relative",
 
         [breakpoints.up("xl")]: {
@@ -52,11 +41,10 @@ function DashboardLayout({ children }) {
       })}
     >
       {children}
-    </MDBox>
+    </Box>
   );
 }
 
-// Typechecking props for the DashboardLayout
 DashboardLayout.propTypes = {
   children: PropTypes.node.isRequired,
 };

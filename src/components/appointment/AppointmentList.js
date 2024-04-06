@@ -26,6 +26,7 @@ import {
 import { isAdmin } from "permission";
 import { setSnackbar } from "redux/ui/ui.slice";
 import moment from "moment";
+import CellButton from "components/common/CellButton";
 
 export default function AppointmentList(props) {
   const { user, data, rowsPerPage, height, onDateRangeChange, hideFilter } = props;
@@ -101,45 +102,43 @@ export default function AppointmentList(props) {
     {
       headerName: t("Order #"),
       field: "id",
-      maxWidth: 180,
+      minWidth: 160,
       flex: 1,
     },
     {
       headerName: t("Client"),
       field: "client",
-      maxWidth: 180,
+      minWidth: 160,
       flex: 1,
       valueGetter: (params) => (params.row?.client ? params.row?.client.username : t("Unknown")),
     },
     {
       headerName: t("Employee"),
       field: "employee",
-      maxWidth: 180,
+      minWidth: 160,
       flex: 1,
       valueGetter: (params) =>
         params.row?.employee ? params.row?.employee.username : t("Unassigned"),
     },
-    { headerName: t("Type"), field: "type", maxWidth: 180, flex: 1 },
-    { headerName: t("Start"), field: "start", maxWidth: 180, flex: 1 },
-    { headerName: t("End"), field: "end", maxWidth: 180, flex: 1 },
-    { headerName: t("Created Date"), field: "created", maxWidth: 250, flex: 2 },
+    { headerName: t("Type"), field: "type", minWidth: 140, flex: 1 },
+    { headerName: t("Start"), field: "start", minWidth: 180, flex: 1 },
+    { headerName: t("End"), field: "end", minWidth: 180, flex: 1 },
+    { headerName: t("Created Date"), field: "created", minWidth: 180, flex: 2 },
     {
       headerName: t("Actions"),
       field: "_id",
-      maxWidth: 150,
+      minWidth: 160,
       flex: 1,
       renderCell: (params) => {
         return (
-          <MDButton
-            size="small"
-            color="info"
+          <CellButton
             onClick={() => {
               dispatch(setAppointment(params.row));
               navigate(`/appointments/${params.row._id}`);
             }}
           >
             {t("View Details")}
-          </MDButton>
+          </CellButton>
         );
       },
     },

@@ -17,6 +17,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
@@ -24,8 +26,11 @@ import Card from "@mui/material/Card";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-import GridTable from "components/common/GridTable";
 import MDButton from "components/MDButton";
+
+import Box from "components/common/Box";
+import Button from "components/common/Button";
+import GridTable from "components/common/GridTable";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "layouts/DashboardLayout";
@@ -46,11 +51,14 @@ import { setSnackbar } from "redux/ui/ui.slice";
 import { selectSnackbar } from "redux/ui/ui.selector";
 import MDSnackbar from "components/MDSnackbar";
 import CardHead from "components/CardHead";
+import CellButton from "components/common/CellButton";
 
 export default function BranchList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.up("xs"));
 
   const [selectedRow, setSelectedRow] = useState();
   const [keyword, setKeyword] = useState("");
@@ -64,28 +72,27 @@ export default function BranchList() {
     {
       headerName: t("Name"),
       field: "name",
-      width: 280,
+      minWidth: 230,
+      maxWidth: 280,
       flex: 1,
     },
     {
       headerName: t("Address"),
       field: "address",
-      width: 300,
+      minWidth: 300,
       flex: 3,
       valueGetter: (params) =>
         params.row?.address ? getAddressString(params.row?.address) : t("Unassigned"),
     },
-    { headerName: t("Created Date"), field: "created", width: 190, flex: 1 },
+    { headerName: t("Created Date"), field: "created", minWidth: 190, flex: 1 },
     {
       headerName: t("Actions"),
       field: "_id",
-      width: 190,
+      minWidth: 140,
       flex: 1,
       renderCell: (params) => {
         return (
-          <MDButton
-            color="info"
-            size="small"
+          <CellButton
             onClick={() => {
               dispatch(setBranch(params.row));
               const branchId = params.row._id;
@@ -93,7 +100,7 @@ export default function BranchList() {
             }}
           >
             {t("View Details")}
-          </MDButton>
+          </CellButton>
         );
       },
     },
@@ -167,7 +174,7 @@ export default function BranchList() {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox pt={1} pb={3}>
+      <Box pt={1} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
@@ -225,7 +232,7 @@ export default function BranchList() {
             </Card>
           </Grid>
         </Grid>
-      </MDBox>
+      </Box>
       <MDSnackbar
         {...snackbar}
         icon="check"

@@ -31,6 +31,7 @@ import { setSnackbar } from "redux/ui/ui.slice";
 import { orderAPI } from "services/orderAPI";
 import { setOrder } from "redux/order/order.slice";
 import { getDefaultDateRange } from "utils";
+import CellButton from "components/common/CellButton";
 
 export default function ProjectList(props) {
   const { user, rowsPerPage, height, onDateRangeChange } = props;
@@ -112,20 +113,20 @@ export default function ProjectList(props) {
     {
       headerName: t("ID"),
       field: "id",
-      width: 120,
+      minWidth: 150,
       flex: 1,
     },
     {
       headerName: t("Branch"),
       field: "branch",
-      width: 150,
+      minWidth: 260,
       flex: 2,
       valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("Unassigned")),
     },
     {
       headerName: t("Address"),
       field: "address",
-      width: 380,
+      minWidth: 380,
       flex: 3,
       valueGetter: (params) =>
         params.row?.address ? getAddressString(params.row?.address) : t("Unassigned"),
@@ -133,27 +134,27 @@ export default function ProjectList(props) {
     {
       headerName: t("Client"),
       field: "client",
-      width: 150,
+      minWidth: 150,
       flex: 1,
       valueGetter: (params) => (params.row?.client ? params.row?.client.username : t("Unknown")),
     },
     {
       headerName: t("Stage"),
       field: "stage",
-      width: 160,
+      minWidth: 160,
       flex: 1,
     },
     {
       headerName: t("Sales"),
       field: "sales",
-      width: 150,
+      minWidth: 150,
       flex: 1,
       valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("Unassigned")),
     },
     {
       headerName: t("Measure"),
       field: "measure",
-      width: 150,
+      minWidth: 150,
       flex: 1,
       valueGetter: (params) =>
         params.row?.measure ? params.row?.measure.username : t("Unassigned"),
@@ -161,22 +162,20 @@ export default function ProjectList(props) {
     {
       headerName: t("Install"),
       field: "install",
-      width: 150,
+      minWidth: 150,
       flex: 1,
       valueGetter: (params) =>
         params.row?.install ? params.row?.install.username : t("Unassigned"),
     },
-    { headerName: t("Created Date"), field: "created", width: 190, flex: 1 },
+    { headerName: t("Created Date"), field: "created", minWidth: 190, flex: 1 },
     {
       headerName: t("Actions"),
       field: "_id",
-      width: 170,
+      minWidth: 160,
       flex: 1,
       renderCell: (params) => {
         return (
-          <MDButton
-            color="info"
-            size="small"
+          <CellButton
             onClick={() => {
               dispatch(setProject(params.row));
               orderAPI.searchOrders({ id: params.row.id }).then((r) => {
@@ -190,7 +189,7 @@ export default function ProjectList(props) {
             }}
           >
             {t("View Details")}
-          </MDButton>
+          </CellButton>
         );
       },
     },

@@ -30,6 +30,7 @@ import { setOrders } from "redux/order/order.slice";
 import { setSnackbar } from "redux/ui/ui.slice";
 import exportToCsv from "export/exportToCSV";
 import { getDefaultDateRange } from "utils";
+import CellButton from "components/common/CellButton";
 // import exportToExcel from "export/exportToExcel";
 
 export default function OrderList(props) {
@@ -133,65 +134,63 @@ export default function OrderList(props) {
     {
       headerName: t("ID"),
       field: "id",
-      width: 120,
+      minWidth: 150,
       flex: 2,
     },
     {
       headerName: t("Branch"),
       field: "branch",
-      width: 180,
+      minWidth: 280,
       flex: 2,
       valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("Unassigned")),
     },
     {
       headerName: t("Sales"),
       field: "sales",
-      width: 150,
+      minWidth: 150,
       flex: 1,
       valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("Unassigned")),
     },
     {
       headerName: t("Client"),
       field: "client",
-      width: 150,
+      minWidth: 150,
       flex: 1,
       valueGetter: (params) => (params.row?.client ? params.row?.client.username : t("Unknown")),
     },
     {
       headerName: t("pre-tax Total"),
       field: "amount",
-      width: 80,
+      minWidth: 80,
       flex: 1,
     },
     {
       headerName: t("Deposit"),
       field: "deposit",
-      width: 80,
+      minWidth: 80,
       flex: 1,
     },
     {
       headerName: t("Tax Option"),
       field: "taxOpt",
-      width: 80,
+      minWidth: 80,
       flex: 1,
     },
     {
       headerName: t("Balance"),
       field: "balance",
-      width: 80,
+      minWidth: 80,
       flex: 1,
     },
-    { headerName: t("Created Date"), field: "created", width: 190, flex: 2 },
+    { headerName: t("Created Date"), field: "created", minWidth: 190, flex: 2 },
     {
       headerName: t("Actions"),
       field: "_id",
-      width: 170,
+      minWidth: 160,
       flex: 1,
       renderCell: (params) => {
         return (
-          <MDButton
-            color="info"
-            size="small"
+          <CellButton
             onClick={() => {
               dispatch(setOrder(params.row));
               const orderId = params.row._id;
@@ -199,7 +198,7 @@ export default function OrderList(props) {
             }}
           >
             {t("View Details")}
-          </MDButton>
+          </CellButton>
         );
       },
     },

@@ -24,6 +24,7 @@ import {
   getFirstDayOfMonth,
   getDefaultDateRange,
 } from "utils";
+import CellButton from "components/common/CellButton";
 
 export default function EmployeeList(props) {
   const { user, rowsPerPage, height, onDateRangeChange } = props;
@@ -44,42 +45,40 @@ export default function EmployeeList(props) {
   const [dateRange, setDateRange] = useState(getDefaultDateRange());
 
   const columns = [
-    { headerName: t("Username"), field: "username", maxWidth: 200, flex: 1 },
-    { headerName: t("Email"), field: "email", maxWidth: 320, flex: 1.5 },
-    { headerName: t("Phone"), field: "phone", maxWidth: 200, flex: 1 },
+    { headerName: t("Username"), field: "username", minWidth: 180, flex: 1 },
+    { headerName: t("Email"), field: "email", minWidth: 280, flex: 1.5 },
+    { headerName: t("Phone"), field: "phone", minWidth: 160, flex: 1 },
     {
       headerName: t("Roles"),
       field: "roles",
-      maxWidth: 200,
+      minWidth: 260,
       flex: 1,
       valueGetter: (params) => (params.row?.roles ? params.row?.roles.join(", ") : t("Unknown")),
     },
-    { headerName: t("Status"), field: "status", maxWidth: 200, flex: 1 },
+    { headerName: t("Status"), field: "status", minWidth: 120, flex: 1 },
     {
       headerName: t("Branch"),
       field: "branch",
-      maxWidth: 300,
+      minWidth: 300,
       valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("N/A")),
       flex: 1,
     },
-    { headerName: t("Created Date"), field: "created", maxWidth: 200, flex: 1 },
+    { headerName: t("Created Date"), field: "created", minWidth: 200, flex: 1 },
     {
       headerName: t("Actions"),
       field: "_id",
-      maxWidth: 180,
+      minWidth: 160,
       flex: 1,
       renderCell: (params) => {
         return (
-          <MDButton
-            size="small"
-            color="info"
+          <CellButton
             onClick={() => {
               dispatch(setEmployee(params.row));
               navigate(`/employees/${params.row._id}`);
             }}
           >
             {t("View Details")}
-          </MDButton>
+          </CellButton>
         );
       },
     },
