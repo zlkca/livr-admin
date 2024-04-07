@@ -28,6 +28,7 @@ import { selectBranch } from "redux/branch/branch.selector";
 import { getClientsQuery } from "permission";
 import { SalesRoles } from "permission";
 import { isEmployee } from "permission";
+import { getEmployeesQueryByRoles } from "permission";
 
 const mStyles = {
   root: {
@@ -256,7 +257,7 @@ export default function ProjectForm() {
     const q =
       type === "client"
         ? getClientsQuery(signedInUser, branch ? branch._id : "")
-        : getEmployeesQueryByRoles(user, branchId, SalesRoles);
+        : getEmployeesQueryByRoles(signedInUser, branch ? branch._id : "", SalesRoles);
 
     accountAPI.searchAccounts(q).then((r) => {
       const d = r.status === 200 ? r.data : [];

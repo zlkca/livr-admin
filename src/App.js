@@ -48,7 +48,7 @@ import themeDarkRTL from "assets/theme-dark/theme-rtl";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
-import { setMiniSidenav, setOpenConfigurator } from "./redux/ui/ui.slice";
+import { setLayout, setMiniSidenav, setOpenConfigurator } from "./redux/ui/ui.slice";
 
 // Images
 import brandWhite from "assets/images/logo192.png";
@@ -69,6 +69,7 @@ import { BrandName } from "config";
 import { isStoreManager } from "permission";
 import { branchAPI } from "services/branchAPI";
 import { setBranch } from "redux/branch/branch.slice";
+import { setBranches } from "redux/branch/branch.slice";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -111,6 +112,12 @@ export default function App() {
     if (accountCookie) {
       const user = JSON.parse(accountCookie);
       dispatch(setSignedInUser(user));
+      dispatch(setLayout("dashboard"));
+      branchAPI.fetchBranches().then((r1) => {
+        if (r1.status === 200) {
+          dispatch(setBranches(r1.data));
+        }
+      });
       if (user.branch) {
         branchAPI.fetchBranch(user.branch._id).then((r) => {
           if (r && r.data) {

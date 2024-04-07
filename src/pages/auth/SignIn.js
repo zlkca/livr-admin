@@ -52,6 +52,7 @@ import { setBranches } from "redux/branch/branch.slice";
 import { setLayout } from "redux/ui/ui.slice";
 import { isAdmin } from "permission";
 import { setBranch } from "redux/branch/branch.slice";
+import { BrandName } from "config";
 
 export default function SignIn() {
   const { t } = useTranslation();
@@ -65,7 +66,11 @@ export default function SignIn() {
   }, []);
 
   const handleSubmit = () => {
-    authAPI.login(credential).then((r) => {
+    let cred = credential;
+    if (BrandName === "demo" && !credential.email && !credential.password) {
+      cred = { email: "test@gmail.com", password: "123456" };
+    }
+    authAPI.login(cred).then((r) => {
       if (r && r.status === 200) {
         const data = r.data;
         Cookies.set(JWT_COOKIE, data.token);
