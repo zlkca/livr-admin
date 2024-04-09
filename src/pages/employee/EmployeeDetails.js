@@ -35,6 +35,7 @@ import AppointmentList from "components/appointment/AppointmentList";
 import { selectAppointments } from "redux/appointment/appointment.selector";
 import { getItemsQuery } from "permission";
 import { logout, getFirstDayOfMonth, getLastDayOfMonth, getDefaultDateRangeQuery } from "utils";
+import { selectBranch } from "redux/branch/branch.selector";
 
 const TabContentHeight = 896;
 const RowsPerPage = 12;
@@ -47,6 +48,7 @@ export default function EmployeeDetails() {
   const employee = useSelector(selectEmployee);
   const signedInUser = useSelector(selectSignedInUser);
   const appointments = useSelector(selectAppointments);
+  const branch = useSelector(selectBranch);
 
   const [profile, setProfile] = useState();
 

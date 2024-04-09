@@ -22,6 +22,7 @@ import CardHead from "components/CardHead";
 import MDSection from "components/MDSection";
 import MDInput from "components/MDInput";
 import { RoleCheckGroup } from "components/account/RoleCheckGroup";
+import { isValidEmail } from "utils";
 
 const mStyles = {
   root: {
@@ -134,6 +135,7 @@ export default function EmployeeForm() {
 
   const handleEmailChange = (event) => {
     setProfile({ ...profile, email: event.target.value });
+    setError({ ...error, email: "" });
   };
 
   const handlePhoneChange = (event) => {
@@ -168,13 +170,30 @@ export default function EmployeeForm() {
     const b = branches.find((r) => r._id === event.target.value);
     const v = { _id: b._id, name: b.name, displayAddress: b.displayAddress };
     setProfile({ ...profile, branch: v });
+    setError({ ...error, branch: "" });
   };
 
   const handleRoleToggle = (vs) => {
     setProfile({ ...profile, roles: vs });
+    setError({ ...error, roles: "" });
   };
 
   const handleSubmit = () => {
+    if (!profile.email) {
+      setError({ ...error, email: t("Please input an email address") });
+      return;
+    } else if (profile.email && !isValidEmail(profile.email)) {
+      setError({ ...error, email: t("Please input a valid email address") });
+      return;
+    }
+    if (!profile.roles || profile.roles.length === 0) {
+      setError({ ...error, roles: t("Please select one or multiple roles") });
+      return;
+    }
+    if (!profile.branch) {
+      setError({ ...error, branch: t("Please select a branch") });
+      return;
+    }
     if (profile._id) {
       accountAPI.updateAccount(profile._id, profile).then((r) => {
         if (r.status === 200) {
@@ -231,6 +250,11 @@ export default function EmployeeForm() {
                   <Grid container xs={12} display="flex" pt={2} spacing={2}>
                     <Grid item xs={12}>
                       <RoleCheckGroup roles={profile.roles} onToggle={handleRoleToggle} />
+                      {error && error.roles && (
+                        <div style={{ color: "red", fontSize: 14 }}>
+                          {t("Please select one or multiple roles")}
+                        </div>
+                      )}
                     </Grid>
                   </Grid>
                   <Grid container xs={12} display="flex" pt={2} spacing={2}>
@@ -322,6 +346,11 @@ export default function EmployeeForm() {
                       onChange={handleBranchChange} // (event, child) => { }
                       styles={{ root: mStyles.formControl }}
                     />
+                    {error && error.branch && (
+                      <div style={{ color: "red", fontSize: 14 }}>
+                        {t("Please select a branch")}
+                      </div>
+                    )}
                   </Grid>
                 )}
               </MDSection>

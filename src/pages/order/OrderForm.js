@@ -246,7 +246,7 @@ export default function OrderForm() {
 
   const handleOpenBackdrop = () => {
     const q = getItemsQuery(signedInUser, branch ? branch._id : "");
-    projectAPI.fetchProjects(q).then((r) => {
+    projectAPI.searchProjects(q).then((r) => {
       setProjects(r.data);
       const p = data.project ? r.data.find((it) => it._id === data.project._id) : null;
       setBackdrop({ opened: true, project: p });

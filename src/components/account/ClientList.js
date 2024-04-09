@@ -17,15 +17,12 @@ import { selectSignedInUser } from "redux/auth/auth.selector";
 import { setSnackbar } from "redux/ui/ui.slice";
 import { accountAPI } from "services/accountAPI";
 import { isAdmin } from "permission";
-import {
-  isValidDate,
-  getFirstDayOfYear,
-  getLastDayOfYear,
-  getLastDayOfMonth,
-  getFirstDayOfMonth,
-  getDefaultDateRange,
-} from "utils";
-import CellButton from "components/common/CellButton";
+import { isValidDate } from "utils";
+import { getFirstDayOfYear } from "utils";
+import { getLastDayOfYear } from "utils";
+import { getLastDayOfMonth } from "utils";
+import { getFirstDayOfMonth } from "utils";
+import { logout } from "utils";
 
 export default function ClientList(props) {
   const { user, rowsPerPage, height, onDateRangeChange } = props;
@@ -38,48 +35,53 @@ export default function ClientList(props) {
   const clients = useSelector(selectClients);
   const [isLoading, setLoading] = useState();
   const [selectedRow, setSelectedRow] = useState();
-  const [searchMode, setSearchMode] = useState("range");
+  const [searchMode, setSearchMode] = useState("month");
 
   const today = new Date();
   const [searchMonth, setSearchMonth] = useState(today);
   const [searchYear, setSearchYear] = useState(today.getFullYear());
-  const [dateRange, setDateRange] = useState(getDefaultDateRange());
+  const [dateRange, setDateRange] = useState([
+    getFirstDayOfMonth(today.getFullYear(), today.getMonth()),
+    getLastDayOfMonth(today.getFullYear(), today.getMonth()),
+  ]);
 
   const columns = [
     { headerName: t("Username"), field: "username", maxWidth: 200, flex: 1 },
     {
       headerName: t("Branch"),
       field: "branch",
-      minWidth: 300,
+      maxWidth: 300,
       valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("N/A")),
       flex: 1,
     },
     {
       headerName: t("Sales"),
       field: "sales",
-      minWidth: 180,
+      maxWidth: 300,
       valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("N/A")),
       flex: 1,
     },
-    { headerName: t("Email"), field: "email", minWidth: 250, flex: 1.5 },
-    { headerName: t("Phone"), field: "phone", minWidth: 180, flex: 1 },
+    { headerName: t("Email"), field: "email", maxWidth: 320, flex: 1.5 },
+    { headerName: t("Phone"), field: "phone", maxWidth: 200, flex: 1 },
     // { headerName: t("Status"), field: "status", maxWidth: 150, flex: 1 },
-    { headerName: t("Created Date"), field: "created", minWidth: 180, flex: 1 },
+    { headerName: t("Created Date"), field: "created", maxWidth: 200, flex: 1 },
     {
       headerName: t("Actions"),
       field: "_id",
-      minWidth: 160,
+      maxWidth: 180,
       flex: 1,
       renderCell: (params) => {
         return (
-          <CellButton
+          <MDButton
+            color="info"
+            size="small"
             onClick={() => {
               dispatch(setClient(params.row));
               navigate(`/clients/${params.row._id}`);
             }}
           >
             {t("View Details")}
-          </CellButton>
+          </MDButton>
         );
       },
     },

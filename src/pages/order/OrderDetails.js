@@ -207,7 +207,7 @@ export default function OrderDetails() {
                     <VField label={t("Username")} value={order.client.username} />
                     <VField label={t("Email")} value={order.client.email} />
                     <VField label={t("Phone")} value={order.client.phone} />
-                    <VField label={t("Address")} value={order.displayAddress} />
+                    {/* <VField label={t("Address")} value={order.displayAddress} /> */}
                   </Grid>
                 </MDSection>
 
