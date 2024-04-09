@@ -24,7 +24,7 @@ function DashboardLayout({ children }) {
 
   return (
     <Box
-      pt={3}
+      pt={0}
       pb={1}
       px={isMobile ? 0 : 3}
       sx={({ breakpoints, transitions, functions: { pxToRem } }) => ({

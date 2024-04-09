@@ -272,7 +272,7 @@ export default function EmployeeList(props) {
 
         <Grid item xs={6}>
           <Grid container spacing={2} direction="row" justifyContent="flex-end">
-            {selectedRow && selectedRow.status !== "active" && (
+            {/* {selectedRow && selectedRow.status !== "active" && (
               <Grid item>
                 <MDButton color="info" variant={"outlined"} size="small" onClick={handleActivate}>
                   {t("Activate")}
@@ -290,17 +290,17 @@ export default function EmployeeList(props) {
               <MDButton color="info" variant={"outlined"} size="small" onClick={handleEdit}>
                 {t("Edit")}
               </MDButton>
-            </Grid>
+            </Grid> */}
             <Grid item>
               <MDButton color="info" variant={"outlined"} size="small" onClick={handleCreate}>
                 {t("Create")}
               </MDButton>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <MDButton color="info" variant={"outlined"} size="small" onClick={handleDelete}>
                 {t("Delete")}
               </MDButton>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Grid>
       </Grid>

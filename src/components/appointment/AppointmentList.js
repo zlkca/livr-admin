@@ -218,23 +218,23 @@ export default function AppointmentList(props) {
 
         <Grid item xs={hideFilter ? 12 : 6}>
           <Grid container spacing={2} direction="row" justifyContent="flex-end">
-            {isAdmin(user) && (
+            {/* {isAdmin(user) && (
               <Grid item>
                 <MDButton color="info" variant={"outlined"} size="small" onClick={handleEdit}>
                   {t("Edit")}
                 </MDButton>
               </Grid>
-            )}
+            )} */}
             <Grid item>
               <MDButton color="info" variant={"outlined"} size="small" onClick={handleCreate}>
                 {t("Create")}
               </MDButton>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <MDButton color="info" variant={"outlined"} size="small" onClick={handleDelete}>
                 {t("Delete")}
               </MDButton>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Grid>
       </Grid>

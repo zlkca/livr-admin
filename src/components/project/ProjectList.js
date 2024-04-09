@@ -267,25 +267,25 @@ export default function ProjectList(props) {
 
         <Grid item xs={6}>
           <Grid container spacing={2} direction="row" justifyContent="flex-end">
-            {isAdmin(user) && (
+            {/* {isAdmin(user) && (
               <Grid item>
                 <MDButton color="info" variant={"outlined"} size="small" onClick={handleEdit}>
                   {t("Edit")}
                 </MDButton>
               </Grid>
-            )}
+            )} */}
             <Grid item>
               <MDButton color="info" variant={"outlined"} size="small" onClick={handleCreate}>
                 {t("Create")}
               </MDButton>
             </Grid>
-            {isAdmin(user) && (
+            {/* {isAdmin(user) && (
               <Grid item>
                 <MDButton color="info" variant={"outlined"} size="small" onClick={handleDelete}>
                   {t("Delete")}
                 </MDButton>
               </Grid>
-            )}
+            )} */}
           </Grid>
         </Grid>
       </Grid>

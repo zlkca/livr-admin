@@ -36,6 +36,8 @@ import { selectAppointments } from "redux/appointment/appointment.selector";
 import { getItemsQuery } from "permission";
 import { logout, getFirstDayOfMonth, getLastDayOfMonth, getDefaultDateRangeQuery } from "utils";
 import { selectBranch } from "redux/branch/branch.selector";
+import MDSnackbar from "components/MDSnackbar";
+import { selectSnackbar } from "redux/ui/ui.selector";
 
 const TabContentHeight = 896;
 const RowsPerPage = 12;
@@ -49,6 +51,7 @@ export default function EmployeeDetails() {
   const signedInUser = useSelector(selectSignedInUser);
   const appointments = useSelector(selectAppointments);
   const branch = useSelector(selectBranch);
+  const snackbar = useSelector(selectSnackbar);
 
   const [profile, setProfile] = useState();
 
@@ -199,6 +202,70 @@ export default function EmployeeDetails() {
     }
   };
 
+  const handleActivate = () => {
+    if (profile) {
+      const _id = profile._id;
+      accountAPI.updateAccount(_id, { status: "active" }).then((r) => {
+        if (r.status === 200) {
+          dispatch(setEmployee(r.data));
+          // const es = employees.map((e) => {
+          //   if (e._id === _id) {
+          //     return {
+          //       ...e,
+          //       status: "active",
+          //     };
+          //   } else {
+          //     return e;
+          //   }
+          // });
+          dispatch(
+            setSnackbar({
+              color: "success",
+              icon: "check",
+              title: "",
+              content: t("Updated Successfully!"),
+              open: true,
+            })
+          );
+          // navigate(-1);
+          // dispatch(setEmployees(es));
+        }
+      });
+    }
+  };
+
+  const handleSuspend = () => {
+    if (profile) {
+      const _id = profile._id;
+      accountAPI.updateAccount(_id, { status: "suspend" }).then((r) => {
+        if (r.status === 200) {
+          dispatch(setEmployee(r.data));
+          // const es = employees.map((e) => {
+          //   if (e._id === _id) {
+          //     return {
+          //       ...e,
+          //       status: "suspend",
+          //     };
+          //   } else {
+          //     return e;
+          //   }
+          // });
+          dispatch(
+            setSnackbar({
+              color: "success",
+              icon: "check",
+              title: "",
+              content: t("Updated Successfully!"),
+              open: true,
+            })
+          );
+          // navigate(-1);
+          // dispatch(setEmployees(es));
+        }
+      });
+    }
+  };
+
   // handle refresh
   useEffect(() => {
     const today = new Date();
@@ -260,6 +327,30 @@ export default function EmployeeDetails() {
                       {t("Edit")}
                     </MDButton>
                   </Grid>
+                  {profile.status !== "active" && (
+                    <Grid item>
+                      <MDButton
+                        color="info"
+                        variant={"outlined"}
+                        size="small"
+                        onClick={handleActivate}
+                      >
+                        {t("Activate")}
+                      </MDButton>
+                    </Grid>
+                  )}
+                  {profile.status === "active" && (
+                    <Grid item>
+                      <MDButton
+                        color="info"
+                        variant={"outlined"}
+                        size="small"
+                        onClick={handleSuspend}
+                      >
+                        {t("Deactivate")}
+                      </MDButton>
+                    </Grid>
+                  )}
                   <Grid item>
                     <MDButton color="info" size="small" variant={"outlined"} onClick={handleDelete}>
                       {t("Delete")}
@@ -278,6 +369,7 @@ export default function EmployeeDetails() {
                     <VField label={t("Roles")} value={profile.roles.join(", ")} />
                     <VField label={t("Email")} value={profile.email} />
                     <VField label={t("Phone")} value={profile.phone} />
+                    <VField label={t("Status")} value={profile.status} />
                   </Grid>
                 </MDSection>
 
@@ -323,6 +415,15 @@ export default function EmployeeDetails() {
                     {t("Back")}
                   </MDButton>
                 </Grid>
+                <MDSnackbar
+                  {...snackbar}
+                  title=""
+                  datetime=""
+                  icon="check"
+                  autoHideDuration={3000}
+                  close={() => dispatch(setSnackbar({ ...snackbar, open: false }))}
+                  onClose={() => dispatch(setSnackbar({ ...snackbar, open: false }))}
+                />
               </Card>
             )}
           </Grid>

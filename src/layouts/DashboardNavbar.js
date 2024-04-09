@@ -186,11 +186,15 @@ function DashboardNavbar({ absolute, light, isMini }) {
       position={absolute ? "absolute" : navbarType}
       color="inherit"
       sx={(theme) => navbar(theme, { transparentNavbar, absolute, light, darkMode })}
+      style={{ paddingTop: 0, paddingBottom: 20 }}
     >
-      <Toolbar sx={(theme) => navbarContainer(theme)}>
-        <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
+      <Toolbar
+        sx={(theme) => navbarContainer(theme)}
+        style={{ display: "flex", justifyContent: "flex-end" }}
+      >
+        {/* <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
-        </MDBox>
+        </MDBox> */}
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
             {/* <MDBox pr={1}>
@@ -198,14 +202,14 @@ function DashboardNavbar({ absolute, light, isMini }) {
             </MDBox> */}
             <MDBox color={light ? "white" : "inherit"}>
               {/* <Link to="/authentication/sign-in/basic"> */}
-              <IconButton
+              {/* <IconButton
                 sx={navbarIconButton}
                 size="small"
                 disableRipple
                 onClick={handleEditProfile}
               >
                 <Icon sx={iconsStyle}>account_circle</Icon>
-              </IconButton>
+              </IconButton> */}
               {/* </Link> */}
               <IconButton
                 size="small"
@@ -227,7 +231,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
               >
                 <Icon sx={iconsStyle}>settings</Icon>
               </IconButton>
-              <IconButton
+              {/* <IconButton
                 size="small"
                 disableRipple
                 color="inherit"
@@ -238,7 +242,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 onClick={handleOpenMenu}
               >
                 <Icon sx={iconsStyle}>notifications</Icon>
-              </IconButton>
+              </IconButton> */}
               {/* <LanguageMenu menus={languageMenus} onSelect={handleLanguageSelect} /> */}
               <Menu
                 anchorEl={anchorEl}

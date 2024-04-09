@@ -181,21 +181,21 @@ export default function BranchList() {
               <CardHead title={t("Branches")} />
               <Grid item xs={12} px={2} py={2}>
                 <Grid container spacing={2} direction="row" justifyContent="flex-end">
-                  <Grid item>
+                  {/* <Grid item>
                     <MDButton color="info" size="small" variant={"outlined"} onClick={handleEdit}>
                       {t("Edit")}
                     </MDButton>
-                  </Grid>
+                  </Grid> */}
                   <Grid item>
                     <MDButton color="info" size="small" variant={"outlined"} onClick={handleCreate}>
                       {t("Create")}
                     </MDButton>
                   </Grid>
-                  <Grid item>
+                  {/* <Grid item>
                     <MDButton color="info" size="small" variant={"outlined"} onClick={handleDelete}>
                       {t("Delete")}
                     </MDButton>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </Grid>
               <MDBox pt={0} px={2}>
