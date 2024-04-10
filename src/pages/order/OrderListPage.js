@@ -43,7 +43,7 @@ import MDSnackbar from "components/MDSnackbar";
 import CardHead from "components/CardHead";
 import OrderList from "components/order/OrderList";
 import { getMonthRangeQuery } from "utils";
-import { getItemsQuery } from "permission";
+import { getAllItemsQuery } from "permission";
 import { selectBranch } from "redux/branch/branch.selector";
 // Data
 
@@ -55,7 +55,7 @@ export default function OrderListPage() {
   const branch = useSelector(selectBranch);
 
   const handleOrdersDateRangeChange = (fd, ld) => {
-    const q = getItemsQuery(signedInUser, branch ? branch._id : "");
+    const q = getAllItemsQuery(signedInUser, branch ? branch._id : "");
     orderAPI.searchOrders({ ...q, created: { $gte: fd, $lte: ld } }).then((r) => {
       if (r.status == 200) {
         dispatch(setOrders(r.data));
@@ -68,7 +68,7 @@ export default function OrderListPage() {
 
   useEffect(() => {
     if (signedInUser) {
-      const q = getItemsQuery(signedInUser, branch ? branch._id : "");
+      const q = getAllItemsQuery(signedInUser, branch ? branch._id : "");
       orderAPI.searchOrders({ ...q }).then((r) => {
         if (r.status == 200) {
           dispatch(setOrders(r.data));

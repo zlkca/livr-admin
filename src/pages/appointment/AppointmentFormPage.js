@@ -22,7 +22,7 @@ import { setSnackbar } from "redux/ui/ui.slice";
 import MDSection from "components/MDSection";
 import CardHead from "components/CardHead";
 import AddressForm from "components/AddressForm";
-import { getItemsQuery } from "permission";
+import { getAllItemsQuery } from "permission";
 import { selectBranch } from "redux/branch/branch.selector";
 
 const mStyles = {
@@ -152,7 +152,7 @@ export default function AppointmentFormPage() {
     }
   };
   const handleOpenBackdrop = () => {
-    const q = getItemsQuery(signedInUser, branch ? branch._id : "");
+    const q = getAllItemsQuery(signedInUser, branch ? branch._id : "");
     projectAPI.searchProjects(q).then((r) => {
       setProjects(r.data);
       const p = data.project ? r.data.find((it) => it._id === data.project._id) : null;

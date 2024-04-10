@@ -105,7 +105,7 @@ export function getActiveEmployeesQuery(user, branchId) {
 }
 
 // project, order
-export function getItemsQuery(user, branchId) {
+export function getAllItemsQuery(user, branchId) {
   if (isAdmin(user)) {
     return {};
   } else if (isStoreManager(user)) {
@@ -124,7 +124,26 @@ export function getItemsQuery(user, branchId) {
     return { $or: conditions, "branch._id": branchId };
   }
 }
-export function getAppointmentsQuery(user, branchId) {
+
+// Belong to
+export function getProjectsQuery(user) {
+  return {
+    $or: [
+      { "sales._id": user._id },
+      { "measure._id": user._id },
+      { "install._id": user._id },
+      { "repare._id": user._id },
+    ],
+  };
+}
+export function getOrdersQuery(user) {
+  return { $or: [{ "sales._id": user._id }] };
+}
+export function getAppointmentsQuery(user) {
+  return { "employee._id": user._id };
+}
+
+export function getAllAppointmentsQuery(user, branchId) {
   if (isAdmin(user)) {
     return {};
   } else if (isStoreManager(user)) {

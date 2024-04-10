@@ -48,7 +48,7 @@ import LabTabs from "components/common/Tabs";
 import MDSnackbar from "components/MDSnackbar";
 import AppointmentList from "components/appointment/AppointmentList";
 import { appointmentAPI } from "services/appointmentAPI";
-import { getAppointmentsQuery } from "permission";
+import { getAllAppointmentsQuery } from "permission";
 import { getMonthRangeQuery, logout } from "utils";
 import { accountAPI } from "services/accountAPI";
 import { getActiveEmployeesQuery } from "permission";
@@ -79,7 +79,7 @@ export default function AppointmentsPage() {
   const [employees, setEmployees] = useState([]);
 
   const handleTabChange = (e, id) => {
-    const q = getAppointmentsQuery(signedInUser, branch ? branch._id : "");
+    const q = getAllAppointmentsQuery(signedInUser, branch ? branch._id : "");
     const mq = getDefaultDateRangeQuery();
     appointmentAPI.searchAppointments({ ...q, ...mq }).then((r) => {
       if (r.status == 200) {
@@ -93,7 +93,7 @@ export default function AppointmentsPage() {
   };
 
   const handleAppointmentsDateRangeChange = (fd, ld) => {
-    const q = getAppointmentsQuery(signedInUser, branch ? branch._id : "");
+    const q = getAllAppointmentsQuery(signedInUser, branch ? branch._id : "");
     appointmentAPI.searchAppointments({ ...q, created: { $gte: fd, $lte: ld } }).then((r) => {
       if (r.status == 200) {
         dispatch(setAppointments(r.data));
@@ -177,7 +177,7 @@ export default function AppointmentsPage() {
     const mq = getDefaultDateRangeQuery();
     if (signedInUser) {
       setLoading(true);
-      const q = getAppointmentsQuery(signedInUser, branch ? branch._id : "");
+      const q = getAllAppointmentsQuery(signedInUser, branch ? branch._id : "");
       appointmentAPI.searchAppointments({ ...q, ...mq }).then((r) => {
         if (r.status == 200) {
           dispatch(setAppointments(r.data));

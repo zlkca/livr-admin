@@ -72,7 +72,7 @@ export default function EmployeeList(props) {
       renderCell: (params) => {
         return (
           <CellButton
-            onClick={() => {
+            onClick={(e) => {
               dispatch(setEmployee(params.row));
               navigate(`/employees/${params.row._id}`);
             }}

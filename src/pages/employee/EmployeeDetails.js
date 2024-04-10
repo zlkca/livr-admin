@@ -33,11 +33,15 @@ import { setAppointments } from "redux/appointment/appointment.slice";
 import ProjectList from "components/project/ProjectList";
 import AppointmentList from "components/appointment/AppointmentList";
 import { selectAppointments } from "redux/appointment/appointment.selector";
-import { getItemsQuery } from "permission";
+import { getAllItemsQuery } from "permission";
 import { logout, getFirstDayOfMonth, getLastDayOfMonth, getDefaultDateRangeQuery } from "utils";
 import { selectBranch } from "redux/branch/branch.selector";
 import MDSnackbar from "components/MDSnackbar";
 import { selectSnackbar } from "redux/ui/ui.selector";
+import { getOrdersQuery } from "permission";
+import { getProjectsQuery } from "permission";
+import { getEmployeesQuery } from "permission";
+import { getAppointmentsQuery } from "permission";
 
 const TabContentHeight = 896;
 const RowsPerPage = 12;
@@ -66,9 +70,8 @@ export default function EmployeeDetails() {
   const handleTabChange = (e, id) => {
     const mq = getDefaultDateRangeQuery();
     if (id === "orders") {
-      const q = { "sales._id": profile._id, ...mq };
-
-      orderAPI.searchOrders(q).then((r) => {
+      const q = getOrdersQuery(profile);
+      orderAPI.searchOrders({ ...mq, ...q }).then((r) => {
         if (r.status == 200) {
           dispatch(setOrders(r.data));
           setTab({ id });
@@ -79,7 +82,6 @@ export default function EmployeeDetails() {
       });
     } else if (id === "clients") {
       const qClient = { "sales._id": profile._id, roles: ["client"], ...mq };
-
       accountAPI.searchAccounts(qClient).then((r) => {
         if (r.status == 200) {
           dispatch(setClients(r.data));
@@ -90,9 +92,8 @@ export default function EmployeeDetails() {
         }
       });
     } else if (id === "projects") {
-      const q = { "sales._id": profile._id, ...mq };
-
-      projectAPI.searchProjects(q).then((r) => {
+      const q = getProjectsQuery(profile);
+      projectAPI.searchProjects({ ...mq, ...q }).then((r) => {
         if (r.status == 200) {
           dispatch(setProjects(r.data));
           setTab({ id });
@@ -102,9 +103,8 @@ export default function EmployeeDetails() {
         }
       });
     } else if (id === "appointments") {
-      const q = { "employee._id": profile._id, ...mq };
-
-      appointmentAPI.searchAppointments(q).then((r) => {
+      const q = getAppointmentsQuery(profile);
+      appointmentAPI.searchAppointments({ ...mq, ...q }).then((r) => {
         if (r.status == 200) {
           dispatch(setAppointments(r.data));
           setTab({ id });
@@ -117,7 +117,7 @@ export default function EmployeeDetails() {
   };
 
   const handleOrdersDateRangeChange = (fd, ld) => {
-    const oq = getItemsQuery(profile, branch ? branch._id : "");
+    const oq = getOrdersQuery(profile);
     const q = { ...oq, created: { $gte: fd, $lte: ld } };
 
     orderAPI.searchOrders(q).then((r) => {
@@ -143,7 +143,7 @@ export default function EmployeeDetails() {
 
   const handleProjectsDateRangeChange = (fd, ld) => {
     if (profile) {
-      const oq = getItemsQuery(profile, branch ? branch._id : "");
+      const oq = getProjectsQuery(profile);
       const q = { ...oq, created: { $gte: fd, $lte: ld } };
       projectAPI.searchProjects(q).then((r) => {
         if (r.status == 200) {
@@ -158,7 +158,8 @@ export default function EmployeeDetails() {
 
   const handleAppointmentsDateRangeChange = (fd, ld) => {
     if (profile) {
-      const q = { "employee._id": profile._id, created: { $gte: fd, $lte: ld } };
+      const oq = getAppointmentsQuery(profile);
+      const q = { ...oq, created: { $gte: fd, $lte: ld } };
 
       appointmentAPI.searchAppointments(q).then((r) => {
         if (r.status == 200) {
@@ -208,16 +209,6 @@ export default function EmployeeDetails() {
       accountAPI.updateAccount(_id, { status: "active" }).then((r) => {
         if (r.status === 200) {
           dispatch(setEmployee(r.data));
-          // const es = employees.map((e) => {
-          //   if (e._id === _id) {
-          //     return {
-          //       ...e,
-          //       status: "active",
-          //     };
-          //   } else {
-          //     return e;
-          //   }
-          // });
           dispatch(
             setSnackbar({
               color: "success",
@@ -227,8 +218,6 @@ export default function EmployeeDetails() {
               open: true,
             })
           );
-          // navigate(-1);
-          // dispatch(setEmployees(es));
         }
       });
     }
@@ -240,16 +229,6 @@ export default function EmployeeDetails() {
       accountAPI.updateAccount(_id, { status: "suspend" }).then((r) => {
         if (r.status === 200) {
           dispatch(setEmployee(r.data));
-          // const es = employees.map((e) => {
-          //   if (e._id === _id) {
-          //     return {
-          //       ...e,
-          //       status: "suspend",
-          //     };
-          //   } else {
-          //     return e;
-          //   }
-          // });
           dispatch(
             setSnackbar({
               color: "success",
@@ -259,8 +238,6 @@ export default function EmployeeDetails() {
               open: true,
             })
           );
-          // navigate(-1);
-          // dispatch(setEmployees(es));
         }
       });
     }
@@ -275,7 +252,7 @@ export default function EmployeeDetails() {
     const ld = `${lastDay.toISOString()}`;
     if (employee) {
       setProfile({ ...employee });
-      const oq = getItemsQuery(employee, branch ? branch._id : "");
+      const oq = getOrdersQuery(employee);
       const q = { ...oq, created: { $gte: fd, $lte: ld } };
       orderAPI.searchOrders(q).then((r) => {
         if (r.status == 200) {
@@ -293,7 +270,7 @@ export default function EmployeeDetails() {
           accountAPI.fetchAccount(params.id).then((r1) => {
             if (r1.status === 200) {
               setProfile({ ...r1.data });
-              const oq = getItemsQuery(r1.data, branch ? branch._id : "");
+              const oq = getOrdersQuery(employee);
               const q = { ...oq, created: { $gte: fd, $lte: ld } };
               orderAPI.searchOrders(q).then((r) => {
                 if (r.status == 200) {

@@ -39,7 +39,7 @@ import MDSnackbar from "components/MDSnackbar";
 import CardHead from "components/CardHead";
 import { projectAPI } from "services/projectAPI";
 import ProjectList from "components/project/ProjectList";
-import { getItemsQuery } from "permission";
+import { getAllItemsQuery } from "permission";
 import { getMonthRangeQuery } from "utils";
 import { selectBranch } from "redux/branch/branch.selector";
 // Data
@@ -53,7 +53,7 @@ export default function ProjectListPage() {
   const snackbar = useSelector(selectSnackbar);
 
   const handleProjectsDateRangeChange = (fd, ld) => {
-    const q = getItemsQuery(signedInUser, branch ? branch._id : "");
+    const q = getAllItemsQuery(signedInUser, branch ? branch._id : "");
     projectAPI.searchProjects({ ...q, created: { $gte: fd, $lte: ld } }).then((r) => {
       if (r.status == 200) {
         dispatch(setProjects(r.data));
@@ -66,7 +66,7 @@ export default function ProjectListPage() {
 
   useEffect(() => {
     if (signedInUser) {
-      const q = getItemsQuery(signedInUser, branch ? branch._id : "");
+      const q = getAllItemsQuery(signedInUser, branch ? branch._id : "");
       projectAPI.searchProjects({ ...q }).then((r) => {
         if (r.status == 200) {
           dispatch(setProjects(r.data));
