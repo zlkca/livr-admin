@@ -52,8 +52,16 @@ function Sidenav({ color, brand, brandName, menus, ...rest }) {
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } =
     useSelector(selectUI);
 
+  function getUiPath(pathname) {
+    const arr = pathname.split("/");
+    if (arr.length > 2) {
+      return arr[1];
+    } else {
+      return pathname.replace("/", "");
+    }
+  }
   const location = useLocation();
-  const collapseName = location.pathname.replace("/", "");
+  const collapseName = getUiPath(location.pathname);
   const signedInUser = useSelector(selectSignedInUser);
 
   let textColor = "white";
