@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Grid } from "@mui/material";
 import MDInput from "./MDInput";
 import MDSelect from "./MDSelect";
 
@@ -186,7 +187,7 @@ export default function AddressForm({ address, onChange, readOnly }) {
   return (
     <div style={{ width: "100%" }}>
       <Grid container xs={12} display="flex" pt={2} spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={6} md={3}>
           <MDInput
             readOnly={readOnly}
             name="unitNumber"
@@ -197,22 +198,22 @@ export default function AddressForm({ address, onChange, readOnly }) {
             styles={{ root: mStyles.formControl }}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={6} md={3}>
           <MDInput
             readOnly={readOnly}
             name="streetNumber"
-            label={t("Street Number")}
+            label={`${t("Street Number")}*`}
             type="text"
             value={address ? address.streetNumber : ""} // controlled
             onChange={handleStreetNumberChange}
             styles={{ root: mStyles.formControl }}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} md={6}>
           <MDInput
             readOnly={readOnly}
             name="streetName"
-            label={t("Street Name")}
+            label={`${t("Street Name")}*`}
             type="text"
             value={address ? address.streetName : ""} // controlled
             onChange={handleStreetNameChange}
@@ -222,7 +223,7 @@ export default function AddressForm({ address, onChange, readOnly }) {
       </Grid>
 
       <Grid container xs={12} display="flex" pt={2} spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} md={3}>
           <MDSelect
             readOnly={readOnly}
             name="city"
@@ -233,7 +234,7 @@ export default function AddressForm({ address, onChange, readOnly }) {
             styles={{ root: mStyles.formControl }}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={6} md={3}>
           <MDSelect
             readOnly={readOnly}
             name="province"
@@ -244,7 +245,7 @@ export default function AddressForm({ address, onChange, readOnly }) {
             styles={{ root: mStyles.formControl }}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={6} md={3}>
           <MDSelect
             readOnly={readOnly}
             name="country"
@@ -256,7 +257,7 @@ export default function AddressForm({ address, onChange, readOnly }) {
           />
         </Grid>
 
-        <Grid item xs={3}>
+        <Grid item xs={12} md={6}>
           <MDInput
             readOnly={readOnly}
             name="postcode"

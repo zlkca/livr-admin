@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { DatePicker, DateRangePicker, Grid, InputNumber, Radio, RadioGroup } from "rsuite";
+import { Grid } from "@mui/material";
+import { DatePicker, DateRangePicker, InputNumber, Radio, RadioGroup } from "rsuite";
 import "rsuite/dist/rsuite-no-reset.min.css";
 
 export default function DateRangeFilter({
@@ -20,43 +21,53 @@ export default function DateRangeFilter({
       defaultValue={"month"}
       name="radio-buttons-group"
     >
-      <Grid item xs={12}>
-        <Radio value="year" style={{ width: 114, fontSize: 14 }}>
-          {t("By Year")}
-        </Radio>
-        <Grid item style={{ width: 300, display: "inline-block" }}>
+      <Grid container xs={12} display="flex">
+        <Grid item xs={4}>
+          <Radio value="year" style={{ fontSize: 14 }}>
+            {t("By Year")}
+          </Radio>
+        </Grid>
+        <Grid item xs={8}>
           <InputNumber
             defaultValue={parseInt(new Date().getFullYear())}
             value={year}
             onChange={onYearChange}
-            style={{ width: "221px" }}
           />
         </Grid>
       </Grid>
-      <Grid item xs={12} style={{ marginTop: 5 }}>
-        <Radio value="month" style={{ width: 118, fontSize: 14 }}>
-          {t("By Month")}
-        </Radio>
-        <DatePicker
-          defaultValue={new Date()}
-          format="yyyy-MM"
-          value={month}
-          onChange={onMonthChange}
-        />
+      <Grid container xs={12} display="flex" style={{ marginTop: 5 }}>
+        <Grid item xs={4}>
+          <Radio value="month" style={{ fontSize: 14 }}>
+            {t("By Month")}
+          </Radio>
+        </Grid>
+        <Grid item xs={8}>
+          <DatePicker
+            defaultValue={new Date()}
+            format="yyyy-MM"
+            value={month}
+            onChange={onMonthChange}
+            style={{ width: "100%" }}
+          />
+        </Grid>
       </Grid>
-      <Grid item xs={12} style={{ marginTop: 5 }}>
-        <Radio value="range" style={{ width: 118, fontSize: 14 }}>
-          {t("By Range")}
-        </Radio>
-        <DateRangePicker
-          value={range}
-          onChange={(r) => {
-            if (r && r.length > 1) {
-              r[1].setHours(23, 59, 59);
-            }
-            onRangeChange(r);
-          }}
-        />
+      <Grid container xs={12} display="flex" style={{ marginTop: 5 }}>
+        <Grid item xs={4}>
+          <Radio value="range" style={{ fontSize: 14 }}>
+            {t("By Range")}
+          </Radio>
+        </Grid>
+        <Grid item xs={8}>
+          <DateRangePicker
+            value={range}
+            onChange={(r) => {
+              if (r && r.length > 1) {
+                r[1].setHours(23, 59, 59);
+              }
+              onRangeChange(r);
+            }}
+          />
+        </Grid>
       </Grid>
     </RadioGroup>
   );

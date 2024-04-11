@@ -202,7 +202,7 @@ export default function AppointmentList(props) {
     <Grid xs={12} style={{ height: height + 100 }}>
       <Grid container display="flex" justifyContent={"flex-start"}>
         {!hideFilter && (
-          <Grid item xs={6}>
+          <Grid item xs={10} md={3}>
             <DateRangeFilter
               mode={searchMode}
               year={searchYear}
@@ -216,7 +216,7 @@ export default function AppointmentList(props) {
           </Grid>
         )}
 
-        <Grid item xs={hideFilter ? 12 : 6}>
+        <Grid item xs={hideFilter ? 12 : 2} md={hideFilter ? 12 : 9}>
           <Grid container spacing={2} direction="row" justifyContent="flex-end">
             {/* {isAdmin(user) && (
               <Grid item>

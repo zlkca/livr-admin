@@ -8,8 +8,8 @@ import theme from "theme";
 export default function LabTabs({ tabs, id, children, onChange }) {
   return (
     // <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-    <TabContext value={id}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider", paddingLeft: 3 }}>
+    <TabContext value={id} style={{ paddingLeft: 0 }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider", paddingLeft: 0 }}>
         <TabList
           onChange={onChange}
           aria-label="lab API tabs example"

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Grid } from "@mui/material";
+import { Grid, useMediaQuery } from "@mui/material";
 
 import { WeekCalendar } from "components/calendar/weekCalendar";
 import { getEmployeesQuery } from "permission";
@@ -10,6 +10,7 @@ import { accountAPI } from "services/accountAPI";
 import { logout } from "utils";
 import { EmployeeFilter } from "components/account/EmployeeFilter";
 import { generateColors } from "components/calendar/utils";
+import theme from "theme";
 
 export function AppointmentCalendar({ appointments, user, branch }) {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ export function AppointmentCalendar({ appointments, user, branch }) {
   //   const employees = useSelector(selectEmployees);
   const [employees, setEmployees] = useState([]);
   const [employeeColorMap, setEmployeeColorMap] = useState({});
-
+  const isMobile = useMediaQuery(theme.breakpoints.up("xs"));
   useEffect(() => {
     const q = getEmployeesQuery(user, branch ? branch._id : "");
     accountAPI
@@ -80,10 +81,10 @@ export function AppointmentCalendar({ appointments, user, branch }) {
 
   return (
     <Grid container>
-      <Grid item xs={2}>
+      <Grid item xs={12} md={2}>
         <EmployeeFilter accounts={employees} user={user} onChange={handleSelectEmployees} />
       </Grid>
-      <Grid item xs={10} style={{ paddingRight: 15 }}>
+      <Grid item xs={12} md={10} style={{ paddingRight: isMobile ? 0 : 15 }}>
         <WeekCalendar events={events} onNextWeek={() => {}} onPrevWeek={() => {}} />
       </Grid>
     </Grid>

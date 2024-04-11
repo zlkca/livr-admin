@@ -269,7 +269,10 @@ export default function BranchDetails() {
                 {/* title={t("Details")} */}
                 <MDSection>
                   <LabTabs tabs={tabs} id={tab.id} onChange={handleTabChange}>
-                    <TabPanel value={"orders"} style={{ width: "100%" }}>
+                    <TabPanel
+                      value={"orders"}
+                      style={{ width: "100%", paddingLeft: 0, paddingRight: 0 }}
+                    >
                       <OrderList
                         user={signedInUser}
                         height={TabContentHeight}
@@ -277,7 +280,10 @@ export default function BranchDetails() {
                         onDateRangeChange={handleOrdersDateRangeChange}
                       />
                     </TabPanel>
-                    <TabPanel value={"clients"}>
+                    <TabPanel
+                      value={"clients"}
+                      style={{ width: "100%", paddingLeft: 0, paddingRight: 0 }}
+                    >
                       <ClientList
                         user={signedInUser}
                         height={TabContentHeight}
@@ -285,7 +291,10 @@ export default function BranchDetails() {
                         onDateRangeChange={handleClientsDateRangeChange}
                       />
                     </TabPanel>
-                    <TabPanel value={"projects"}>
+                    <TabPanel
+                      value={"projects"}
+                      style={{ width: "100%", paddingLeft: 0, paddingRight: 0 }}
+                    >
                       <ProjectList
                         user={signedInUser}
                         height={TabContentHeight}
@@ -293,7 +302,10 @@ export default function BranchDetails() {
                         onDateRangeChange={handleProjectDateRangeChange}
                       />
                     </TabPanel>
-                    <TabPanel value={"appointments"}>
+                    <TabPanel
+                      value={"appointments"}
+                      style={{ width: "100%", paddingLeft: 0, paddingRight: 0 }}
+                    >
                       <AppointmentList
                         data={appointments}
                         user={signedInUser}

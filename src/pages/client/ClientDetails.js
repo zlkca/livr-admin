@@ -301,7 +301,10 @@ export default function ClientDetails() {
                 </MDSection>
                 <MDSection>
                   <LabTabs tabs={tabs} id={tab.id} onChange={handleTabChange}>
-                    <TabPanel value={"orders"} style={{ width: "100%" }}>
+                    <TabPanel
+                      value={"orders"}
+                      style={{ width: "100%", paddingLeft: 0, paddingRight: 0 }}
+                    >
                       <OrderList
                         user={signedInUser}
                         height={300}
@@ -309,7 +312,10 @@ export default function ClientDetails() {
                         onDateRangeChange={handleOrdersDateRangeChange}
                       />
                     </TabPanel>
-                    <TabPanel value={"projects"}>
+                    <TabPanel
+                      value={"projects"}
+                      style={{ width: "100%", paddingLeft: 0, paddingRight: 0 }}
+                    >
                       <ProjectList
                         user={signedInUser}
                         height={300}
@@ -317,7 +323,10 @@ export default function ClientDetails() {
                         onDateRangeChange={handleProjectsDateRangeChange}
                       />
                     </TabPanel>
-                    <TabPanel value={"appointments"}>
+                    <TabPanel
+                      value={"appointments"}
+                      style={{ width: "100%", paddingLeft: 0, paddingRight: 0 }}
+                    >
                       <AppointmentList
                         data={appointments}
                         user={signedInUser}

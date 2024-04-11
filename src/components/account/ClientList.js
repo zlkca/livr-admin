@@ -197,7 +197,7 @@ export default function ClientList(props) {
   return (
     <Grid xs={12} style={{ height: height + 100 }}>
       <Grid container display="flex" justifyContent={"flex-start"}>
-        <Grid item xs={6}>
+        <Grid item xs={10} md={3}>
           <DateRangeFilter
             mode={searchMode}
             year={searchYear}
@@ -210,7 +210,7 @@ export default function ClientList(props) {
           />
         </Grid>
 
-        <Grid item xs={6}>
+        <Grid item xs={2} md={9}>
           <Grid container spacing={2} direction="row" justifyContent="flex-end">
             {/* <Grid item>
               <MDButton color="info" variant={"outlined"} size="small" onClick={handleEdit}>

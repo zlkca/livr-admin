@@ -344,7 +344,7 @@ export default function ClientForm() {
                 <CardHead title={profile._id ? t("Edit Client") : t("Create Client")} />
                 <MDSection title={t("Profile")}>
                   <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={3}>
                       <MDInput
                         name="username"
                         label={t("Username")}
@@ -354,7 +354,7 @@ export default function ClientForm() {
                     </Grid>
                   </Grid>
                   <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={3}>
                       <MDSelect
                         label={t("Title.")}
                         options={titleOptions}
@@ -362,7 +362,7 @@ export default function ClientForm() {
                         onChange={handleTitleChange}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={2}>
                       <MDInput
                         name="firstName"
                         label={t("First Name")}
@@ -372,7 +372,7 @@ export default function ClientForm() {
                         FormHelperTextProps={error && error.firstName ? { error: true } : null}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={1}>
                       <MDInput
                         name="middleName"
                         label={t("Middle Name")}
@@ -380,7 +380,7 @@ export default function ClientForm() {
                         onChange={handleMiddleNameChange}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={2}>
                       <MDInput
                         name="lastName"
                         label={t("Last Name")}
@@ -393,11 +393,11 @@ export default function ClientForm() {
                   </Grid>
 
                   <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={3}>
                       <MDInput
                         readOnly={profile._id}
                         name="email"
-                        label={t("Email")}
+                        label={`${t("Email")}*`}
                         type="email"
                         value={profile.email}
                         onChange={handleEmailChange}
@@ -405,7 +405,7 @@ export default function ClientForm() {
                         FormHelperTextProps={error && error.email ? { error: true } : null}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={3}>
                       <MDInput
                         name="phone"
                         label={t("Phone")}
@@ -418,7 +418,7 @@ export default function ClientForm() {
                     </Grid>
                   </Grid>
                   <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} md={12}>
                       <MDTypography variant="caption" color="text" fontWeight="regular">
                         {t("Language")}
                       </MDTypography>
@@ -444,7 +444,7 @@ export default function ClientForm() {
                     </Grid>
                   </Grid>
                   <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={3}>
                       <MDSelect
                         name="source"
                         label={t("Source")}
@@ -453,7 +453,7 @@ export default function ClientForm() {
                         onChange={handleSourceChange}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={3}>
                       <MDSelect
                         name="bestTimeToCall"
                         label={t("Best Time to Call")}
@@ -462,7 +462,7 @@ export default function ClientForm() {
                         onChange={handleBestTimeToCallChange}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={3}>
                       <MDSelect
                         label={t("Preferred Contact")}
                         options={preferredContactOptions}
@@ -482,16 +482,16 @@ export default function ClientForm() {
                 </MDSection>
                 <MDSection title={t("Belong to")}>
                   <Grid container xs={12} display="flex" spacing={2}>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={3}>
                       <MDInput
                         readOnly
-                        label={t("Sales")}
+                        label={`${t("Sales")}*`}
                         value={profile && profile.sales ? profile.sales.username : ""}
                         onClick={() => handleOpenBackdrop("sales")}
                         helperText={error && error.sales ? error.sales : ""}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={3}>
                       <MDSelect
                         readOnly
                         name="branch"

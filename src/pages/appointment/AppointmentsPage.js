@@ -54,6 +54,8 @@ import { accountAPI } from "services/accountAPI";
 import { getActiveEmployeesQuery } from "permission";
 import { AppointmentCalendar } from "components/appointment/AppointmentCalendar";
 import { getDefaultDateRangeQuery } from "utils";
+import { useMediaQuery } from "@mui/material";
+import theme from "theme";
 
 export default function AppointmentsPage() {
   const dispatch = useDispatch();
@@ -69,6 +71,7 @@ export default function AppointmentsPage() {
   const signedInUser = useSelector(selectSignedInUser);
   const branch = useSelector(selectBranch);
   const appointments = useSelector(selectAppointments);
+  const isMobile = useMediaQuery(theme.breakpoints.up("xs"));
 
   const tabs = [
     { id: "appointment-calendar", label: t("Calendar") },
@@ -210,7 +213,13 @@ export default function AppointmentsPage() {
             <Card>
               <CardHead title={t("Appointments")}></CardHead>
               <LabTabs tabs={tabs} id={tab.id} onChange={handleTabChange}>
-                <TabPanel value={"appointment-calendar"} style={{ width: "100%" }}>
+                <TabPanel
+                  value={"appointment-calendar"}
+                  style={{
+                    width: "100%",
+                    paddingLeft: isMobile ? 6 : 20,
+                  }}
+                >
                   <AppointmentCalendar
                     appointments={appointments}
                     user={signedInUser}
