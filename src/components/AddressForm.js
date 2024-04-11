@@ -185,8 +185,8 @@ export default function AddressForm({ address, onChange, readOnly }) {
 
   return (
     <div style={{ width: "100%" }}>
-      <div style={mStyles.row}>
-        <div style={mStyles.shortCol}>
+      <Grid container xs={12} display="flex" pt={2} spacing={2}>
+        <Grid item xs={3}>
           <MDInput
             readOnly={readOnly}
             name="unitNumber"
@@ -196,8 +196,8 @@ export default function AddressForm({ address, onChange, readOnly }) {
             onChange={handleUnitNumberChange}
             styles={{ root: mStyles.formControl }}
           />
-        </div>
-        <div style={mStyles.shortCol}>
+        </Grid>
+        <Grid item xs={3}>
           <MDInput
             readOnly={readOnly}
             name="streetNumber"
@@ -207,8 +207,8 @@ export default function AddressForm({ address, onChange, readOnly }) {
             onChange={handleStreetNumberChange}
             styles={{ root: mStyles.formControl }}
           />
-        </div>
-        <div style={mStyles.longCol}>
+        </Grid>
+        <Grid item xs={3}>
           <MDInput
             readOnly={readOnly}
             name="streetName"
@@ -218,11 +218,11 @@ export default function AddressForm({ address, onChange, readOnly }) {
             onChange={handleStreetNameChange}
             styles={{ formControl: { width: "100%", float: "left" } }}
           />
-        </div>
-      </div>
+        </Grid>
+      </Grid>
 
-      <div style={mStyles.row}>
-        <div style={mStyles.col}>
+      <Grid container xs={12} display="flex" pt={2} spacing={2}>
+        <Grid item xs={3}>
           <MDSelect
             readOnly={readOnly}
             name="city"
@@ -232,8 +232,8 @@ export default function AddressForm({ address, onChange, readOnly }) {
             onChange={handleCityChange} // (event, child) => { }
             styles={{ root: mStyles.formControl }}
           />
-        </div>
-        <div style={mStyles.shortCol}>
+        </Grid>
+        <Grid item xs={3}>
           <MDSelect
             readOnly={readOnly}
             name="province"
@@ -243,8 +243,8 @@ export default function AddressForm({ address, onChange, readOnly }) {
             onChange={handleProvinceChange} // (event, child) => { }
             styles={{ root: mStyles.formControl }}
           />
-        </div>
-        <div style={mStyles.shortCol}>
+        </Grid>
+        <Grid item xs={3}>
           <MDSelect
             readOnly={readOnly}
             name="country"
@@ -254,9 +254,9 @@ export default function AddressForm({ address, onChange, readOnly }) {
             onChange={handleCountryChange} // (event, child) => { }
             styles={{ root: mStyles.formControl }}
           />
-        </div>
+        </Grid>
 
-        <div style={mStyles.shortCol}>
+        <Grid item xs={3}>
           <MDInput
             readOnly={readOnly}
             name="postcode"
@@ -266,8 +266,8 @@ export default function AddressForm({ address, onChange, readOnly }) {
             onChange={handlePostcodeChange}
             styles={{ root: mStyles.formControl }}
           />
-        </div>
-      </div>
+        </Grid>
+      </Grid>
     </div>
   );
 }

@@ -45,6 +45,7 @@ import { setMiniSidenav, setTransparentSidenav, setWhiteSidenav } from "../redux
 import { selectUI } from "../redux/ui/ui.selector";
 import { selectSignedInUser } from "../redux/auth/auth.selector";
 import Sidemenu from "./Sidemenu";
+import { getUiPath } from "utils";
 
 function Sidenav({ color, brand, brandName, menus, ...rest }) {
   const dispatch = useDispatch();
@@ -52,14 +53,6 @@ function Sidenav({ color, brand, brandName, menus, ...rest }) {
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } =
     useSelector(selectUI);
 
-  function getUiPath(pathname) {
-    const arr = pathname.split("/");
-    if (arr.length > 2) {
-      return arr[1];
-    } else {
-      return pathname.replace("/", "");
-    }
-  }
   const location = useLocation();
   const collapseName = getUiPath(location.pathname);
   const signedInUser = useSelector(selectSignedInUser);

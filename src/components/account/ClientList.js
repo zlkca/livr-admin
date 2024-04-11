@@ -4,7 +4,6 @@ import DateRangeFilter from "components/DateRangeFilter";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDLinearProgress from "components/MDLinearProgress";
-import MDSection from "components/MDSection";
 import GridTable from "components/common/GridTable";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -46,29 +45,29 @@ export default function ClientList(props) {
   ]);
 
   const columns = [
-    { headerName: t("Username"), field: "username", maxWidth: 200, flex: 1 },
+    { headerName: t("Username"), field: "username", minWidth: 200, flex: 1 },
     {
       headerName: t("Branch"),
       field: "branch",
-      maxWidth: 300,
+      minWidth: 300,
       valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("N/A")),
       flex: 1,
     },
     {
       headerName: t("Sales"),
       field: "sales",
-      maxWidth: 300,
+      minWidth: 160,
       valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("N/A")),
       flex: 1,
     },
-    { headerName: t("Email"), field: "email", maxWidth: 320, flex: 1.5 },
-    { headerName: t("Phone"), field: "phone", maxWidth: 200, flex: 1 },
-    // { headerName: t("Status"), field: "status", maxWidth: 150, flex: 1 },
-    { headerName: t("Created Date"), field: "created", maxWidth: 200, flex: 1 },
+    { headerName: t("Email"), field: "email", minWidth: 200, flex: 1.5 },
+    { headerName: t("Phone"), field: "phone", minWidth: 160, flex: 1 },
+    // { headerName: t("Status"), field: "status", minWidth: 150, flex: 1 },
+    { headerName: t("Created Date"), field: "created", minWidth: 200, flex: 1 },
     {
       headerName: t("Actions"),
       field: "_id",
-      maxWidth: 180,
+      minWidth: 160,
       flex: 1,
       renderCell: (params) => {
         return (

@@ -4,13 +4,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
 import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
 import { Card, Grid } from "@mui/material";
 import Footer from "layouts/Footer";
 import MDButton from "components/MDButton";
-import MDSnackbar from "components/MDSnackbar";
 import MDInput from "components/MDInput";
 import AddressForm from "components/AddressForm";
 import { branchAPI } from "services/branchAPI";
@@ -177,7 +175,12 @@ export default function BranchForm() {
                   <Grid container>
                     <Grid item xs={12} sm={10} md={10} lg={8} xl={8}>
                       <MDInput
-                        style={{ width: 400 }}
+                        // style={{ width: 400 }}
+                        xs={12}
+                        sm={10}
+                        md={10}
+                        lg={4}
+                        xl={4}
                         name="Name"
                         label={t("Branch Name")}
                         value={branch.name}

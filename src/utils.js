@@ -306,3 +306,12 @@ export function getPrevMonthRange(date) {
     year,
   };
 }
+
+export function getUiPath(pathname) {
+  const arr = pathname.split("/");
+  if (arr.length > 2) {
+    return arr[1];
+  } else {
+    return pathname.replace("/", "");
+  }
+}
