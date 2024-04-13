@@ -33,6 +33,8 @@ import AccountSelectBackdrop from "components/account/AccountSelectBackdrop";
 import { getEmployeesQueryByRoles } from "permission";
 import { selectBranch } from "redux/branch/branch.selector";
 import { SalesRoles } from "permission";
+import { authAPI } from "services/authAPI";
+import { isValidEmail } from "utils";
 
 const mStyles = {
   root: {
@@ -174,27 +176,32 @@ export default function ClientForm() {
     }
   }, [client]);
 
-  const validate = (mode) => {
-    const errs = {};
-    if (!profile.firstName) {
-      errs["firstName"] = "Please enter your first name";
-    }
-    if (!profile.lastName) {
-      errs["lastName"] = "Please enter your last name";
-    }
+  const validate = async (profile) => {
+    let hasError = false;
     if (!profile.email) {
-      errs["email"] = "Please enter your email";
-    } else if (!isValidEmail(profile.email)) {
-      errs["email"] = "Invalid email format";
-    }
-    if (!profile.phone) {
-      errs["phone"] = "Please enter your phone number";
+      setError({ ...error, email: t("Please input an email address") });
+      hasError = true;
+      return hasError;
+    } else if (profile.email && !isValidEmail(profile.email)) {
+      setError({ ...error, email: t("Please input a valid email address") });
+      hasError = true;
+      return hasError;
+    } else {
+      const r = await authAPI.checkEmail({ email: profile.email });
+      if (r.status === 200 && r.data.dup) {
+        setError({ ...error, email: t("Email exists, please try another") });
+        hasError = true;
+        return hasError;
+      }
     }
 
-    // if (mode === "new" && !profile.account.password) {
-    //   errs["password"] = "Please enter your password";
-    // }
-    return errs;
+    if (!profile.sales) {
+      setError({ ...error, sales: t("Please select a sales") });
+      hasError = true;
+      return hasError;
+    }
+
+    return hasError;
   };
 
   const handleSourceChange = (event) => {
@@ -213,6 +220,7 @@ export default function ClientForm() {
 
   const handleEmailChange = (event) => {
     setProfile({ ...profile, email: event.target.value });
+    setError({ ...error, email: "" });
   };
 
   const handlePhoneChange = (event) => {
@@ -277,7 +285,7 @@ export default function ClientForm() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     profile.roles = ["client"];
 
     if (!isAdmin(signedInUser)) {
@@ -287,39 +295,41 @@ export default function ClientForm() {
         email: signedInUser.email,
       };
     }
+    const hasErr = await validate(profile);
+    if (hasErr) {
+      return;
+    }
 
     if (profile._id) {
-      accountAPI.updateAccount(profile._id, profile).then((r) => {
-        if (r.status === 200) {
-          dispatch(setClient(r.data));
-          dispatch(
-            setSnackbar({
-              color: "success",
-              icon: "check",
-              title: "",
-              content: t("Updated Successfully!"),
-              open: true,
-            })
-          );
-          navigate("/clients");
-        }
-      });
+      const r = await accountAPI.updateAccount(profile._id, profile);
+      if (r.status === 200) {
+        dispatch(setClient(r.data));
+        dispatch(
+          setSnackbar({
+            color: "success",
+            icon: "check",
+            title: "",
+            content: t("Updated Successfully!"),
+            open: true,
+          })
+        );
+        navigate("/clients");
+      }
     } else {
-      accountAPI.createAccount(profile).then((r) => {
-        if (r.status === 200) {
-          dispatch(setClient(r.data));
-          dispatch(
-            setSnackbar({
-              color: "success",
-              icon: "check",
-              title: "",
-              content: t("Created Successfully!"),
-              open: true,
-            })
-          );
-          navigate("/clients");
-        }
-      });
+      const r = await accountAPI.createAccount(profile);
+      if (r.status === 200) {
+        dispatch(setClient(r.data));
+        dispatch(
+          setSnackbar({
+            color: "success",
+            icon: "check",
+            title: "",
+            content: t("Created Successfully!"),
+            open: true,
+          })
+        );
+        navigate("/clients");
+      }
     }
   };
 
@@ -488,8 +498,13 @@ export default function ClientForm() {
                         label={`${t("Sales")}*`}
                         value={profile && profile.sales ? profile.sales.username : ""}
                         onClick={() => handleOpenBackdrop("sales")}
-                        helperText={error && error.sales ? error.sales : ""}
+                        // helperText={error && error.sales ? error.sales : ""}
                       />
+                      {error && error.sales && (
+                        <div style={{ color: "red", fontSize: 14 }}>
+                          {t("Please select a sales")}
+                        </div>
+                      )}
                     </Grid>
                     <Grid item xs={12} md={3}>
                       <MDSelect

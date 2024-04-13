@@ -106,6 +106,13 @@ export default function AppointmentList(props) {
       flex: 1,
     },
     {
+      headerName: t("Branch"),
+      field: "branch",
+      minWidth: 180,
+      flex: 1,
+      valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("Unknown")),
+    },
+    {
       headerName: t("Client"),
       field: "client",
       minWidth: 160,

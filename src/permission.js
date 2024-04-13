@@ -147,7 +147,7 @@ export function getAllAppointmentsQuery(user, branchId) {
   if (isAdmin(user)) {
     return {};
   } else if (isStoreManager(user)) {
-    return { "branch._id": branchId };
+    return {}; // "branch._id": branchId
   } else if (isSales(user)) {
     return { "employee._id": user._id };
   } else {

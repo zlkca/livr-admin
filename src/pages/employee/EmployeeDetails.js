@@ -296,7 +296,7 @@ export default function EmployeeDetails() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             {profile && (
-              <Card style={{ height: 940 }}>
+              <Card>
                 <CardHead title={t("Employee")} />
                 <Grid container spacing={2} direction="row" justifyContent="flex-end" px={2} pt={2}>
                   <Grid item>

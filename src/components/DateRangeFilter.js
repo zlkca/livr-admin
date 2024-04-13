@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Grid } from "@mui/material";
 import { DatePicker, DateRangePicker, InputNumber, Radio, RadioGroup } from "rsuite";
 import "rsuite/dist/rsuite-no-reset.min.css";
-
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 export default function DateRangeFilter({
   mode,
   onModeChange,
@@ -48,6 +48,7 @@ export default function DateRangeFilter({
             value={month}
             onChange={onMonthChange}
             style={{ width: "100%" }}
+            caretAs={CalendarMonthIcon}
           />
         </Grid>
       </Grid>

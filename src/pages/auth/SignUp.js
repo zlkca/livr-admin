@@ -37,6 +37,7 @@ import { Alert } from "@mui/material";
 import MDAlert from "components/MDAlert";
 import { setLayout } from "redux/ui/ui.slice";
 import { useDispatch } from "react-redux";
+import { isValidEmail } from "utils";
 
 const alertContent = (message) => (
   <MDTypography variant="body2" color="white">
@@ -55,17 +56,49 @@ export default function SignUp() {
     dispatch(setLayout("auth"));
   }, []);
 
-  const handleCreateAccount = () => {
-    authAPI.signup(data).then((r) => {
-      if (r && r.status === 200) {
-        setAlertMessage("Sign up successfully, please wait your admin's approval");
-      } else {
-        if (r.status !== 200) {
-          const field = r.data.field;
-          setError({ [field]: t(r.data.message) });
-        }
+  const validate = async (profile) => {
+    let hasError = false;
+    if (!profile.email) {
+      setError({ ...error, email: t("Please input an email address") });
+      hasError = true;
+      return hasError;
+    } else if (profile.email && !isValidEmail(profile.email)) {
+      setError({ ...error, email: t("Please input a valid email address") });
+      hasError = true;
+      return hasError;
+    } else {
+      const r = await authAPI.checkEmail({ email: profile.email });
+      if (r.status === 200 && r.data.dup) {
+        setError({ ...error, email: t("Email exists, please try another") });
+        hasError = true;
+        return hasError;
       }
-    });
+    }
+
+    if (!profile.password) {
+      setError({ ...error, password: t("Please input a password") });
+      hasError = true;
+      return hasError;
+    }
+
+    return hasError;
+  };
+
+  const handleCreateAccount = async () => {
+    const hasErr = await validate(data);
+    if (hasErr) {
+      return;
+    }
+
+    const r = await authAPI.signup(data);
+    if (r && r.status === 200) {
+      setAlertMessage("Sign up successfully, please wait your admin's approval");
+    } else {
+      if (r.status !== 200) {
+        const field = r.data.field;
+        setError({ [field]: t(r.data.message) });
+      }
+    }
   };
 
   const handleChangeUsername = (e) => {
@@ -76,11 +109,13 @@ export default function SignUp() {
   const handleChangeEmail = (e) => {
     const email = e.target.value;
     setData({ ...data, email });
+    setError({ ...error, email: "" });
   };
 
   const handleChangePassword = (e) => {
     const password = e.target.value;
     setData({ ...data, password });
+    setError({ ...error, password: "" });
   };
 
   return (
@@ -124,6 +159,7 @@ export default function SignUp() {
                 fullWidth
                 onChange={handleChangeEmail}
                 helperText={error ? error.email : ""}
+                FormHelperTextProps={error && error.email ? { error: true } : null}
               />
             </MDBox>
             <MDBox mb={2}>
@@ -134,6 +170,7 @@ export default function SignUp() {
                 fullWidth
                 onChange={handleChangePassword}
                 helperText={error ? error.password : ""}
+                FormHelperTextProps={error && error.password ? { error: true } : null}
               />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>

@@ -278,6 +278,7 @@
         "Order": "订单",
         "Order #": "订单号",
         "N/A": "无",
+        "Please select a start and an end time": "请选择一个开始时间和结束时间",
         "Please select a branch": "请选择分公司",
         "Please input an email address": "请输入一个电子邮箱地址",
         "Please input a valid email address": "请输入一个有效的电子邮箱地址",
@@ -375,9 +376,11 @@
         "Are you sure to delete this window ?":"您确定要删除此窗户吗？",
         "Project is required":"项目是必填项",
         "Distance is required":"距离是必填项",
-        "Not authorized for the account": "未授權給此類賬號",
-        "The password does not match":"密碼不匹配",
-        "Email not found, please try another": "此電子郵箱未註冊，請嘗試其他賬號",
+        "Not authorized for the account": "未授权给此账号，请联系管理员",
+        "The password does not match":"密码不匹配",
+        "Please input a password":"请输入一个密码",
+        "Email not found, please try another": "此电子邮箱未注册，请尝试其他邮箱",
+        "Email exists, please try another": "此电子邮箱已注册，请尝试其他邮箱",
         "Delete the project will delete layout, windows, deposite, uploaded files and quotes associate to it. Are you sure to delete this project ?":"删除项目将删除与其关联的布局、窗口、付款、上传的文件和报价。 你确定要删除这个项目吗？"
     }
 }

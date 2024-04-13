@@ -2,7 +2,7 @@ import { get, post, put, del } from "./http";
 import { buildApiUrl } from "./utils";
 
 export const authAPI = {
-  hasEmail: async (data) => {
+  checkEmail: async (data) => {
     const url = buildApiUrl("/email-check");
     return await post(url, data);
   },

@@ -23,6 +23,7 @@ import MDSection from "components/MDSection";
 import MDInput from "components/MDInput";
 import { RoleCheckGroup } from "components/account/RoleCheckGroup";
 import { isValidEmail } from "utils";
+import { authAPI } from "services/authAPI";
 
 const mStyles = {
   root: {
@@ -178,13 +179,19 @@ export default function EmployeeForm() {
     setError({ ...error, roles: "" });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!profile.email) {
       setError({ ...error, email: t("Please input an email address") });
       return;
     } else if (profile.email && !isValidEmail(profile.email)) {
       setError({ ...error, email: t("Please input a valid email address") });
       return;
+    } else {
+      const r = await authAPI.checkEmail({ email: profile.email });
+      if (r.status === 200 && r.data.dup) {
+        setError({ ...error, email: t("Email exists, please try another") });
+        return;
+      }
     }
     if (!profile.roles || profile.roles.length === 0) {
       setError({ ...error, roles: t("Please select one or multiple roles") });
@@ -195,37 +202,35 @@ export default function EmployeeForm() {
       return;
     }
     if (profile._id) {
-      accountAPI.updateAccount(profile._id, profile).then((r) => {
-        if (r.status === 200) {
-          dispatch(setEmployee(r.data));
-          dispatch(
-            setSnackbar({
-              color: "success",
-              icon: "check",
-              title: "",
-              content: t("Updated Successfully!"),
-              open: true,
-            })
-          );
-          navigate("/employees");
-        }
-      });
+      const r = await accountAPI.updateAccount(profile._id, profile);
+      if (r.status === 200) {
+        dispatch(setEmployee(r.data));
+        dispatch(
+          setSnackbar({
+            color: "success",
+            icon: "check",
+            title: "",
+            content: t("Updated Successfully!"),
+            open: true,
+          })
+        );
+        navigate("/employees");
+      }
     } else {
-      accountAPI.createAccount(profile).then((r) => {
-        if (r.status === 200) {
-          dispatch(setEmployee(r.data));
-          dispatch(
-            setSnackbar({
-              color: "success",
-              icon: "check",
-              title: "",
-              content: t("Created Successfully!"),
-              open: true,
-            })
-          );
-          navigate("/employees");
-        }
-      });
+      const r = await accountAPI.createAccount(profile);
+      if (r.status === 200) {
+        dispatch(setEmployee(r.data));
+        dispatch(
+          setSnackbar({
+            color: "success",
+            icon: "check",
+            title: "",
+            content: t("Created Successfully!"),
+            open: true,
+          })
+        );
+        navigate("/employees");
+      }
     }
   };
   // ProfileForm
@@ -258,7 +263,7 @@ export default function EmployeeForm() {
                     </Grid>
                   </Grid>
                   <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                    <Grid item xs={3}>
+                    <Grid item xs={4} sm={3}>
                       <MDInput
                         name="firstName"
                         label={t("First Name")}
@@ -268,7 +273,7 @@ export default function EmployeeForm() {
                         FormHelperTextProps={error && error.firstName ? { error: true } : null}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={4} sm={3}>
                       <MDInput
                         name="middleName"
                         label={t("Middle Name")}
@@ -276,7 +281,7 @@ export default function EmployeeForm() {
                         onChange={handleMiddleNameChange}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={4} sm={3}>
                       <MDInput
                         name="lastName"
                         label={t("Last Name")}
@@ -299,7 +304,7 @@ export default function EmployeeForm() {
                         FormHelperTextProps={error && error.employeeId ? { error: true } : null}
                       />
                     </Grid> */}
-                    <Grid item xs={3}>
+                    <Grid item xs={12} sm={3}>
                       <MDInput
                         readOnly={profile._id}
                         name="email"
@@ -311,7 +316,7 @@ export default function EmployeeForm() {
                         FormHelperTextProps={error && error.email ? { error: true } : null}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} sm={3}>
                       <MDInput
                         name="phone"
                         label={t("Phone")}
@@ -324,7 +329,7 @@ export default function EmployeeForm() {
                     </Grid>
                   </Grid>
                   <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                    <Grid item xs={3}>
+                    <Grid item xs={6} sm={3}>
                       <MDInput
                         name="username"
                         label={t("Username")}
@@ -337,7 +342,7 @@ export default function EmployeeForm() {
               )}
               <MDSection title={t("Belong to")}>
                 {profile && (
-                  <Grid item xs={5}>
+                  <Grid item xs={12} sm={5}>
                     <MDSelect
                       name="branch"
                       label={t("Branch")}

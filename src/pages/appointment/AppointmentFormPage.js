@@ -95,27 +95,30 @@ export default function AppointmentFormPage() {
     }
   }, [appointment]);
 
-  const validate = (mode) => {
-    const errs = {};
-    if (!data.firstName) {
-      errs["firstName"] = "Please enter your first name";
+  const validate = (data) => {
+    let hasError = false;
+    if (!data.id) {
+      setError({ project: t("Please select a project") });
+      return true;
     }
-    if (!data.lastName) {
-      errs["lastName"] = "Please enter your last name";
+    if (!data.type) {
+      setError({ type: t("Please select a type") });
+      return true;
+    } else {
+      if (!data.employee) {
+        setError({ employee: t("Please select an employee") });
+        return true;
+      }
     }
-    if (!data.email) {
-      errs["email"] = "Please enter your email";
-    } else if (!isValidEmail(data.email)) {
-      errs["email"] = "Invalid email format";
+    if (!data.start) {
+      setError({ timeRange: t("Please select a start and an end time") });
+      return true;
     }
-    if (!data.phone) {
-      errs["phone"] = "Please enter your phone number";
+    if (!data.end) {
+      setError({ timeRange: t("Please select a start and an end time") });
+      return true;
     }
-
-    // if (mode === "new" && !data.account.password) {
-    //   errs["password"] = "Please enter your password";
-    // }
-    return errs;
+    return hasError;
   };
 
   const handleAddressChange = (obj) => {
@@ -161,20 +164,8 @@ export default function AppointmentFormPage() {
   };
 
   const handleSubmit = () => {
-    if (!data.id) {
-      setError({ project: "Please select a project" });
-      return;
-    }
-    if (!data.type) {
-      setError({ type: "Please select a type" });
-      return;
-    }
-    if (!data.start) {
-      setError({ timeRange: "Please select start and end date time" });
-      return;
-    }
-    if (!data.end) {
-      setError({ timeRange: "Please select start and end date time" });
+    const hasErr = validate(data);
+    if (hasErr) {
       return;
     }
     if (data._id) {
@@ -228,6 +219,7 @@ export default function AppointmentFormPage() {
         project: { _id: project._id },
         address: project.address,
         client: project.client,
+        branch: project.branch,
         // employee: data.type === "measure" ? project.sales : project.technician,
       });
       setError({ ...error, project: "" });
@@ -248,46 +240,34 @@ export default function AppointmentFormPage() {
           {data && (
             <MDSection>
               <Grid container xs={12} spacing={2}>
-                <Grid item xs={3}>
+                <Grid item xs={12} sm={3}>
                   <MDInput
                     readOnly
                     name="project"
-                    label={t("Order #")}
+                    label={`${t("Order #")}*`}
                     value={data && data.id ? data.id : ""}
                     onClick={() => handleOpenBackdrop()}
-                    helperText={error && error.project ? error.project : ""}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container xs={12} spacing={2}>
-                {/* {data && !data._id && (
-                  <Grid item xs={12} sm={10} md={10} lg={8} xl={8} pt={2}>
-                    <FormGroup>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={sameAddress}
-                            onChange={handleSameAddrCheckboxChange}
-                            inputProps={{ "aria-label": "controlled" }}
-                          />
-                        }
-                        label={t("Same as Client's Home Address")}
-                      />
-                    </FormGroup>
-                  </Grid>
-                )} */}
-                <Grid item xs={12} sm={10} md={10} lg={8} xl={8}>
-                  <AddressForm
-                    readOnly={true}
-                    address={data ? data.address : {}}
-                    onChange={handleAddressChange}
+                    FormHelperTextProps={error && error.project ? { error: true } : null}
+                    helperText={error && error.project ? t("Please select a project") : ""}
                   />
                 </Grid>
               </Grid>
 
+              <Grid container xs={12} spacing={2}>
+                {data && data.project && (
+                  <Grid item xs={12} sm={10} md={10} lg={8} xl={8}>
+                    <AddressForm
+                      readOnly={true}
+                      address={data ? data.address : {}}
+                      onChange={handleAddressChange}
+                    />
+                  </Grid>
+                )}
+              </Grid>
+
               {data.client && (
                 <Grid container xs={12} spacing={2} style={{ marginTop: 25 + "px" }}>
-                  <Grid item xs={3}>
+                  <Grid item xs={12} sm={3}>
                     <MDInput
                       readOnly
                       label={t("Client")}

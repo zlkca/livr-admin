@@ -125,29 +125,30 @@ export default function AppointmentForm({ data, error, onChange }) {
   return (
     <Grid container title={t("Appointment")} styles={mStyles.root}>
       <Grid container item xs={12} spacing={2} display="flex">
-        <Grid item xs={3}>
+        <Grid item xs={6} sm={3}>
           <MDSelect
             label={t("Type")}
             value={data ? data.type : ""} // controlled
             options={typeOptions}
             onChange={handleTypeChange} // (event, child) => { }
           />
-          {error && error.type && <div style={mStyles.error}>{error.type}</div>}
+          {error && error.type && <div style={mStyles.error}>{t("Please select a type")}</div>}
         </Grid>
         {data && data.type && (
-          <Grid item xs={3}>
+          <Grid item xs={6} sm={3}>
             <MDInput
               readOnly
               label={data.type === "measure" ? t("Field Sales") : t("Technician")}
               value={data.employee ? data.employee.username : ""}
               onClick={() => handleOpenBackdrop(data.type)}
-              helperText={error && error.sales ? error.sales : ""}
+              helperText={error && error.employee ? error.employee : ""}
+              FormHelperTextProps={error && error.employee ? { error: true } : null}
             />
           </Grid>
         )}
       </Grid>
       <Grid container item xs={12} spacing={2} display="flex" pt={2}>
-        <Grid item xs={5} pb={2}>
+        <Grid item xs={12} sm={5} pb={2}>
           <DateRangePicker
             size="lg"
             format="yyyy-MM-dd HH:mm"
@@ -163,7 +164,7 @@ export default function AppointmentForm({ data, error, onChange }) {
         </Grid>
       </Grid>
       <Grid container xs={12} spacing={2} style={{ marginTop: 15 }}>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <MDInput
             name="notes"
             label={t("Notes")}
