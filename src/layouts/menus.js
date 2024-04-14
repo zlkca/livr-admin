@@ -1,6 +1,10 @@
 import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
-
+import BusinessIcon from "@mui/icons-material/Business";
+import BadgeIcon from "@mui/icons-material/Badge";
+import GroupsIcon from "@mui/icons-material/Groups";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 // @mui icons
 import Icon from "@mui/material/Icon";
 import EmployeeListPage from "pages/employee/EmployeeListPage";
@@ -25,7 +29,7 @@ const menus = [
     type: "collapse",
     name: "Branches",
     key: "branches",
-    icon: <Icon fontSize="small">table_view</Icon>,
+    icon: <BusinessIcon fontSize="small" color="white" />,
     route: "/branches",
     component: <BranchList />,
   },
@@ -33,7 +37,7 @@ const menus = [
     type: "collapse",
     name: "Employees",
     key: "employees",
-    icon: <Icon fontSize="small">table_view</Icon>,
+    icon: <BadgeIcon fontSize="small" color="white" />,
     route: "/employees",
     component: <EmployeeListPage />,
   },
@@ -41,7 +45,7 @@ const menus = [
     type: "collapse",
     name: "Clients",
     key: "clients",
-    icon: <Icon fontSize="small">table_view</Icon>,
+    icon: <GroupsIcon fontSize="small" color="white" />,
     route: "/clients",
     component: <ClientListPage />,
   },
@@ -49,7 +53,7 @@ const menus = [
     type: "collapse",
     name: "Projects",
     key: "projects",
-    icon: <Icon fontSize="small">table_view</Icon>,
+    icon: <AssignmentIcon fontSize="small" color="white" />,
     route: "/projects",
     component: <ProjectListPage />,
   },
@@ -57,7 +61,7 @@ const menus = [
     type: "collapse",
     name: "Appointments",
     key: "appointments",
-    icon: <Icon fontSize="small">table_view</Icon>,
+    icon: <CalendarMonthIcon fontSize="small" color="white" />,
     route: "/appointments",
     component: <AppointmentsPage />,
   },

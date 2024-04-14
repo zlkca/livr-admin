@@ -282,64 +282,58 @@ export default function ProjectForm() {
             <Card>
               <CardHead title={data._id ? t("Edit Project") : t("Create Project")} />
 
-              {1 && (
-                <MDSection title={t("Basic Info")}>
-                  <Grid item xs={12} sm={10} md={10} lg={8} xl={8}>
-                    <MDBox display="flex" alignItems="center" mb={0.5} ml={0}>
-                      <MDBox width="80%" ml={0.5}>
-                        <MDTypography variant="button" fontWeight="regular" color="text">
-                          {`Project #: ${data ? data.id : ""}`}
-                        </MDTypography>
-                      </MDBox>
-                    </MDBox>
+              <MDSection title={t("Basic Info")}>
+                <Grid container xs={12} display="flex" pt={1} spacing={2}>
+                  <Grid item xs={12} sm={4}>
+                    <MDTypography variant="button" fontWeight="regular" color="text">
+                      {`Project #: ${data ? data.id : ""}`}
+                    </MDTypography>
                   </Grid>
-                  <Grid item xs={12} sm={10} md={10} lg={8} xl={8}>
+                </Grid>
+                <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                  <Grid item xs={12} sm={3}>
                     <MDInput
                       readOnly
                       label={t("Client")}
                       value={data && data.client ? data.client.username : ""}
                       onClick={() => handleOpenBackdrop("client")}
-                      style={{ marginTop: 30 }}
                       helperText={error && error.client ? error.client : ""}
                     />
                   </Grid>
-                  <Grid container xs={12} spacing={2} display={"flex"}>
-                    <Grid item xs={3}>
-                      <MDInput
-                        readOnly
-                        label={t("Sales")}
-                        value={data && data.sales ? data.sales.username : ""}
-                        onClick={() => handleOpenBackdrop("sales")}
-                        style={{ marginTop: 30 }}
-                        helperText={error && error.sales ? error.sales : ""}
-                      />
-                    </Grid>
-                    <Grid item xs={3}>
-                      <MDInput
-                        readOnly
-                        label={t("Branch")}
-                        style={{ marginTop: 30 }}
-                        value={data.branch ? data.branch.name : ""}
-                      />
-                    </Grid>
+                </Grid>
+                <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                  <Grid item xs={6} sm={3}>
+                    <MDInput
+                      readOnly
+                      label={t("Sales")}
+                      value={data && data.sales ? data.sales.username : ""}
+                      onClick={() => handleOpenBackdrop("sales")}
+                      helperText={error && error.sales ? error.sales : ""}
+                    />
                   </Grid>
+                  <Grid item xs={6} sm={3}>
+                    <MDInput
+                      readOnly
+                      label={t("Branch")}
+                      value={data.branch ? data.branch.name : ""}
+                    />
+                  </Grid>
+                </Grid>
 
-                  <Grid item xs={12} sm={10} md={10} lg={8} xl={8}>
-                    <div style={mStyles.row}>
-                      <MDInput
-                        name="notes"
-                        label={t("Notes")}
-                        value={data ? data.notes : ""} // controlled
-                        onChange={handleNotesChange}
-                        // styles={{ root: { width: 500, float: "left" } }}
-                        maxRows={5}
-                        minRows={5}
-                        multiline
-                      />
-                    </div>
+                <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <MDInput
+                      name="notes"
+                      label={t("Notes")}
+                      value={data ? data.notes : ""} // controlled
+                      onChange={handleNotesChange}
+                      maxRows={5}
+                      minRows={5}
+                      multiline
+                    />
                   </Grid>
-                </MDSection>
-              )}
+                </Grid>
+              </MDSection>
               {data && (
                 <MDSection title={t("Address")}>
                   {data && !data._id && (

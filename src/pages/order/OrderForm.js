@@ -361,8 +361,8 @@ export default function OrderForm() {
                 <CardHead title={data._id ? t("Edit Order") : t("Create Order")} />
 
                 <MDSection title={t("Basic Info")}>
-                  <Grid container spacing={2} style={{ marginTop: 15 }}>
-                    <Grid item xs={3}>
+                  <Grid container xs={12} display="flex" pt={1} spacing={2}>
+                    <Grid item xs={12} sm={3}>
                       <MDInput
                         name="project"
                         label={t("Order #")}
@@ -373,22 +373,22 @@ export default function OrderForm() {
                     </Grid>
                   </Grid>
 
-                  <Grid container spacing={2} style={{ marginTop: 15 }}>
-                    <Grid item xs={3}>
+                  <Grid container xs={12} display="flex" pt={1} spacing={2}>
+                    <Grid item xs={12} sm={3}>
                       <MDInput
                         readOnly
                         label={t("Branch")}
                         value={data.branch ? data.branch.name : ""}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} sm={3}>
                       <MDInput
                         readOnly
                         label={t("Sales")}
                         value={data.sales ? data.sales.username : ""}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} sm={3}>
                       <MDInput
                         readOnly
                         label={t("Client")}
@@ -396,8 +396,8 @@ export default function OrderForm() {
                       />
                     </Grid>
                   </Grid>
-                  <Grid container spacing={2} style={{ marginTop: 15 }}>
-                    <Grid item xs={3}>
+                  <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                    <Grid item xs={6} sm={3}>
                       <MDInput
                         name="amount"
                         type="number"
@@ -407,7 +407,7 @@ export default function OrderForm() {
                         helperText={error && error.amount ? error.amount : ""}
                       />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={6} sm={3}>
                       {data && (
                         <MDSelect
                           name="taxOpt"
@@ -420,8 +420,8 @@ export default function OrderForm() {
                       {error && error.taxOpt && <div style={mStyles.error}>{error.taxOpt}</div>}
                     </Grid>
                   </Grid>
-                  <Grid item xs={12} sm={10} md={10} lg={8} xl={8}>
-                    <div style={mStyles.row}>
+                  <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                    <Grid item xs={12} sm={3}>
                       <MDInput
                         name="notes"
                         label={t("Notes")}
@@ -431,12 +431,12 @@ export default function OrderForm() {
                         minRows={5}
                         multiline
                       />
-                    </div>
+                    </Grid>
                   </Grid>
                 </MDSection>
                 <MDSection title={t("Deposit")}>
-                  <Grid container spacing={2} style={{ marginTop: 15 }}>
-                    <Grid item xs={3}>
+                  <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                    <Grid item xs={6} sm={3}>
                       <MDInput
                         name="deposit"
                         type="number"
@@ -447,7 +447,7 @@ export default function OrderForm() {
                       />
                     </Grid>
                     {data && !data._id && (
-                      <Grid item xs={3}>
+                      <Grid item xs={6} sm={3}>
                         <FormGroup>
                           <FormControlLabel
                             control={
@@ -464,8 +464,8 @@ export default function OrderForm() {
                     )}
                   </Grid>
                   {data && data.depositPaid && (
-                    <Grid container spacing={2} style={{ marginTop: 15 }}>
-                      <Grid item xs={3}>
+                    <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                      <Grid item xs={6} sm={3}>
                         <MDSelect
                           name="paymentMethod"
                           label={t("Method")}

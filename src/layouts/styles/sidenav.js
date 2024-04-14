@@ -1,3 +1,6 @@
+import { useSelector } from "react-redux";
+import { selectUI } from "redux/ui/ui.selector";
+
 /**
 =========================================================
 * Material Dashboard 2 React - v2.2.0
@@ -12,9 +15,9 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-export default function sidenavLogoLabel(theme, ownerState) {
+export default function sidenavLogoLabel(theme) {
   const { functions, transitions, typography, breakpoints } = theme;
-  const { miniSidenav } = ownerState;
+  const { miniSidenav } = useSelector(selectUI);
 
   const { pxToRem } = functions;
   const { fontWeightMedium } = typography;

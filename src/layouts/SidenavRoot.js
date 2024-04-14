@@ -16,12 +16,14 @@ Coded by www.creative-tim.com
 // @mui material components
 import Drawer from "@mui/material/Drawer";
 import { styled } from "@mui/material/styles";
+import { useSelector } from "react-redux";
+import { selectUI } from "redux/ui/ui.selector";
 
-export default styled(Drawer)(({ theme, ownerState }) => {
+const MaxSidebarWidth = 250;
+
+export default styled(Drawer)(({ theme }) => {
   const { palette, boxShadows, transitions, breakpoints, functions } = theme;
-  const { transparentSidenav, whiteSidenav, miniSidenav, darkMode } = ownerState;
-
-  const sidebarWidth = 250;
+  const { transparentSidenav, miniSidenav } = useSelector(selectUI);
   const { transparent, gradients, white, background } = palette;
   const { xxl } = boxShadows;
   const { pxToRem, linearGradient } = functions;
@@ -50,7 +52,7 @@ export default styled(Drawer)(({ theme, ownerState }) => {
       boxShadow: transparentSidenav ? "none" : xxl,
       marginBottom: transparentSidenav ? 0 : "inherit",
       left: "0",
-      width: sidebarWidth,
+      width: MaxSidebarWidth,
       transform: "translateX(0)",
       transition: transitions.create(["width", "background-color"], {
         easing: transitions.easing.sharp,
@@ -86,7 +88,6 @@ export default styled(Drawer)(({ theme, ownerState }) => {
     "& .MuiDrawer-paper": {
       boxShadow: xxl,
       border: "none",
-
       ...(miniSidenav ? drawerCloseStyles() : drawerOpenStyles()),
     },
   };

@@ -50,8 +50,7 @@ import { getUiPath } from "utils";
 function Sidenav({ color, brand, brandName, menus, ...rest }) {
   const dispatch = useDispatch();
 
-  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } =
-    useSelector(selectUI);
+  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode } = useSelector(selectUI);
 
   const location = useLocation();
   const collapseName = getUiPath(location.pathname);
@@ -91,14 +90,11 @@ function Sidenav({ color, brand, brandName, menus, ...rest }) {
   }, [dispatch, location]);
 
   return (
-    <SidenavRoot
-      {...rest}
-      variant="permanent"
-      ownerState={{ transparentSidenav, whiteSidenav, miniSidenav, darkMode }}
-    >
+    <SidenavRoot {...rest} variant="permanent">
       <MDBox pt={3} pb={1} px={4} textAlign="center">
         <MDBox
           display={{ xs: "block", xl: "none" }}
+          // display={{ xs: "block" }}
           position="absolute"
           top={0}
           right={0}

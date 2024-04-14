@@ -25,58 +25,114 @@ import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
+import theme from "assets/theme/index";
 
 // Custom styles for the SidenavCollapse
-import {
-  collapseItem,
-  collapseIconBox,
-  collapseIcon,
-  collapseText,
-} from "./styles/sidenavCollapse";
+import { collapseIconBox, collapseIcon, collapseText } from "./styles/sidenavCollapse";
 
 import { selectUI } from "../redux/ui/ui.selector";
 
-function SidenavCollapse({ icon, name, active, ...rest }) {
+function collapseItem(theme, active, sidenavColor) {
+  const { palette, transitions, breakpoints, boxShadows, borders, functions } = theme;
+
+  const { white, transparent, dark, grey, gradients } = palette;
+  const { md } = boxShadows;
+  const { borderRadius } = borders;
+  const { pxToRem, rgba, linearGradient } = functions;
+
+  return {
+    background: active
+      ? linearGradient(gradients[sidenavColor].main, gradients[sidenavColor].state)
+      : transparent.main,
+    // color: !active ? dark.main : white.main,
+    color: white.main,
+    display: "flex",
+    alignItems: "center",
+    width: "100%",
+    padding: `${pxToRem(8)} ${pxToRem(10)}`,
+    margin: `${pxToRem(1.5)} ${pxToRem(16)}`,
+    borderRadius: borderRadius.md,
+    cursor: "pointer",
+    userSelect: "none",
+    whiteSpace: "nowrap",
+    boxShadow: active ? md : "none",
+    [breakpoints.up("xl")]: {
+      transition: transitions.create(["box-shadow", "background-color"], {
+        easing: transitions.easing.easeInOut,
+        duration: transitions.duration.shorter,
+      }),
+    },
+    "& span": { color: white.main },
+    "&:hover, &:focus": {
+      color: active ? white.main : dark.main,
+      backgroundColor: active ? null : grey[600],
+    },
+  };
+}
+
+function SidenavCollapse({ icon, name, active }) {
+  // , ...rest
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } =
     useSelector(selectUI);
 
+  const { palette } = theme;
+  const { white, transparent, dark, grey, gradients } = palette;
   return (
     <ListItem component="li">
       <MDBox
-        {...rest}
-        sx={(theme) =>
-          collapseItem(theme, {
-            active,
-            transparentSidenav,
-            whiteSidenav,
-            darkMode,
-            sidenavColor,
-          })
-        }
+        // {...rest}
+        sx={(theme) => collapseItem(theme, active, sidenavColor)}
       >
         <ListItemIcon
-          sx={(theme) =>
-            collapseIconBox(theme, { transparentSidenav, whiteSidenav, darkMode, active })
-          }
+          sx={{
+            // color: white.main,
+            "& svg, svg g": { fontSize: 16 },
+            "&:hover, &:focus": {
+              color: dark.main,
+            },
+          }}
+          // sx={(theme) =>
+          //   collapseIconBox(theme, { transparentSidenav, whiteSidenav, darkMode, active })
+          // }
         >
           {typeof icon === "string" ? (
-            <Icon sx={(theme) => collapseIcon(theme, { active })}>{icon}</Icon>
+            <Icon
+              sx={{
+                // color: white.main,
+                fontSize: 16,
+                // "&:hover, &:focus": {
+                //   color: dark.main,
+                // },
+              }}
+              // sx={(theme) => collapseIcon(theme, { active })}
+            >
+              {icon}
+            </Icon>
           ) : (
             icon
           )}
         </ListItemIcon>
 
+        {/* {!miniSidenav && ( */}
         <ListItemText
           primary={name}
-          sx={(theme) =>
-            collapseText(theme, {
-              miniSidenav,
-              transparentSidenav,
-              whiteSidenav,
-              active,
-            })
-          }
+          sx={{
+            // color: white.main,
+            "& span": { fontSize: 16 },
+            // "&:hover, &:focus": {
+            //   color: dark.main,
+            // },
+          }}
+          // sx={(theme) =>
+          //   collapseText(theme, {
+          //     miniSidenav,
+          //     transparentSidenav,
+          //     whiteSidenav,
+          //     active,
+          //   })
+          // }
         />
+        {/* )} */}
       </MDBox>
     </ListItem>
   );
