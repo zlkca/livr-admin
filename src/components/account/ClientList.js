@@ -34,7 +34,7 @@ export default function ClientList(props) {
   const clients = useSelector(selectClients);
   const [isLoading, setLoading] = useState();
   const [selectedRow, setSelectedRow] = useState();
-  const [searchMode, setSearchMode] = useState("month");
+  const [searchMode, setSearchMode] = useState("range");
 
   const today = new Date();
   const [searchMonth, setSearchMonth] = useState(today);

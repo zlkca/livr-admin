@@ -12,15 +12,16 @@ import Footer from "layouts/Footer";
 import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
 import MDBox from "components/MDBox";
-import { StageMap } from "const";
-import { sourceOptions } from "const";
+import { StageMap, sourceOptions } from "const";
 import { orderAPI } from "services/orderAPI";
 import { selectBranches } from "redux/branch/branch.selector";
 import { branchAPI } from "services/branchAPI";
 import { setBranches } from "redux/branch/branch.slice";
-import { numToString } from "utils";
 import { getFirstDayOfMonth, getLastDayOfMonth, getPrevMonthRange, getNextMonthRange } from "utils";
 import MDButton from "components/MDButton";
+import DashboardFilter from "components/DashboardFilter";
+import { numToString, isValidDate, getFirstDayOfYear, getLastDayOfYear } from "utils";
+
 const months = [
   "January",
   "February",
@@ -45,33 +46,157 @@ export default function DashboardPage() {
   const [nClients, setNumOfClients] = useState("0");
   const [monthData, setMonth] = useState();
 
-  useEffect(() => {
-    const d = new Date();
-    const firstDay = getFirstDayOfMonth(d.getFullYear(), d.getMonth());
-    const lastDay = getLastDayOfMonth(d.getFullYear(), d.getMonth());
-    setMonth({ firstDay, lastDay, iMonth: d.getMonth(), year: d.getFullYear() });
-  }, []);
+  const d = new Date();
+  const [filterMode, setFilterMode] = useState("month");
+  const [dateRangeQuery, setDateRangeQuery] = useState({}); // this month
+  const [filterMonth, setFilterMonth] = useState(d);
+  const [filterYear, setFilterYear] = useState(d.getFullYear());
 
-  const [receivedMonthly, setReceivedMonthly] = useState({
+  const [receivedByBranch, setReceivedByBranch] = useState({
     labels: [],
     datasets: { label: t("Received Payments"), data: [] },
   });
 
-  const [receivableMonthly, setReceivableMonthly] = useState({
+  const [receivableByBranch, setReceivableByBranch] = useState({
     labels: [],
     datasets: { label: t("Receivable Payments"), data: [] },
   });
 
   const [projectsByStage, setProjectsByStage] = useState({
     labels: Object.keys(StageMap).map((k) => t(k)),
-    datasets: { label: t("Projects this month"), data: [] },
+    datasets: { label: t("Projects"), data: [] },
   });
 
   const [clientsBySource, setClientsBySource] = useState({
     labels: [],
-    datasets: { label: t("Clients this month"), data: [] },
+    datasets: { label: t("Clients"), data: [] },
   });
 
+  const handleFilterModeChange = (mode) => {
+    if (mode === "year") {
+      setFilterMode("year");
+      handleFilterYear(filterYear);
+    } else if (mode === "month") {
+      setFilterMode("month");
+      handleFilterMonth(filterMonth);
+    } else {
+      setFilterMode("all");
+    }
+  };
+
+  const handleFilterMonth = (d) => {
+    if (d && isValidDate(d)) {
+      const m = d.getMonth();
+      const y = d.getFullYear();
+      const firstDay = getFirstDayOfMonth(y, m);
+      const lastDay = getLastDayOfMonth(y, m);
+      const fd = `${firstDay.toISOString()}`;
+      const ld = `${lastDay.toISOString()}`;
+      setDateRangeQuery({
+        created: {
+          $gte: fd,
+          $lte: ld,
+        },
+      });
+      setFilterMonth(firstDay);
+    }
+  };
+
+  const handleFilterYear = (year) => {
+    if (year && year < 10000 && year > 1900) {
+      const firstDay = getFirstDayOfYear(year);
+      const lastDay = getLastDayOfYear(year);
+      const fd = `${firstDay.toISOString()}`;
+      const ld = `${lastDay.toISOString()}`;
+      setDateRangeQuery({
+        created: {
+          $gte: fd,
+          $lte: ld,
+        },
+      });
+      setFilterYear(year);
+    }
+  };
+
+  useEffect(() => {
+    branchAPI.fetchBranches().then((r1) => {
+      if (r1.status === 200) {
+        dispatch(setBranches(r1.data));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (filterMode === "year") {
+      handleFilterYear(filterYear);
+    } else if (filterMode === "month") {
+      handleFilterMonth(filterMonth);
+    } else {
+      setDateRangeQuery({});
+    }
+  }, [filterMode]);
+
+  useEffect(() => {
+    // const d = new Date();
+    // const firstDay = getFirstDayOfMonth(d.getFullYear(), d.getMonth());
+    // const lastDay = getLastDayOfMonth(d.getFullYear(), d.getMonth());
+    // setMonth({ firstDay, lastDay, iMonth: d.getMonth(), year: d.getFullYear() });
+
+    projectAPI.searchProjects({ ...dateRangeQuery }).then((r) => {
+      setNumOfProjects(r.data.length);
+      const map = { ...StageMap };
+      for (let k in map) {
+        map[k] = 0;
+      }
+      for (let i in r.data) {
+        const k = r.data[i].stage;
+        map[k]++;
+      }
+      setProjectsByStage({
+        ...projectsByStage,
+        datasets: {
+          label: t("Projects this month"),
+          data: Object.values(map),
+        },
+      });
+    });
+
+    accountAPI
+      .searchAccounts({
+        roles: ["client"],
+        ...dateRangeQuery,
+      })
+      .then((r) => {
+        const map = {};
+        const arr = [];
+
+        setNumOfClients(r.data.length);
+
+        for (let i in sourceOptions) {
+          const k = sourceOptions[i].value;
+          map[k] = 0;
+        }
+        for (let i in r.data) {
+          const k = r.data[i].source;
+          map[k]++;
+        }
+        for (let i in sourceOptions) {
+          const key = sourceOptions[i].value;
+          arr.push({ key, count: map[key] });
+        }
+        arr.sort((a, b) => b.count - a.count);
+        const tops = arr.slice(0, 5);
+        setClientsBySource({
+          labels: tops.map((it) => t(it.key)),
+          datasets: {
+            label: t("Top 5 Clients this month"),
+            data: tops.map((it) => it.count),
+          },
+        });
+      });
+  }, [dateRangeQuery]);
+
+  // orders by branch
   function getOrderMap(orders, branches) {
     let totalMap = {};
     let balanceMap = {};
@@ -98,121 +223,33 @@ export default function DashboardPage() {
   }
 
   useEffect(() => {
-    branchAPI.fetchBranches().then((r1) => {
-      if (r1.status === 200) {
-        setReceivableMonthly({ ...receivableMonthly, labels: r1.data.map((it) => it.name) });
-        setReceivedMonthly({ ...receivedMonthly, labels: r1.data.map((it) => it.name) });
-        dispatch(setBranches(r1.data));
-      }
-    });
+    if (branches && branches.length > 0) {
+      orderAPI.searchOrders({ ...dateRangeQuery }).then((r) => {
+        const map = getOrderMap(r.data, branches);
+        setOrderMap(map);
 
-    if (monthData && monthData.firstDay && monthData.lastDay) {
-      projectAPI
-        .searchProjects({
-          created: {
-            $gte: `${monthData.firstDay.toISOString()}`,
-            $lte: `${monthData.lastDay.toISOString()}`,
+        setReceivableByBranch({
+          ...receivableByBranch,
+          labels: branches.map((k) => t(k.name)),
+          datasets: {
+            label: t("Receivable Payments"),
+            data: branches.map((b) => -parseFloat(map.balanceMap[b._id])),
           },
-        })
-        .then((r) => {
-          setNumOfProjects(r.data.length);
-          const map = { ...StageMap };
-          for (let k in map) {
-            map[k] = 0;
-          }
-          for (let i in r.data) {
-            const k = r.data[i].stage;
-            map[k]++;
-          }
-          setProjectsByStage({
-            ...projectsByStage,
-            datasets: {
-              label: t("Projects this month"),
-              data: Object.values(map),
-            },
-          });
-          // dispatch(setProjects(r.data));
         });
 
-      accountAPI
-        .searchAccounts({
-          roles: ["client"],
-          created: {
-            $gte: `${monthData.firstDay.toISOString()}`,
-            $lte: `${monthData.lastDay.toISOString()}`,
+        setReceivedByBranch({
+          ...receivedByBranch,
+          labels: branches.map((k) => t(k.name)),
+          datasets: {
+            label: t("Received Payments"),
+            data: branches.map(
+              (b) => parseFloat(map.totalMap[b._id]) + parseFloat(map.balanceMap[b._id])
+            ),
           },
-        })
-        .then((r) => {
-          const map = {};
-          const arr = [];
-
-          setNumOfClients(r.data.length);
-
-          for (let i in sourceOptions) {
-            const k = sourceOptions[i].value;
-            map[k] = 0;
-          }
-          for (let i in r.data) {
-            const k = r.data[i].source;
-            map[k]++;
-          }
-          for (let i in sourceOptions) {
-            const key = sourceOptions[i].value;
-            arr.push({ key, count: map[key] });
-          }
-          arr.sort((a, b) => b.count - a.count);
-          const tops = arr.slice(0, 5);
-          setClientsBySource({
-            labels: tops.map((it) => t(it.key)),
-            datasets: {
-              label: t("Top 5 Clients this month"),
-              data: tops.map((it) => it.count),
-            },
-          });
-          // dispatch(setProjects(r.data));
         });
-    }
-  }, [monthData]);
-
-  useEffect(() => {
-    if (branches && branches.length > 0 && monthData && monthData.firstDay && monthData.firstDay) {
-      orderAPI
-        .searchOrders({
-          created: {
-            $gte: `${monthData.firstDay.toISOString()}`,
-            $lte: `${monthData.lastDay.toISOString()}`,
-          },
-        })
-        .then((r) => {
-          const t = getOrderMap(r.data, branches);
-          setOrderMap(t);
-        });
-    }
-  }, [branches]);
-
-  useEffect(() => {
-    if (orderMap && orderMap.balanceMap && Object.keys(orderMap.balanceMap).length) {
-      setReceivableMonthly({
-        ...receivableMonthly,
-        labels: receivableMonthly.labels.map((k) => t(k)),
-        datasets: {
-          label: t("Receivable Payments"),
-          data: branches.map((b) => -parseFloat(orderMap.balanceMap[b._id])),
-        },
-      });
-
-      setReceivedMonthly({
-        ...receivedMonthly,
-        labels: receivedMonthly.labels.map((k) => t(k)),
-        datasets: {
-          label: t("Received Payments"),
-          data: branches.map(
-            (b) => parseFloat(orderMap.totalMap[b._id]) + parseFloat(orderMap.balanceMap[b._id])
-          ),
-        },
       });
     }
-  }, [orderMap]);
+  }, [branches, dateRangeQuery]);
 
   const handlePrevMonth = () => {
     const m = getPrevMonthRange(monthData.firstDay);
@@ -223,12 +260,31 @@ export default function DashboardPage() {
     const m = getNextMonthRange(monthData.firstDay);
     setMonth(m);
   };
+
+  const getCardLabel = () => {
+    if (filterMode === "year") {
+      return filterYear;
+    } else if (filterMode === "month") {
+      return t(months[filterMonth.getMonth()]);
+    } else {
+      return t("All");
+    }
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox pb={0}>
         <Grid container spacing={2} pb={1}>
-          <Grid item>
+          <DashboardFilter
+            mode={filterMode}
+            year={filterYear}
+            month={filterMonth}
+            onModeChange={handleFilterModeChange}
+            onYearChange={handleFilterYear}
+            onMonthChange={handleFilterMonth}
+          />
+          {/* <Grid item>
             <MDButton color="info" variant={"outlined"} size="small" onClick={handlePrevMonth}>
               {t("Prev Month")}
             </MDButton>
@@ -237,26 +293,24 @@ export default function DashboardPage() {
             <MDButton color="info" variant={"outlined"} size="small" onClick={handleNextMonth}>
               {t("Next Month")}
             </MDButton>
-          </Grid>
+          </Grid> */}
         </Grid>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={2}>
-            {orderMap && monthData && (
-              <StatisticsCard
-                color="dark"
-                icon="weekend"
-                title={t("Clients")}
-                count={nClients}
-                percentage={{
-                  color: "success",
-                  amount: "",
-                  label: t(months[monthData.iMonth]),
-                }}
-              />
-            )}
+            <StatisticsCard
+              color="dark"
+              icon="weekend"
+              title={t("Clients")}
+              count={nClients}
+              percentage={{
+                color: "success",
+                amount: "",
+                label: getCardLabel(),
+              }}
+            />
           </Grid>
           <Grid item xs={12} md={6} lg={2}>
-            {orderMap && monthData && (
+            {orderMap && (
               <StatisticsCard
                 icon="leaderboard"
                 title={t("Received")}
@@ -264,13 +318,13 @@ export default function DashboardPage() {
                 percentage={{
                   color: "success",
                   amount: "",
-                  label: t(months[monthData.iMonth]),
+                  label: getCardLabel(),
                 }}
               />
             )}
           </Grid>
           <Grid item xs={12} md={6} lg={2}>
-            {orderMap && monthData && (
+            {orderMap && (
               <StatisticsCard
                 color="success"
                 icon="store"
@@ -279,13 +333,13 @@ export default function DashboardPage() {
                 percentage={{
                   color: "success",
                   amount: "",
-                  label: t(months[monthData.iMonth]),
+                  label: getCardLabel(),
                 }}
               />
             )}
           </Grid>
           <Grid item xs={12} md={6} lg={2}>
-            {orderMap && monthData && (
+            {orderMap && (
               <StatisticsCard
                 color="success"
                 icon="store"
@@ -294,71 +348,65 @@ export default function DashboardPage() {
                 percentage={{
                   color: "success",
                   amount: "",
-                  label: t(months[monthData.iMonth]),
+                  label: getCardLabel(),
                 }}
               />
             )}
           </Grid>
           <Grid item xs={12} md={6} lg={2}>
-            {monthData && (
-              <StatisticsCard
-                color="primary"
-                icon="person_add"
-                title={t("Projects")}
-                count={nProjects}
-                percentage={{
-                  color: "success",
-                  amount: "",
-                  label: t(months[monthData.iMonth]),
-                }}
-              />
-            )}
+            <StatisticsCard
+              color="primary"
+              icon="person_add"
+              title={t("Projects")}
+              count={nProjects}
+              percentage={{
+                color: "success",
+                amount: "",
+                label: getCardLabel(),
+              }}
+            />
           </Grid>
         </Grid>
-        {monthData && (
-          <Grid container spacing={3} style={{ marginTop: 30 }}>
-            <Grid item xs={12} md={4} lg={4}>
-              <BarChartCard
-                color="#EF5350"
-                title={t("Projects")}
-                description={t("Monthly projects by stage")}
-                date={t(months[monthData.iMonth])}
-                chart={projectsByStage}
-              />
-            </Grid>
-            <Grid item xs={12} md={4} lg={4}>
-              <BarChartCard
-                color="#747b8a"
-                title={t("Clients")}
-                description={t("Monthly clients by source")}
-                date={t(months[monthData.iMonth])}
-                chart={clientsBySource}
-              />
-            </Grid>
-            <Grid item xs={12} md={4} lg={4}>
-              <BarChartCard
-                color="#FFA726"
-                title={t("Receivable")}
-                description={t("Monthly Receivable by branch")}
-                date={t(months[monthData.iMonth])}
-                chart={receivableMonthly}
-              />
-            </Grid>
+        <Grid container spacing={3} style={{ marginTop: 30 }}>
+          <Grid item xs={12} md={4} lg={4}>
+            <BarChartCard
+              color="#EF5350"
+              title={t("Projects")}
+              description={t("Projects by stage")}
+              date={getCardLabel()}
+              chart={projectsByStage}
+            />
           </Grid>
-        )}
-        {monthData && (
-          <Grid container spacing={3} style={{ marginTop: 30 }}>
-            <Grid item xs={12} md={6} lg={4}>
-              <BarChartCard
-                color="#1769aa"
-                title={t("Received Payments")}
-                description={t("Received Payments")}
-                date={t(months[monthData.iMonth])}
-                chart={receivedMonthly}
-              />
-            </Grid>
+          <Grid item xs={12} md={4} lg={4}>
+            <BarChartCard
+              color="#747b8a"
+              title={t("Clients")}
+              description={t("Clients by source")}
+              date={getCardLabel()}
+              chart={clientsBySource}
+            />
           </Grid>
-        )}
+          <Grid item xs={12} md={4} lg={4}>
+            <BarChartCard
+              color="#FFA726"
+              title={t("Receivable")}
+              description={t("Receivable by branch")}
+              date={getCardLabel()}
+              chart={receivableByBranch}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} style={{ marginTop: 30 }}>
+          <Grid item xs={12} md={6} lg={4}>
+            <BarChartCard
+              color="#1769aa"
+              title={t("Received Payments")}
+              description={t("Received Payments")}
+              date={getCardLabel()}
+              chart={receivedByBranch}
+            />
+          </Grid>
+        </Grid>
       </MDBox>
       <Footer />
     </DashboardLayout>

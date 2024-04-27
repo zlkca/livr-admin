@@ -1,17 +1,17 @@
 import { useTranslation } from "react-i18next";
 import { Grid } from "@mui/material";
-import { DatePicker, DateRangePicker, InputNumber, Radio, RadioGroup } from "rsuite";
+import { DatePicker, InputNumber, Radio, RadioGroup } from "rsuite";
 import "rsuite/dist/rsuite-no-reset.min.css";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-export default function DateRangeFilter({
+// import { Unstable_NumberInput as NumberInput } from "@mui/base/Unstable_NumberInput";
+
+export default function DashboardFilter({
   mode,
   onModeChange,
   year,
   onYearChange,
   month,
   onMonthChange,
-  range,
-  onRangeChange,
 }) {
   const { t } = useTranslation();
   return (
@@ -21,7 +21,7 @@ export default function DateRangeFilter({
       defaultValue={"month"}
       name="radio-buttons-group"
     >
-      <Grid container xs={12} display="flex">
+      <Grid container xs={12} pt={2} display="flex">
         <Grid item xs={4}>
           <Radio value="year" style={{ fontSize: 14 }}>
             {t("By Year")}
@@ -55,21 +55,9 @@ export default function DateRangeFilter({
       </Grid>
       <Grid container xs={12} display="flex" style={{ marginTop: 5 }}>
         <Grid item xs={4}>
-          <Radio value="range" style={{ fontSize: 14 }}>
-            {t("By Range")}
+          <Radio value="all" style={{ fontSize: 14 }}>
+            {t("All")}
           </Radio>
-        </Grid>
-        <Grid item xs={8}>
-          <DateRangePicker
-            value={range}
-            onChange={(r) => {
-              if (r && r.length > 1) {
-                r[1].setHours(23, 59, 59);
-              }
-              onRangeChange(r);
-            }}
-            cleanable={false}
-          />
         </Grid>
       </Grid>
     </RadioGroup>
