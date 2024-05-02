@@ -15,6 +15,10 @@ import BranchList from "pages/branch/BranchList";
 import Notifications from "./notifications";
 import OrderListPage from "pages/order/OrderListPage";
 import ClientListPage from "pages/client/ClientListPage";
+import ProductListPage from "pages/product/ProductList";
+import InventoryLocationListPage from "pages/inventory/InventoryLocationList";
+import InventoryTransactionListPage from "pages/inventory/InventoryTransactionList";
+import InventoryStockListPage from "pages/inventory/InventoryStockList";
 
 const menus = [
   {
@@ -73,14 +77,39 @@ const menus = [
     route: "/orders",
     component: <OrderListPage />,
   },
-  // {
-  //   type: "collapse",
-  //   name: "Payments",
-  //   key: "payments",
-  //   icon: <Icon fontSize="small">table_view</Icon>,
-  //   route: "/payments",
-  //   component: <PaymentList />,
-  // },
+  {
+    type: "collapse",
+    name: "Products",
+    key: "products",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/products",
+    component: <ProductListPage />,
+  },
+
+  {
+    type: "collapse",
+    name: "Inventory Settings",
+    key: "settings",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/inventoryLocations",
+    component: <InventoryLocationListPage />,
+  },
+  {
+    type: "collapse",
+    name: "Inventory Transaction",
+    key: "settings",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/inventoryTransactions",
+    component: <InventoryTransactionListPage />,
+  },
+  {
+    type: "collapse",
+    name: "Stock",
+    key: "inventoryStocks",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/inventoryStocks",
+    component: <InventoryStockListPage />,
+  },
   // {
   //   type: "collapse",
   //   name: "Billing",
