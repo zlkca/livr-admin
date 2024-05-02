@@ -16,6 +16,10 @@ import Notifications from "./notifications";
 import OrderListPage from "pages/order/OrderListPage";
 import ClientListPage from "pages/client/ClientListPage";
 import FeedbackListPage from "pages/feedback/FeedbackList";
+import ProductListPage from "pages/product/ProductList";
+import InventoryLocationListPage from "pages/inventory/InventoryLocationList";
+import InventoryTransactionListPage from "pages/inventory/InventoryTransactionList";
+import InventoryStockListPage from "pages/inventory/InventoryStockList";
 
 const menus = [
   {
@@ -81,6 +85,37 @@ const menus = [
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/feedbacks",
     component: <FeedbackListPage />,
+  },
+  {
+    name: "Products",
+    key: "products",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/products",
+    component: <ProductListPage />,
+  },
+  {
+    type: "collapse",
+    name: "Inventory Settings",
+    key: "settings",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/inventoryLocations",
+    component: <InventoryLocationListPage />,
+  },
+  {
+    type: "collapse",
+    name: "Inventory Transaction",
+    key: "settings",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/inventoryTransactions",
+    component: <InventoryTransactionListPage />,
+  },
+  {
+    type: "collapse",
+    name: "Stock",
+    key: "inventoryStocks",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/inventoryStocks",
+    component: <InventoryStockListPage />,
   },
   // {
   //   type: "collapse",

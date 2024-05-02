@@ -78,6 +78,14 @@ import { isStoreManager } from "permission";
 import FeedbackForm from "pages/feedback/FeedbackForm";
 import FeedbackListPage from "pages/feedback/FeedbackList";
 import FeedbackDetails from "pages/feedback/FeedbackDetails";
+import ProductListPage from "pages/product/ProductList";
+import ProductFormPage from "pages/product/ProductForm";
+import InventoryLocationListPage from "pages/inventory/InventoryLocationList";
+import InventoryLocationFormPage from "pages/inventory/InventoryLocationForm";
+import InventoryTransactionListPage from "pages/inventory/InventoryTransactionList";
+import InventoryTransactionFormPage from "pages/inventory/InventoryTransactionForm";
+import InventoryStockListPage from "pages/inventory/InventoryStockList";
+import InventoryStockFormPage from "pages/inventory/InventoryStockForm";
 
 export const MyRoutes = ({ tokenId, signedInUser }) => {
   return (
@@ -126,6 +134,64 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
       <Route exact path="/feedbacks" element={<FeedbackListPage />} key="feedbacks" />
       <Route exact path="/feedbacks/:id" element={<FeedbackDetails />} key="feedback" />
       <Route exact path="/feedbacks/new/form" element={<FeedbackForm />} key="feedback-form" />
+      <Route exact path="/products" element={<ProductListPage />} key="products" />
+      <Route exact path="/products/:id" element={<ProductFormPage />} key="product" />
+      <Route exact path="/products/:id?/form" element={<ProductFormPage />} key="product-form" />
+      <Route
+        exact
+        path="/inventoryLocations"
+        element={<InventoryLocationListPage />}
+        key="inventoryLocations"
+      />
+      <Route
+        exact
+        path="/inventoryLocations/:id"
+        element={<InventoryLocationFormPage />}
+        key="inventory-location"
+      />
+      <Route
+        exact
+        path="/inventoryLocations/:id?/form"
+        element={<InventoryLocationFormPage />}
+        key="inventory-locations-form"
+      />
+      <Route
+        exact
+        path="/inventoryTransactions"
+        element={<InventoryTransactionListPage />}
+        key="inventoryTransactions"
+      />
+      <Route
+        exact
+        path="/inventoryTransactions/:id"
+        element={<InventoryTransactionFormPage />}
+        key="inventory-transaction"
+      />
+      <Route
+        exact
+        path="/inventoryTransactions/:id?/form"
+        element={<InventoryTransactionFormPage />}
+        key="inventory-transactions-form"
+      />
+      <Route
+        exact
+        path="/inventoryStocks"
+        element={<InventoryStockListPage />}
+        key="inventoryStocks"
+      />
+      <Route
+        exact
+        path="/inventoryStocks/:id"
+        element={<InventoryStockFormPage />}
+        key="inventory-stock"
+      />
+      <Route
+        exact
+        path="/inventoryStocks/:id?/form"
+        element={<InventoryStockFormPage />}
+        key="inventory-stock-form"
+      />
+
       <Route exact path="/billing" element={<Billing />} key="billing" />
       <Route exact path="/notifications" element={<Notifications />} key="notifications" />
       <Route exact path="/profile" element={<Profile />} key="profile" />
