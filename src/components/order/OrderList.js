@@ -165,7 +165,7 @@ export default function OrderList(props) {
       flex: 1,
     },
     {
-      headerName: t("Deposit"),
+      headerName: t("Deposit Receivable"),
       field: "deposit",
       minWidth: 80,
       flex: 1,

@@ -194,8 +194,8 @@ export default function OrderDetails() {
                 <MDSection title={t("Orders")}>
                   <Grid display="flex">
                     <VField label={t("ID")} value={order.id} />
-                    <VField label={t("Amount")} value={order.amount} />
-                    <VField label={t("Deposit")} value={order.deposit} />
+                    <VField label={t("pre-tax Total")} value={order.amount} />
+                    <VField label={t("Deposit Receivable")} value={order.deposit} />
                     <VField label={t("Tax")} value={order.taxOpt} />
                     <VField label={t("Balance")} value={order.balance} />
                     <VField label={t("Date")} value={order.created} />
