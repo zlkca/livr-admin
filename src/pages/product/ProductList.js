@@ -25,6 +25,7 @@ import DashboardNavbar from "layouts/DashboardNavbar";
 import Footer from "layouts/Footer";
 
 import { productAPI } from "../../services/productAPI";
+import { ActionButton } from "components/common/Button";
 
 const GridCfg = { RowsPerPage: 20 };
 
@@ -109,14 +110,7 @@ export default function ProductListPage() {
                   <Grid item xs={2} md={9}>
                     <Grid container spacing={2} direction="row" justifyContent="flex-end">
                       <Grid item>
-                        <MDButton
-                          color="info"
-                          variant={"outlined"}
-                          size="small"
-                          onClick={handleCreate}
-                        >
-                          {t("Create")}
-                        </MDButton>
+                        <ActionButton onClick={handleCreate}>{t("Create")}</ActionButton>
                       </Grid>
                     </Grid>
                   </Grid>

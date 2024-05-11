@@ -25,6 +25,7 @@ import DashboardNavbar from "layouts/DashboardNavbar";
 import Footer from "layouts/Footer";
 
 import { inventoryLocationAPI } from "../../services/inventoryLocationAPI";
+import { ActionButton } from "components/common/Button";
 
 const GridCfg = { RowsPerPage: 20 };
 
@@ -79,6 +80,13 @@ export default function InventoryLocationListPage() {
     navigate("/inventoryLocations/new/form");
   };
 
+  const handleMove = (direction) => {
+    if (selectedRow) {
+      dispatch(setInventoryLocation(selectedRow));
+      navigate(`/inventoryTransactions/new/form?dir=${direction}`);
+    }
+  };
+
   const handleSelectRow = (row) => {
     setSelectedRow(row);
   };
@@ -108,14 +116,15 @@ export default function InventoryLocationListPage() {
                   <Grid item xs={2} md={9}>
                     <Grid container spacing={2} direction="row" justifyContent="flex-end">
                       <Grid item>
-                        <MDButton
-                          color="info"
-                          variant={"outlined"}
-                          size="small"
-                          onClick={handleCreate}
-                        >
-                          {t("Create")}
-                        </MDButton>
+                        <ActionButton onClick={handleCreate}>{t("Create")}</ActionButton>
+                      </Grid>
+                      <Grid item>
+                        <ActionButton onClick={() => handleMove("in")}>{t("Move in")}</ActionButton>
+                      </Grid>
+                      <Grid item>
+                        <ActionButton onClick={() => handleMove("out")}>
+                          {t("Move out")}
+                        </ActionButton>
                       </Grid>
                     </Grid>
                   </Grid>

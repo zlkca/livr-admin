@@ -21,7 +21,7 @@ const mStyles = {
   },
 };
 
-export default function ProjectSelect({ projects, selected, onSelect }) {
+export default function ProductSelect({ products, selected, onSelect }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -36,7 +36,7 @@ export default function ProjectSelect({ projects, selected, onSelect }) {
 
   const handleRadioChange = (e, row) => {
     setSelectedRow(row);
-    const p = projects.find((it) => it._id === row._id);
+    const p = products.find((it) => it._id === row._id);
     onSelect(p);
   };
 
@@ -57,6 +57,7 @@ export default function ProjectSelect({ projects, selected, onSelect }) {
       headerName: t("Name"),
       field: "name",
       width: 200,
+      valueGetter: (params) => (params.row?.name ? params.row?.name : t("Unknown")),
     },
     {
       headerName: t("Address"),
@@ -65,18 +66,10 @@ export default function ProjectSelect({ projects, selected, onSelect }) {
       valueGetter: (params) => (params.row?.address ? params.row?.address : t("Unassigned")),
     },
     {
-      headerName: t("Price"),
-      field: "price",
-      width: 150,
-      valueGetter: (params) => (params.row?.price ? params.row?.price : t("Unknown")),
+      headerName: t("Created Date"),
+      field: "created",
+      width: 200,
     },
-    {
-      headerName: t("Cost"),
-      field: "cost",
-      width: 150,
-      valueGetter: (params) => (params.row?.cost ? params.row?.cost : t("Unassigned")),
-    },
-    { headerName: t("Created Date"), field: "created", width: 200 },
   ];
 
   const handleHighlightRow = (row) => {
@@ -85,14 +78,14 @@ export default function ProjectSelect({ projects, selected, onSelect }) {
 
   return (
     <div style={mStyles.root}>
-      {projects && projects.length > 0 && (
+      {products && products.length > 0 && (
         <div style={{ width: "100%", height: 500, padding: 10 }}>
           {/* <div style={mStyles.row}>
             <SearchBar onSearch={handleSearch} />
           </div> */}
           <GridTable
             autoPageSize
-            data={projects}
+            data={products}
             columns={columns}
             onRowClick={handleHighlightRow}
             rowsPerPage={7}

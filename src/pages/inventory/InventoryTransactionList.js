@@ -41,12 +41,30 @@ export default function InventoryTransactionListPage() {
 
   const columns = [
     { headerName: t("Notes"), field: "notes", minWidth: 200, flex: 1 },
-    { headerName: t("ProductId"), field: "productId", minWidth: 200, flex: 1 },
+    {
+      headerName: t("Product"),
+      field: "product",
+      minWidth: 200,
+      flex: 1,
+      valueGetter: (params) => (params.row?.product ? params.row?.product.name : t("Unknown")),
+    },
     { headerName: t("Quantity"), field: "quantity", minWidth: 200, flex: 1 },
     { headerName: t("CostAtTransaction"), field: "costAtTransaction", minWidth: 200, flex: 1 },
     { headerName: t("PriceAtTransaction"), field: "priceAtTransaction", minWidth: 200, flex: 1 },
-    { headerName: t("LocationId"), field: "locationId", minWidth: 200, flex: 1 },
-    { headerName: t("Type"), field: "type", minWidth: 200, flex: 1 },
+    {
+      headerName: t("From"),
+      field: "from",
+      minWidth: 200,
+      flex: 1,
+      valueGetter: (params) => (params.row?.from ? params.row?.from.name : t("Unknown")),
+    },
+    {
+      headerName: t("To"),
+      field: "to",
+      minWidth: 200,
+      flex: 1,
+      valueGetter: (params) => (params.row?.to ? params.row?.to.name : t("Unknown")),
+    },
     {
       headerName: t("Creator"),
       field: "creator",
