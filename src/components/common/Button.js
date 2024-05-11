@@ -1,4 +1,5 @@
 import Button from "@mui/material/Button";
+import MDButton from "components/MDButton";
 
 export default function XButton(props) {
   return (
@@ -7,6 +8,15 @@ export default function XButton(props) {
     </Button>
   );
 }
+
+export function ActionButton({ children, onClick }) {
+  return (
+    <MDButton color="info" variant={"outlined"} size="small" onClick={onClick}>
+      {children}
+    </MDButton>
+  );
+}
+
 // const baseStyles = {
 //   root: {
 //     marginLeft: 8,

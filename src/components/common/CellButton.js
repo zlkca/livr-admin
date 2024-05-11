@@ -1,9 +1,9 @@
-import Button from "./Button";
+import { XButton } from "./Button";
 
 export default function CellButton({ onClick, children }) {
   return (
-    <Button variant="contained" size="small" style={{ color: "white" }} onClick={onClick}>
+    <XButton variant="contained" size="small" style={{ color: "white" }} onClick={onClick}>
       {children}
-    </Button>
+    </XButton>
   );
 }
