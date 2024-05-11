@@ -13,21 +13,13 @@
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  */
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-// react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-
+import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 
-// @mui material components
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import Icon from "@mui/material/Icon";
-
-// Material Dashboard 2 React components
-import MDBox from "components/MDBox";
 
 // Material Dashboard 2 React example components
 import menus from "layouts/menus";
@@ -37,16 +29,9 @@ import Configurator from "examples/Configurator";
 
 // Material Dashboard 2 React themes
 import theme from "assets/theme";
-import themeRTL from "assets/theme/theme-rtl";
 
 // Material Dashboard 2 React Dark Mode themes
 import themeDark from "assets/theme-dark";
-import themeDarkRTL from "assets/theme-dark/theme-rtl";
-
-// RTL plugins
-// import rtlPlugin from "stylis-plugin-rtl";
-import { CacheProvider } from "@emotion/react";
-import createCache from "@emotion/cache";
 
 import { setLayout, setMiniSidenav, setOpenConfigurator } from "./redux/ui/ui.slice";
 
@@ -56,7 +41,6 @@ import brandDark from "assets/images/logo192.png";
 import { selectTokenId } from "redux/auth/auth.selector";
 import { setTokenId } from "redux/auth/auth.slice";
 import { selectUI } from "redux/ui/ui.selector";
-import { getRouteList } from "routes";
 import { ACCOUNT_COOKIE } from "const";
 import { setSignedInUser } from "redux/auth/auth.slice";
 import { JWT_COOKIE } from "const";

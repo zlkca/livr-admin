@@ -50,10 +50,10 @@ export default function AppointmentList(props) {
     if (data) {
       const rows = data.map((it) => ({
         ...it,
-        start: moment.utc(it.start).local().format("yyyy-MM-DD hh:mm:ss"),
-        end: moment.utc(it.end).local().format("yyyy-MM-DD hh:mm:ss"),
-        created: moment.utc(it.created).local().format("yyyy-MM-DD hh:mm:ss"),
-        updated: moment.utc(it.updated).local().format("yyyy-MM-DD hh:mm:ss"),
+        start: moment.utc(it.start).local().format("yyyy-MM-DD HH:mm:ss"),
+        end: moment.utc(it.end).local().format("yyyy-MM-DD HH:mm:ss"),
+        created: moment.utc(it.created).local().format("yyyy-MM-DD HH:mm:ss"),
+        updated: moment.utc(it.updated).local().format("yyyy-MM-DD HH:mm:ss"),
       }));
       setAppointments(rows);
     }

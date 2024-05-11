@@ -10,8 +10,8 @@ export const branchAPI = {
     if (rsp.data) {
       data = rsp.data.map((it) => ({
         ...it,
-        created: moment.utc(it.created).local().format("yyyy-MM-DD hh:mm:ss"),
-        updated: moment.utc(it.updated).local().format("yyyy-MM-DD hh:mm:ss"),
+        created: moment.utc(it.created).local().format("yyyy-MM-DD HH:mm:ss"),
+        updated: moment.utc(it.updated).local().format("yyyy-MM-DD HH:mm:ss"),
       }));
     }
     return { ...rsp, data };
@@ -44,8 +44,8 @@ export const branchAPI = {
     if (rsp.data) {
       data = rsp.data.map((it) => ({
         ...it,
-        created: moment.utc(it.created).local().format("yyyy-MM-DD hh:mm:ss"),
-        updated: moment.utc(it.updated).local().format("yyyy-MM-DD hh:mm:ss"),
+        created: moment.utc(it.created).local().format("yyyy-MM-DD HH:mm:ss"),
+        updated: moment.utc(it.updated).local().format("yyyy-MM-DD HH:mm:ss"),
       }));
     }
     return { ...rsp, data };
