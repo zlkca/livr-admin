@@ -67,6 +67,7 @@ export default function App() {
     transparentSidenav,
     whiteSidenav,
     darkMode,
+    hideSidenav,
   } = useSelector(selectUI);
 
   const [onMouseEnter, setOnMouseEnter] = useState(false);
@@ -203,7 +204,7 @@ export default function App() {
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <CssBaseline />
-      {layout === "dashboard" && signedInUser && (
+      {layout === "dashboard" && signedInUser && !hideSidenav && (
         <>
           <Sidenav
             color={sidenavColor}

@@ -1,5 +1,5 @@
 import { InputAdornment } from "@mui/material";
-import InputWidget from "./Input";
+import InputWidget from "./InputWidget";
 
 const mStyles = {
   formControl: {

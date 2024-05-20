@@ -1,6 +1,6 @@
 import { FormControl } from "@mui/material";
 import Select from "./Select";
-import Input from "./Input";
+import Input from "./InputWidget";
 
 const mStyles = {
   root: {

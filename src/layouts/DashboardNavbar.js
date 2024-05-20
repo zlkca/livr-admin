@@ -72,7 +72,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const [navbarType, setNavbarType] = useState();
-  const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } =
+  const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode, hideSidenav } =
     useSelector(selectUI);
 
   const [openMenu, setOpenMenu] = useState(false);

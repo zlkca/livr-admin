@@ -24,6 +24,7 @@ import i18n from "./localization/i18n";
 
 import App from "App";
 import store from "./redux/store";
+import "./index.css";
 
 const container = document.getElementById("app");
 const root = createRoot(container);

@@ -1,7 +1,11 @@
 import Button from "@mui/material/Button";
 
 export default function XButton(props) {
-  return <Button {...props}>{props.children}</Button>;
+  return (
+    <Button {...props} fullWidth>
+      {props.children}
+    </Button>
+  );
 }
 // const baseStyles = {
 //   root: {
