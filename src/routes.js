@@ -75,6 +75,9 @@ import { isAdmin } from "permission";
 import OrderListPage from "pages/order/OrderListPage";
 import ClientListPage from "pages/client/ClientListPage";
 import { isStoreManager } from "permission";
+import FeedbackForm from "pages/feedback/FeedbackForm";
+import FeedbackListPage from "pages/feedback/FeedbackList";
+import FeedbackDetails from "pages/feedback/FeedbackDetails";
 
 export const MyRoutes = ({ tokenId, signedInUser }) => {
   return (
@@ -120,6 +123,9 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
         element={<AppointmentFormPage />}
         key="appointment-form"
       />
+      <Route exact path="/feedbacks" element={<FeedbackListPage />} key="feedbacks" />
+      <Route exact path="/feedbacks/:id" element={<FeedbackDetails />} key="feedback" />
+      <Route exact path="/feedbacks/new/form" element={<FeedbackForm />} key="feedback-form" />
       <Route exact path="/billing" element={<Billing />} key="billing" />
       <Route exact path="/notifications" element={<Notifications />} key="notifications" />
       <Route exact path="/profile" element={<Profile />} key="profile" />

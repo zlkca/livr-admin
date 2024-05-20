@@ -186,7 +186,8 @@ export default function EmployeeForm() {
     } else if (profile.email && !isValidEmail(profile.email)) {
       setError({ ...error, email: t("Please input a valid email address") });
       return;
-    } else { // only when create new, check email dup
+    } else {
+      // only when create new, check email dup
       const r = await authAPI.checkEmail({ email: profile.email });
       if (!profile._id && r.status === 200 && r.data.dup) {
         setError({ ...error, email: t("Email exists, please try another") });

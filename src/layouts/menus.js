@@ -15,6 +15,7 @@ import BranchList from "pages/branch/BranchList";
 import Notifications from "./notifications";
 import OrderListPage from "pages/order/OrderListPage";
 import ClientListPage from "pages/client/ClientListPage";
+import FeedbackListPage from "pages/feedback/FeedbackList";
 
 const menus = [
   {
@@ -73,14 +74,14 @@ const menus = [
     route: "/orders",
     component: <OrderListPage />,
   },
-  // {
-  //   type: "collapse",
-  //   name: "Payments",
-  //   key: "payments",
-  //   icon: <Icon fontSize="small">table_view</Icon>,
-  //   route: "/payments",
-  //   component: <PaymentList />,
-  // },
+  {
+    type: "collapse",
+    name: "Feedbacks",
+    key: "feedbacks",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/feedbacks",
+    component: <FeedbackListPage />,
+  },
   // {
   //   type: "collapse",
   //   name: "Billing",

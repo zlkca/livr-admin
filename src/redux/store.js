@@ -8,7 +8,7 @@ import accountReducer from "../redux/account/account.slice";
 import paymentReducer from "../redux/payment/payment.slice";
 import orderReducer from "../redux/order/order.slice";
 import branchReducer from "../redux/branch/branch.slice";
-
+import feedbackReducer from "../redux/feedback/feedback.slice";
 //
 // import projectReducer from '../redux/project/project.slice';
 // import productReducer from '../redux/product/product.slice';
@@ -26,6 +26,7 @@ export default configureStore({
     project: projectReducer,
     account: accountReducer,
     order: orderReducer,
+    feedback: feedbackReducer,
     // product: productReducer,
     // window: windowReducer,
     // upload: uploadReducer,

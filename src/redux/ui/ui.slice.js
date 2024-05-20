@@ -5,6 +5,7 @@ export const initialUIState = {
   miniSidenav: false,
   transparentSidenav: false,
   whiteSidenav: false,
+  hideSidenav: false,
   sidenavColor: "info",
   transparentNavbar: true,
   fixedNavbar: true,
@@ -60,6 +61,9 @@ export const uiSlice = createSlice({
     setDarkMode: (state, action) => {
       state.darkMode = action.payload;
     },
+    setHideSidenav: (state, action) => {
+      state.hideSidenav = action.payload;
+    },
   },
   // extraReducers: uiThunkReducers
 });
@@ -78,6 +82,7 @@ export const {
   setLanguage,
   setSnackbar,
   setDialog,
+  setHideSidenav,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;
