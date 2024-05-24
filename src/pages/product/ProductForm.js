@@ -18,8 +18,16 @@ import MDButton from "components/MDButton";
 import MDSection from "components/MDSection";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
+
+import Select from "components/common/Select";
+
 import Footer from "layouts/Footer";
 import { productAPI } from "../../services/productAPI";
+// import { selectCategories } from "redux/category/category.selector";
+import { categoryAPI } from "services/categoryAPI";
+import { setCategories } from "redux/category/category.slice";
+import ImageUploader from "components/common/ImageUploader";
+import { uploadFilesToS3 } from "services/upload";
 
 export default function ProductFormPage() {
   const { t } = useTranslation();
@@ -29,9 +37,19 @@ export default function ProductFormPage() {
 
   const [error, setError] = useState({});
   const [data, setData] = useState();
+  const [catOptions, setCatOptions] = useState([]);
+  const [uploadItems, setUploadItems] = useState([]);
 
   const signedInUser = useSelector(selectSignedInUser);
   const product = useSelector(selectProduct);
+  // const categories = useSelector(selectCategories);
+
+  useEffect(() => {
+    categoryAPI.fetchCategories().then((r) => {
+      dispatch(setCategories(r.data));
+      setCatOptions(r.data.map((it) => ({ id: it._id, label: it.name })));
+    });
+  }, []);
 
   useEffect(() => {
     if (product) {
@@ -51,6 +69,10 @@ export default function ProductFormPage() {
   }, [product]);
 
   const validate = (d) => {
+    if (!d.category) {
+      alert(t("Category is required"));
+      return false;
+    }
     if (!d.name) {
       alert(t("Name is required"));
       return false;
@@ -87,6 +109,11 @@ export default function ProductFormPage() {
     }
 
     return true;
+  };
+
+  const handleCategoryChange = (event) => {
+    const cat = catOptions.find((r) => r.id === event.target.value);
+    setData({ ...data, category: { _id: cat.id, name: cat.label } });
   };
 
   const handleNameChange = (event) => {
@@ -169,6 +196,43 @@ export default function ProductFormPage() {
     }
   };
 
+  const handleUpload = async () => {
+    if(uploadItems && uploadItems.length > 0){
+      const category = "product";
+      const res = await uploadFilesToS3(files, category, data._id);
+      if (res.status === 200) {
+        if (ds && ds.length > 0) {
+          // { entityId, category, items: [{fname, notes}] }
+          const r = await bulkUpload({
+            entityId: data._id,
+            category,
+            items: ds,
+          });
+          dispatch(setUploads(r.data));
+        }
+        setSnackbar({ opened: true, message: "Upload files successfully" });
+      } else {
+        setSnackbar({ opened: true, message: "Upload files failed" });
+      }
+    }
+  }
+
+  // only upload new files
+  const handleUploadFileChange = async (files) => {
+
+    if (files && files.length > 0) {
+      const ds = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const found = data.pictures.find((it) => it.fname === file.name);
+        if (!found) {
+          ds.push({ fname: file.name, notes: "" });
+        }
+      }
+      setUploadItems(ds);
+    }
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -179,75 +243,100 @@ export default function ProductFormPage() {
               <CardHead title={data && data._id ? t("Edit Project") : t("Create Project")} />
 
               <MDSection title={t("Basic Info")}>
-                <Grid container xs={12} display="flex" pt={1} spacing={2}>
-                  <Grid item xs={12} sm={4}>
-                    <MDTypography variant="button" fontWeight="regular" color="text"></MDTypography>
-                  </Grid>
-                </Grid>
+                <Grid container xs={12}>
+                  {data && (
+                    <Grid item xs={6}>
+                      <ImageUploader items={data.pictures} onFileChange={handleUploadFileChange} />
+                    </Grid>
+                  )}
+                  <Grid item xs={6}>
+                    <Grid container xs={12} display="flex" pt={1} spacing={2}>
+                      <Grid item xs={12} sm={12}>
+                        <MDTypography
+                          variant="button"
+                          fontWeight="regular"
+                          color="text"
+                        ></MDTypography>
+                      </Grid>
+                    </Grid>
 
-                <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                  <Grid item xs={6} sm={3}>
-                    <MDInput
-                      label={t("name")}
-                      value={data && data.name ? data.name : ""}
-                      onChange={handleNameChange}
-                      helperText={error && error.name ? error.name : ""}
-                    />
-                  </Grid>
-                </Grid>
+                    <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                      <Grid item xs={6} sm={8}>
+                        <Select
+                          name="category"
+                          label={t("Category")}
+                          value={data && data.category ? data.category._id : ""} // controlled
+                          options={catOptions}
+                          onChange={handleCategoryChange}
+                        />
+                      </Grid>
+                    </Grid>
 
-                <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                  <Grid item xs={6} sm={3}>
-                    <MDInput
-                      label={t("description")}
-                      value={data && data.description ? data.description : ""}
-                      onChange={handleDescriptionChange}
-                      helperText={error && error.description ? error.description : ""}
-                    />
-                  </Grid>
-                </Grid>
+                    <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                      <Grid item xs={6} sm={8}>
+                        <MDInput
+                          label={t("name")}
+                          value={data && data.name ? data.name : ""}
+                          onChange={handleNameChange}
+                          helperText={error && error.name ? error.name : ""}
+                        />
+                      </Grid>
+                    </Grid>
 
-                <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                  <Grid item xs={6} sm={3}>
-                    <MDInput
-                      label={t("SKU")}
-                      value={data && data.SKU ? data.SKU : ""}
-                      onChange={handleSkuChange}
-                      helperText={error && error.SKU ? error.SKU : ""}
-                    />
-                  </Grid>
-                </Grid>
+                    <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                      <Grid item xs={6} sm={8}>
+                        <MDInput
+                          label={t("description")}
+                          value={data && data.description ? data.description : ""}
+                          onChange={handleDescriptionChange}
+                          helperText={error && error.description ? error.description : ""}
+                        />
+                      </Grid>
+                    </Grid>
 
-                <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                  <Grid item xs={6} sm={3}>
-                    <MDInput
-                      label={t("cost")}
-                      value={data && data.cost ? data.cost : ""}
-                      onChange={handleCostChange}
-                      helperText={error && error.cost ? error.cost : ""}
-                    />
-                  </Grid>
-                </Grid>
+                    <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                      <Grid item xs={6} sm={8}>
+                        <MDInput
+                          label={t("SKU")}
+                          value={data && data.SKU ? data.SKU : ""}
+                          onChange={handleSkuChange}
+                          helperText={error && error.SKU ? error.SKU : ""}
+                        />
+                      </Grid>
+                    </Grid>
 
-                <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                  <Grid item xs={6} sm={3}>
-                    <MDInput
-                      label={t("price")}
-                      value={data && data.price ? data.price : ""}
-                      onChange={handlePriceChange}
-                      helperText={error && error.price ? error.price : ""}
-                    />
-                  </Grid>
-                </Grid>
+                    <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                      <Grid item xs={6} sm={8}>
+                        <MDInput
+                          label={t("cost")}
+                          value={data && data.cost ? data.cost : ""}
+                          onChange={handleCostChange}
+                          helperText={error && error.cost ? error.cost : ""}
+                        />
+                      </Grid>
+                    </Grid>
 
-                <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                  <Grid item xs={6} sm={3}>
-                    <MDInput
-                      label={t("status")}
-                      value={data && data.status ? data.status : ""}
-                      onChange={handleStatusChange}
-                      helperText={error && error.status ? error.status : ""}
-                    />
+                    <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                      <Grid item xs={6} sm={8}>
+                        <MDInput
+                          label={t("price")}
+                          value={data && data.price ? data.price : ""}
+                          onChange={handlePriceChange}
+                          helperText={error && error.price ? error.price : ""}
+                        />
+                      </Grid>
+                    </Grid>
+
+                    <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                      <Grid item xs={6} sm={8}>
+                        <MDInput
+                          label={t("status")}
+                          value={data && data.status ? data.status : ""}
+                          onChange={handleStatusChange}
+                          helperText={error && error.status ? error.status : ""}
+                        />
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
               </MDSection>

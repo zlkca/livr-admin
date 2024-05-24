@@ -19,6 +19,7 @@ import ProductListPage from "pages/product/ProductList";
 import InventoryLocationListPage from "pages/inventory/InventoryLocationList";
 import InventoryTransactionListPage from "pages/inventory/InventoryTransactionList";
 import InventoryStockListPage from "pages/inventory/InventoryStockList";
+import CategoryListPage from "pages/category/CategoryList";
 
 const menus = [
   {
@@ -79,6 +80,14 @@ const menus = [
   },
   {
     type: "collapse",
+    name: "Categories",
+    key: "categories",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/categories",
+    component: <CategoryListPage />,
+  },
+  {
+    type: "collapse",
     name: "Products",
     key: "products",
     icon: <Icon fontSize="small">table_view</Icon>,
@@ -89,7 +98,7 @@ const menus = [
   {
     type: "collapse",
     name: "Inventory Settings",
-    key: "settings",
+    key: "inventory_settings",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/inventoryLocations",
     component: <InventoryLocationListPage />,
@@ -97,7 +106,7 @@ const menus = [
   {
     type: "collapse",
     name: "Inventory Transaction",
-    key: "settings",
+    key: "inventory_transaction",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/inventoryTransactions",
     component: <InventoryTransactionListPage />,
@@ -105,7 +114,7 @@ const menus = [
   {
     type: "collapse",
     name: "Stock",
-    key: "inventoryStocks",
+    key: "inventory_stocks",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/inventoryStocks",
     component: <InventoryStockListPage />,

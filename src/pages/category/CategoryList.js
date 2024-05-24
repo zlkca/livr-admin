@@ -6,9 +6,9 @@ import { useGridApiRef } from "@mui/x-data-grid";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 
-import { setProduct } from "../../redux/product/product.slice";
-import { selectProducts } from "../../redux/product/product.selector";
-import { setProducts } from "../../redux/product/product.slice";
+import { setCategory } from "redux/category/category.slice";
+import { selectCategories } from "redux/category/category.selector";
+import { setCategories } from "redux/category/category.slice";
 import { setSignedInUser } from "redux/auth/auth.slice";
 import { setSnackbar } from "redux/ui/ui.slice";
 import { selectSnackbar } from "redux/ui/ui.selector";
@@ -24,40 +24,29 @@ import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
 import Footer from "layouts/Footer";
 
-import { productAPI } from "../../services/productAPI";
-import { ActionButton } from "components/common/Button";
+import { categoryAPI } from "../../services/categoryAPI";
 
 const GridCfg = { RowsPerPage: 20 };
 
-export default function ProductListPage() {
+export default function CategoryListPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const gridApiRef = useGridApiRef();
 
-  const products = useSelector(selectProducts);
+  const categories = useSelector(selectCategories);
   const signedInUser = useSelector(selectSignedInUser);
   const [selectedRow, setSelectedRow] = useState();
   const snackbar = useSelector(selectSnackbar);
 
   const columns = [
-    {
-      headerName: t("Category"),
-      field: "category",
-      minWidth: 180,
-      flex: 1,
-      valueGetter: (params) => (params.row?.category ? params.row?.category.name : t("Unassigned")),
-    },
     { headerName: t("Name"), field: "name", minWidth: 200, flex: 1 },
     { headerName: t("Description"), field: "description", minWidth: 200, flex: 1 },
-    { headerName: t("SKU"), field: "SKU", minWidth: 120, flex: 1 },
-    { headerName: t("Cost"), field: "cost", minWidth: 90, flex: 1 },
-    { headerName: t("Price"), field: "price", minWidth: 90, flex: 1 },
-    { headerName: t("Status"), field: "status", minWidth: 80, flex: 1 },
+    { headerName: t("Status"), field: "status", minWidth: 200, flex: 1 },
     {
       headerName: t("Creator"),
       field: "creator",
-      minWidth: 100,
+      minWidth: 200,
       flex: 1,
       valueGetter: (params) => (params.row?.creator ? params.row?.creator.username : t("Unknown")),
     },
@@ -71,9 +60,9 @@ export default function ProductListPage() {
         return (
           <CellButton
             onClick={() => {
-              dispatch(setProduct(params.row));
-              const productId = params.row._id;
-              navigate("/products/" + productId);
+              dispatch(setCategory(params.row));
+              const categoryId = params.row._id;
+              navigate("/categories/" + categoryId);
             }}
           >
             {t("View Details")}
@@ -84,8 +73,8 @@ export default function ProductListPage() {
   ];
 
   const handleCreate = () => {
-    dispatch(setProduct());
-    navigate("/products/new/form");
+    dispatch(setCategory());
+    navigate("/categories/new/form");
   };
 
   const handleSelectRow = (row) => {
@@ -94,9 +83,9 @@ export default function ProductListPage() {
 
   useEffect(() => {
     if (signedInUser) {
-      productAPI.searchProducts({}).then((r) => {
+      categoryAPI.searchCategories({}).then((r) => {
         if (r.status == 200) {
-          dispatch(setProducts(r.data));
+          dispatch(setCategories(r.data));
         } else if (r.status === 401) {
           dispatch(setSignedInUser());
         }
@@ -111,13 +100,20 @@ export default function ProductListPage() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <CardHead title={t("Products")} />
+              <CardHead title={t("Categories")} />
               <MDBox pt={2} px={2} style={{ height: 1240 }}>
                 <Grid container display="flex" justifyContent={"flex-start"}>
                   <Grid item xs={2} md={9}>
                     <Grid container spacing={2} direction="row" justifyContent="flex-end">
                       <Grid item>
-                        <ActionButton onClick={handleCreate}>{t("Create")}</ActionButton>
+                        <MDButton
+                          color="info"
+                          variant={"outlined"}
+                          size="small"
+                          onClick={handleCreate}
+                        >
+                          {t("Create")}
+                        </MDButton>
                       </Grid>
                     </Grid>
                   </Grid>
@@ -126,7 +122,7 @@ export default function ProductListPage() {
                   <GridTable
                     autoPageSize
                     apiRef={gridApiRef}
-                    data={products}
+                    data={categories}
                     columns={columns}
                     onRowClick={handleSelectRow}
                     rowsPerPage={GridCfg.RowsPerPage}

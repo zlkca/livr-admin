@@ -12,7 +12,7 @@ import branchReducer from "../redux/branch/branch.slice";
 import productReducer from "../redux/product/product.slice";
 import inventoryReducer from "../redux/inventory/inventory.slice";
 
-// import windowReducer from '../redux/window/window.slice';
+import categoryReducer from "../redux/category/category.slice";
 // import uploadReducer from '../redux/upload/upload.slice';
 // import messageReducer from '../redux/message/message.slice';
 
@@ -28,7 +28,7 @@ export default configureStore({
     order: orderReducer,
     product: productReducer,
     inventory: inventoryReducer,
-    // window: windowReducer,
+    category: categoryReducer,
     // upload: uploadReducer,
     // message: messageReducer,
   },

@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button";
 import MDButton from "components/MDButton";
 
-export function XButton(props) {
+export default function XButton(props) {
   return <Button {...props}>{props.children}</Button>;
 }
 
