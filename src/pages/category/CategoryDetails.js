@@ -19,15 +19,15 @@ import Footer from "layouts/Footer";
 
 import { selectSignedInUser } from "redux/auth/auth.selector";
 import { setSignedInUser } from "redux/auth/auth.slice";
-import { selectProduct } from "../../redux/product/product.selector";
-import { setProduct } from "../../redux/product/product.slice";
+import { selectCategory } from "redux/category/category.selector";
+import { setCategory } from "redux/category/category.slice";
 import { selectSnackbar } from "redux/ui/ui.selector";
 import { setSnackbar } from "redux/ui/ui.slice";
 
-import { productAPI } from "../../services/productAPI";
+import { categoryAPI } from "../../services/categoryAPI";
 
-export default function ProductDetails() {
-  const product = useSelector(selectProduct);
+export default function CategoryDetails() {
+  const category = useSelector(selectCategory);
   const signedInUser = useSelector(selectSignedInUser);
   const snackbar = useSelector(selectSnackbar);
 
@@ -38,12 +38,12 @@ export default function ProductDetails() {
   const [data, setData] = useState();
 
   useEffect(() => {
-    if (product) {
-      setData({ ...product });
+    if (category) {
+      setData({ ...category });
     } else {
       if (params && params.id && params.id !== "new") {
         if (!data) {
-          productAPI.fetchProduct(params.id).then((r) => {
+          categoryAPI.fetchCategory(params.id).then((r) => {
             setData({ ...r.data });
           });
         }
@@ -54,10 +54,10 @@ export default function ProductDetails() {
   const handleEdit = () => {
     if (data) {
       const _id = data._id;
-      productAPI.fetchProduct(_id).then((r) => {
+      categoryAPI.fetchCategory(_id).then((r) => {
         if (r.status === 200) {
-          dispatch(setProduct(r.data));
-          navigate("/products/_id/form");
+          dispatch(setCategory(r.data));
+          navigate("/categories/_id/form");
         }
       });
     }
@@ -66,7 +66,7 @@ export default function ProductDetails() {
   const handleDelete = () => {
     if (data) {
       const _id = data._id;
-      productAPI.deleteProduct(_id).then((r) => {
+      categoryAPI.deleteCategory(_id).then((r) => {
         if (r.status === 200) {
           dispatch(
             setSnackbar({
@@ -77,7 +77,7 @@ export default function ProductDetails() {
               open: true,
             })
           );
-          navigate("/products");
+          navigate("/categories");
         }
       });
     }
@@ -89,9 +89,9 @@ export default function ProductDetails() {
       <MDBox pt={1} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
-            {order && (
+            {data && (
               <Card>
-                <CardHead title={t("Order")} />
+                <CardHead title={t("Category")} />
                 <Grid container spacing={2} direction="row" justifyContent="flex-end" px={2} pt={2}>
                   <Grid item>
                     <ActionButton onClick={handleEdit}>{t("Edit")}</ActionButton>
@@ -101,17 +101,11 @@ export default function ProductDetails() {
                   </Grid>
                 </Grid>
 
-                <MDSection title={t("Orders")}>
+                <MDSection title={t("Category")}>
                   <Grid display="flex">
                     <VField label={t("Name")} value={data.name} />
 
                     <VField label={t("Description")} value={data.description} />
-
-                    <VField label={t("Sku")} value={data.SKU} />
-
-                    <VField label={t("Cost")} value={data.cost} />
-
-                    <VField label={t("Price")} value={data.price} />
 
                     <VField label={t("Status")} value={data.status} />
 

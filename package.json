@@ -46,6 +46,7 @@
     "rsuite": "^5.55.1",
     "stylis": "4.1.4",
     "stylis-plugin-rtl": "^2.1.1",
+    "uuid": "^9.0.1",
     "yup": "1.1.1"
   },
   "scripts": {

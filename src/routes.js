@@ -64,12 +64,17 @@ import OrderDetails from "pages/order/OrderDetails";
 import OrderForm from "pages/order/OrderForm";
 import PaymentList from "pages/payment/PaymentList";
 import PaymentForm from "pages/payment/PaymentForm";
+import PaymentDetails from "pages/payment/PaymentDetails";
+
+import CategoryList from "pages/category/CategoryList";
+import CategoryForm from "pages/category/CategoryForm";
+import CategoryDetails from "pages/category/CategoryDetails";
+
 import AppointmentFormPage from "pages/appointment/AppointmentFormPage";
 import AppointmentsPage from "pages/appointment/AppointmentsPage";
 import DashboardPage from "pages/dashboard/DashboardPage";
 import ClientDetails from "pages/client/ClientDetails";
 import EmployeeDetails from "pages/employee/EmployeeDetails";
-import PaymentDetails from "pages/payment/PaymentDetails";
 import AppointmentDetails from "pages/appointment/AppointmentDetails";
 import { isAdmin } from "permission";
 import OrderListPage from "pages/order/OrderListPage";
@@ -134,6 +139,10 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
       <Route exact path="/feedbacks" element={<FeedbackListPage />} key="feedbacks" />
       <Route exact path="/feedbacks/:id" element={<FeedbackDetails />} key="feedback" />
       <Route exact path="/feedbacks/new/form" element={<FeedbackForm />} key="feedback-form" />
+      <Route exact path="/categories" element={<CategoryList />} key="categories" />
+      <Route exact path="/categories/:id" element={<CategoryForm />} key="category" />
+      <Route exact path="/categories/:id?/form" element={<CategoryForm />} key="category-form" />
+
       <Route exact path="/products" element={<ProductListPage />} key="products" />
       <Route exact path="/products/:id" element={<ProductFormPage />} key="product" />
       <Route exact path="/products/:id?/form" element={<ProductFormPage />} key="product-form" />
