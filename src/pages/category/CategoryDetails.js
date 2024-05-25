@@ -89,9 +89,9 @@ export default function CategoryDetails() {
       <MDBox pt={1} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
-            {order && (
+            {data && (
               <Card>
-                <CardHead title={t("Order")} />
+                <CardHead title={t("Category")} />
                 <Grid container spacing={2} direction="row" justifyContent="flex-end" px={2} pt={2}>
                   <Grid item>
                     <ActionButton onClick={handleEdit}>{t("Edit")}</ActionButton>
@@ -101,7 +101,7 @@ export default function CategoryDetails() {
                   </Grid>
                 </Grid>
 
-                <MDSection title={t("Orders")}>
+                <MDSection title={t("Category")}>
                   <Grid display="flex">
                     <VField label={t("Name")} value={data.name} />
 

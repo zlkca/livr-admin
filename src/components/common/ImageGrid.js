@@ -6,13 +6,14 @@ export default function ImageGrid({ items }) {
   return (
     <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
       {items.map((item) => (
-        <ImageListItem key={item.src}>
+        <ImageListItem key={item.url}>
           <img
-            src={item.src}
+            src={item.url}
             // srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-            alt={item.title}
+            alt={item.notes}
             loading="lazy"
             width={64}
+            style={{ objectFit: "contain" }}
           />
         </ImageListItem>
       ))}

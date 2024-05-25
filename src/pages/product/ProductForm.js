@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { v4 as uuidv4 } from "uuid";
 import { Card, Checkbox, FormControlLabel, FormGroup, Grid } from "@mui/material";
 
 import { selectProduct } from "../../redux/product/product.selector";
@@ -28,6 +29,7 @@ import { categoryAPI } from "services/categoryAPI";
 import { setCategories } from "redux/category/category.slice";
 import ImageUploader from "components/common/ImageUploader";
 import { uploadFilesToS3 } from "services/upload";
+import { bulkUpload } from "services/upload";
 
 export default function ProductFormPage() {
   const { t } = useTranslation();
@@ -55,14 +57,19 @@ export default function ProductFormPage() {
     if (product) {
       setData({ ...product });
     } else {
-      if (params && params.id && params.id !== "new") {
-        if (!product) {
-          // refetch if page refreshed
-          productAPI.fetchProduct(params.id).then((r) => {
-            if (r.status === 200) {
-              setData({ ...r.data });
-            }
-          });
+      if (params && params.id) {
+        if (params.id !== "new") {
+          if (!product) {
+            // refetch if page refreshed
+            productAPI.fetchProduct(params.id).then((r) => {
+              if (r.status === 200) {
+                const uploadId = r.data.uploadId ? r.data.uploadId : uuidv4();
+                setData({ ...r.data, uploadId });
+              }
+            });
+          }
+        } else {
+          setData({ uploadId: uuidv4() });
         }
       }
     }
@@ -141,6 +148,11 @@ export default function ProductFormPage() {
     setData(a);
   };
 
+  const handleDiscountChange = (event) => {
+    const a = { ...data, discount: event.target.value };
+    setData(a);
+  };
+
   const handleStatusChange = (event) => {
     const a = { ...data, status: event.target.value };
     setData(a);
@@ -196,40 +208,39 @@ export default function ProductFormPage() {
     }
   };
 
-  const handleUpload = async () => {
-    if(uploadItems && uploadItems.length > 0){
+  const handleUpload = async (files, ds) => {
+    if (ds && ds.length > 0) {
       const category = "product";
-      const res = await uploadFilesToS3(files, category, data._id);
+
+      // { uploadId, category, items: [{fname, notes}] }
+      const r = await bulkUpload({
+        uploadId: data.uploadId,
+        category,
+        items: ds,
+      });
+
+      const res = await uploadFilesToS3(files, category, data.uploadId);
       if (res.status === 200) {
-        if (ds && ds.length > 0) {
-          // { entityId, category, items: [{fname, notes}] }
-          const r = await bulkUpload({
-            entityId: data._id,
-            category,
-            items: ds,
-          });
-          dispatch(setUploads(r.data));
-        }
-        setSnackbar({ opened: true, message: "Upload files successfully" });
+        // setSnackbar({ opened: true, message: "Upload files successfully" });
       } else {
-        setSnackbar({ opened: true, message: "Upload files failed" });
+        // setSnackbar({ opened: true, message: "Upload files failed" });
       }
     }
-  }
+  };
 
   // only upload new files
   const handleUploadFileChange = async (files) => {
-
     if (files && files.length > 0) {
       const ds = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const found = data.pictures.find((it) => it.fname === file.name);
-        if (!found) {
-          ds.push({ fname: file.name, notes: "" });
-        }
+        // const found = data.pictures && data.pictures.find((it) => it.fname === file.name);
+        // if (!found) {
+        ds.push({ fname: file.name, notes: "" });
+        // }
       }
       setUploadItems(ds);
+      await handleUpload(files, ds);
     }
   };
 
@@ -323,6 +334,17 @@ export default function ProductFormPage() {
                           value={data && data.price ? data.price : ""}
                           onChange={handlePriceChange}
                           helperText={error && error.price ? error.price : ""}
+                        />
+                      </Grid>
+                    </Grid>
+
+                    <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                      <Grid item xs={6} sm={8}>
+                        <MDInput
+                          label={t("discount")}
+                          value={data && data.discount ? data.discount : ""}
+                          onChange={handleDiscountChange}
+                          helperText={error && error.discount ? error.discount : ""}
                         />
                       </Grid>
                     </Grid>

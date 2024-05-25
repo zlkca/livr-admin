@@ -146,7 +146,7 @@ export default function CategoryFormPage() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <CardHead title={data && data._id ? t("Edit Project") : t("Create Project")} />
+              <CardHead title={data && data._id ? t("Edit Category") : t("Create Category")} />
 
               <MDSection title={t("Basic Info")}>
                 <Grid container xs={12} display="flex" pt={1} spacing={2}>

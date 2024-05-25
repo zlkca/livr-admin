@@ -134,8 +134,9 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
         key="appointment-form"
       />
       <Route exact path="/categories" element={<CategoryList />} key="categories" />
-      <Route exact path="/categories/:id" element={<CategoryDetails />} key="category" />
+      <Route exact path="/categories/:id" element={<CategoryForm />} key="category" />
       <Route exact path="/categories/:id?/form" element={<CategoryForm />} key="category-form" />
+
       <Route exact path="/products" element={<ProductListPage />} key="products" />
       <Route exact path="/products/:id" element={<ProductFormPage />} key="product" />
       <Route exact path="/products/:id?/form" element={<ProductFormPage />} key="product-form" />

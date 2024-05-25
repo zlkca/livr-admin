@@ -22,10 +22,10 @@ export const upload = async (file, path) => {
   //   }
 };
 
-export const uploadFilesToS3 = async (files, category, entityId) => {
+export const uploadFilesToS3 = async (files, category, uploadId) => {
   const formData = new FormData();
   formData.append("category", category);
-  formData.append("entityId", entityId);
+  formData.append("uploadId", uploadId);
 
   for (let i = 0; i < files.length; i++) {
     formData.append("files", files[i], files[i].name);
@@ -39,7 +39,7 @@ export const uploadFilesToS3 = async (files, category, entityId) => {
   }
 };
 
-// data - { entityId, category, notes, items: [{index, fname, notes}] }
+// data - { uploadId, category, notes, items: [{index, fname, notes}] }
 export const bulkUpload = async (data) => {
   const url = buildApiUrl("/uploads/bulk");
   return await post(url, data);

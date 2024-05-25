@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import { useGridApiRef } from "@mui/x-data-grid";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -71,7 +72,8 @@ export default function ProductListPage() {
         return (
           <CellButton
             onClick={() => {
-              dispatch(setProduct(params.row));
+              const uploadId = params.row.uploadId ? params.row.uploadId : uuidv4();
+              dispatch(setProduct({ ...params.row, uploadId }));
               const productId = params.row._id;
               navigate("/products/" + productId);
             }}
