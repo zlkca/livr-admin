@@ -7,7 +7,10 @@ import StatisticsCard from "../../components/dashboard/StatisticsCard";
 
 // import { fetchProjects } from "../../services/api";
 import { accountAPI } from "../../services/accountAPI";
+
 import { projectAPI } from "services/projectAPI";
+
+
 import Footer from "layouts/Footer";
 import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
@@ -21,6 +24,7 @@ import { getFirstDayOfMonth, getLastDayOfMonth, getPrevMonthRange, getNextMonthR
 import MDButton from "components/MDButton";
 import DashboardFilter from "components/DashboardFilter";
 import { numToString, isValidDate, getFirstDayOfYear, getLastDayOfYear } from "utils";
+import { Cfg } from "config";
 
 const months = [
   "January",
@@ -43,6 +47,7 @@ export default function DashboardPage() {
   const branches = useSelector(selectBranches);
   const [orderMap, setOrderMap] = useState({});
   const [nProjects, setNumOfProjects] = useState("0");
+    
   const [nClients, setNumOfClients] = useState("0");
   const [monthData, setMonth] = useState();
 
@@ -398,13 +403,16 @@ export default function DashboardPage() {
         </Grid>
         <Grid container spacing={3} style={{ marginTop: 30 }}>
           <Grid item xs={12} md={6} lg={4}>
-            <BarChartCard
-              color="#1769aa"
-              title={t("Received Payments")}
-              description={t("Received Payments")}
-              date={getCardLabel()}
-              chart={receivedByBranch}
-            />
+            {
+              Cfg.MultiStore.enabled &&
+                <BarChartCard
+                  color="#1769aa"
+                  title={t("Received Payments")}
+                  description={t("Received Payments")}
+                  date={getCardLabel()}
+                  chart={receivedByBranch}
+                />
+            }
           </Grid>
         </Grid>
       </MDBox>

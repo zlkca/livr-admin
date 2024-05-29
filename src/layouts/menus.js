@@ -21,6 +21,7 @@ import InventoryLocationListPage from "pages/inventory/InventoryLocationList";
 import InventoryTransactionListPage from "pages/inventory/InventoryTransactionList";
 import InventoryStockListPage from "pages/inventory/InventoryStockList";
 import CategoryListPage from "pages/category/CategoryList";
+import { Cfg } from "config";
 
 const menus = [
   {
@@ -30,6 +31,7 @@ const menus = [
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
     component: <Dashboard />,
+    enabled: true,
   },
   {
     type: "collapse",
@@ -38,6 +40,7 @@ const menus = [
     icon: <BusinessIcon fontSize="small" color="white" />,
     route: "/branches",
     component: <BranchList />,
+    enabled: Cfg.MultiStore.enabled
   },
   {
     type: "collapse",
@@ -46,6 +49,7 @@ const menus = [
     icon: <BadgeIcon fontSize="small" color="white" />,
     route: "/employees",
     component: <EmployeeListPage />,
+    enabled: true
   },
   {
     type: "collapse",
@@ -54,6 +58,7 @@ const menus = [
     icon: <GroupsIcon fontSize="small" color="white" />,
     route: "/clients",
     component: <ClientListPage />,
+    enabled: true
   },
   {
     type: "collapse",
@@ -62,6 +67,7 @@ const menus = [
     icon: <AssignmentIcon fontSize="small" color="white" />,
     route: "/projects",
     component: <ProjectListPage />,
+    enabled: Cfg.Workflow.enabled
   },
   {
     type: "collapse",
@@ -70,6 +76,7 @@ const menus = [
     icon: <CalendarMonthIcon fontSize="small" color="white" />,
     route: "/appointments",
     component: <AppointmentsPage />,
+    enabled: Cfg.Appointment.enabled
   },
   {
     type: "collapse",
@@ -78,6 +85,7 @@ const menus = [
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/orders",
     component: <OrderListPage />,
+    enabled: true
   },
   {
     type: "collapse",
@@ -93,6 +101,7 @@ const menus = [
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/categories",
     component: <CategoryListPage />,
+    enabled: Cfg.Product.enabled
   },
   {
     type: "collapse",
@@ -101,6 +110,7 @@ const menus = [
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/products",
     component: <ProductListPage />,
+    enabled: Cfg.Product.enabled
   },
   {
     type: "collapse",
@@ -109,6 +119,7 @@ const menus = [
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/inventoryLocations",
     component: <InventoryLocationListPage />,
+    enabled: Cfg.Inventory.enabled
   },
   {
     type: "collapse",
@@ -117,6 +128,7 @@ const menus = [
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/inventoryTransactions",
     component: <InventoryTransactionListPage />,
+    enabled: Cfg.Inventory.enabled
   },
   {
     type: "collapse",
@@ -125,6 +137,7 @@ const menus = [
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/inventoryStocks",
     component: <InventoryStockListPage />,
+    enabled: Cfg.Inventory.enabled
   },
   // {
   //   type: "collapse",

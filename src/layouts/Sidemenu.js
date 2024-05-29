@@ -10,29 +10,32 @@ export default function Sidemenu({ menus, collapseName }) {
   const { t } = useTranslation();
 
   return menus.map((menu) => {
-    const { type, name, icon, title, noCollapse, key, href, route } = menu;
+    const { type, name, icon, title, noCollapse, key, href, route, enabled } = menu;
     let returnValue;
     if (type === "collapse") {
-      returnValue = href ? (
-        <Link
-          href={href}
-          key={key}
-          target="_blank"
-          rel="noreferrer"
-          sx={{ textDecoration: "none" }}
-        >
-          <SidenavCollapse
-            name={t(name)}
-            icon={icon}
-            active={key === collapseName}
-            noCollapse={noCollapse}
-          />
-        </Link>
-      ) : (
-        <NavLink key={key} to={route}>
+      // returnValue = href ? (
+      //   <Link
+      //     href={href}
+      //     key={key}
+      //     target="_blank"
+      //     rel="noreferrer"
+      //     sx={{ textDecoration: "none" }}
+      //   >
+      //     <SidenavCollapse
+      //       name={t(name)}
+      //       icon={icon}
+      //       active={key === collapseName}
+      //       noCollapse={noCollapse}
+      //     />
+      //   </Link>
+      // ) : (
+        if(enabled){
+          returnValue = <NavLink key={key} to={route}>
           <SidenavCollapse name={t(name)} icon={icon} active={key === collapseName} />
         </NavLink>
-      );
+        }
+
+      // );
     } else if (type === "title") {
       returnValue = (
         <MDTypography
