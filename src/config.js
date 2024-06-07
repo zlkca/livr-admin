@@ -10,16 +10,22 @@ const CfgMap = {
       enabled: false,
     },
     Deposit: {
-      enabled: false
+      enabled: false,
     },
     Product: {
-      enabled: false
+      enabled: true,
     },
     Inventory: {
-      enabled: false
+      enabled: true,
     },
     Appointment: {
-      enabled: false
+      enabled: false,
+    },
+    Feedback: {
+      enabled: true,
+    },
+    OnlineStore: {
+      enabled: true,
     },
   },
   shutterlux: {
@@ -31,16 +37,22 @@ const CfgMap = {
       enabled: true,
     },
     Deposit: {
-      enabled: true
+      enabled: true,
     },
     Product: {
-      enabled: false
+      enabled: false,
     },
     Inventory: {
-      enabled: false
+      enabled: false,
     },
     Appointment: {
-      enabled: true
+      enabled: true,
+    },
+    Feedback: {
+      enabled: false,
+    },
+    OnlineStore: {
+      enabled: false,
     },
   },
 };

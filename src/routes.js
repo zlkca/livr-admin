@@ -89,15 +89,19 @@ import InventoryLocationListPage from "pages/inventory/InventoryLocationList";
 import InventoryLocationFormPage from "pages/inventory/InventoryLocationForm";
 import InventoryTransactionListPage from "pages/inventory/InventoryTransactionList";
 import InventoryTransactionFormPage from "pages/inventory/InventoryTransactionForm";
+
 import InventoryStockListPage from "pages/inventory/InventoryStockList";
 import InventoryStockFormPage from "pages/inventory/InventoryStockForm";
+import SupplierDetails from "pages/supplier/SupplierDetails";
+import SupplierListPage from "pages/supplier/SupplierList";
+import SupplierFormPage from "pages/supplier/SupplierForm";
+import InventoryTransactionDetails from "pages/inventory/InventoryTransactionDetails";
+import { Cfg } from "./config";
+import DashboardSingleStore from "pages/dashboard/DashboardSingleStore";
 
 export const MyRoutes = ({ tokenId, signedInUser }) => {
   return (
     <Routes>
-      {isAdmin(signedInUser) && (
-        <Route exact path="/dashboard" element={<DashboardPage />} key="dashboard" />
-      )}
       <Route exact path="/clients" element={<ClientListPage />} key="clients" />
       <Route exact path="/clients/:id" element={<ClientDetails />} key="client" />
       <Route exact path="/clients/:id?/form" element={<ClientForm />} key="client-form" />
@@ -139,6 +143,11 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
       <Route exact path="/feedbacks" element={<FeedbackListPage />} key="feedbacks" />
       <Route exact path="/feedbacks/:id" element={<FeedbackDetails />} key="feedback" />
       <Route exact path="/feedbacks/new/form" element={<FeedbackForm />} key="feedback-form" />
+
+      <Route exact path="/suppliers" element={<SupplierListPage />} key="suppliers" />
+      {/* <Route exact path="/suppliers/:id" element={<SupplierDetails />} key="supplier" /> */}
+      <Route exact path="/suppliers/:id?/form" element={<SupplierFormPage />} key="supplier-form" />
+
       <Route exact path="/categories" element={<CategoryList />} key="categories" />
       <Route exact path="/categories/:id" element={<CategoryForm />} key="category" />
       <Route exact path="/categories/:id?/form" element={<CategoryForm />} key="category-form" />
@@ -173,7 +182,7 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
       <Route
         exact
         path="/inventoryTransactions/:id"
-        element={<InventoryTransactionFormPage />}
+        element={<InventoryTransactionDetails />}
         key="inventory-transaction"
       />
       <Route
@@ -212,8 +221,21 @@ export const MyRoutes = ({ tokenId, signedInUser }) => {
         element={<ChangePassword />}
         key="change-pass"
       />
+      {isAdmin(signedInUser) && (
+        <Route
+          exact
+          path="/dashboard"
+          element={Cfg.MultiStore.enabled ? <DashboardPage /> : <DashboardSingleStore />}
+          key="dashboard"
+        />
+      )}
       {signedInUser && isAdmin(signedInUser) && (
-        <Route exact path="/" element={<DashboardPage />} key="root" />
+        <Route
+          exact
+          path="/"
+          element={Cfg.MultiStore.enabled ? <DashboardPage /> : <DashboardSingleStore />}
+          key="root"
+        />
       )}
       {signedInUser && !isAdmin(signedInUser) && (
         <Route exact path="/" element={<ClientListPage />} key="root" />

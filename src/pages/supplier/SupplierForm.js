@@ -4,10 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card, Checkbox, FormControlLabel, FormGroup, Grid } from "@mui/material";
 
-import { selectInventoryStock } from "../../redux/inventory/inventory.selector";
-import { setInventoryStock } from "../../redux/inventory/inventory.slice";
-import { setSignedInUser } from "../../redux/auth/auth.slice";
-import { setSnackbar } from "../../redux/ui/ui.slice";
+import { selectSupplier } from "redux/supplier/supplier.selector";
+import { setSupplier } from "redux/supplier/supplier.slice";
+import { setSignedInUser } from "redux/auth/auth.slice";
+import { setSnackbar } from "redux/ui/ui.slice";
 import { selectSignedInUser } from "redux/auth/auth.selector";
 
 import DashboardLayout from "layouts/DashboardLayout";
@@ -17,11 +17,13 @@ import CardHead from "components/CardHead";
 import MDButton from "components/MDButton";
 import MDSection from "components/MDSection";
 import MDTypography from "components/MDTypography";
-import MDInput from "components/MDInput";
-import Footer from "layouts/Footer";
-import { inventoryStockAPI } from "../../services/inventoryStockAPI";
 
-export default function InventoryStockFormPage() {
+import Input from "components/common/Input";
+import Footer from "layouts/Footer";
+import { supplierAPI } from "../../services/supplierAPI";
+import AddressForm from "components/AddressForm";
+
+export default function SupplierFormPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -31,16 +33,16 @@ export default function InventoryStockFormPage() {
   const [data, setData] = useState();
 
   const signedInUser = useSelector(selectSignedInUser);
-  const inventoryStock = useSelector(selectInventoryStock);
+  const supplier = useSelector(selectSupplier);
 
   useEffect(() => {
-    if (inventoryStock) {
-      setData({ ...inventoryStock });
+    if (supplier) {
+      setData({ ...supplier });
     } else {
       if (params && params.id && params.id !== "new") {
-        if (!inventoryStock) {
+        if (!supplier) {
           // refetch if page refreshed
-          inventoryStockAPI.fetchInventoryStock(params.id).then((r) => {
+          supplierAPI.fetchSupplier(params.id).then((r) => {
             if (r.status === 200) {
               setData({ ...r.data });
             }
@@ -48,26 +50,21 @@ export default function InventoryStockFormPage() {
         }
       }
     }
-  }, [inventoryStock]);
+  }, [supplier]);
 
   const validate = (d) => {
-    if (!d.notes) {
-      alert(t("Notes is required"));
+    if (!d.name) {
+      alert(t("Name is required"));
       return false;
     }
 
-    if (!d.product) {
-      alert(t("Product is required"));
+    if (!d.description) {
+      alert(t("Description is required"));
       return false;
     }
 
-    if (!d.quantity) {
-      alert(t("Quantity is required"));
-      return false;
-    }
-
-    if (!d.location) {
-      alert(t("Location is required"));
+    if (!d.status) {
+      alert(t("Status is required"));
       return false;
     }
 
@@ -79,24 +76,31 @@ export default function InventoryStockFormPage() {
     return true;
   };
 
-  const handleNotesChange = (event) => {
-    const a = { ...data, notes: event.target.value };
+  const handleNameChange = (event) => {
+    const a = { ...data, name: event.target.value };
     setData(a);
   };
 
-  const handleProductChange = (event) => {
-    const a = { ...data, product: event.target.value };
+  const handleDescriptionChange = (event) => {
+    const a = { ...data, description: event.target.value };
     setData(a);
   };
 
-  const handleQuantityChange = (event) => {
-    const a = { ...data, quantity: event.target.value };
+  const handleStatusChange = (event) => {
+    const a = { ...data, status: event.target.value };
     setData(a);
   };
 
-  const handleLocationChange = (event) => {
-    const a = { ...data, location: event.target.value };
+  const handlePhoneChange = (event) => {
+    const a = { ...data, phone: event.target.value };
     setData(a);
+  };
+
+  const handleAddressChange = (obj) => {
+    setData({
+      ...data,
+      address: { ...data.address, ...obj },
+    });
   };
 
   const handleSubmit = () => {
@@ -111,9 +115,9 @@ export default function InventoryStockFormPage() {
     if (!validate(d)) return;
 
     if (d._id) {
-      inventoryStockAPI.updateInventoryStock(d._id, d).then((r) => {
+      supplierAPI.updateSupplier(d._id, d).then((r) => {
         if (r.status === 200) {
-          dispatch(setInventoryStock(r.data));
+          dispatch(setSupplier(r.data));
           dispatch(
             setSnackbar({
               color: "success",
@@ -123,17 +127,17 @@ export default function InventoryStockFormPage() {
               open: true,
             })
           );
-          navigate("/inventoryStocks");
+          navigate("/suppliers");
         }
       });
     } else {
-      inventoryStockAPI
-        .createInventoryStock({
+      supplierAPI
+        .createSupplier({
           ...d,
         })
         .then((r) => {
           if (r.status === 200) {
-            dispatch(setInventoryStock(r.data));
+            dispatch(setSupplier(r.data));
             dispatch(
               setSnackbar({
                 color: "success",
@@ -143,7 +147,7 @@ export default function InventoryStockFormPage() {
                 open: true,
               })
             );
-            navigate("/inventoryStocks");
+            navigate("/suppliers");
           }
         });
     }
@@ -156,7 +160,7 @@ export default function InventoryStockFormPage() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <CardHead title={data && data._id ? t("Edit Project") : t("Create Project")} />
+              <CardHead title={data && data._id ? t("Edit Supplier") : t("Create Supplier")} />
 
               <MDSection title={t("Basic Info")}>
                 <Grid container xs={12} display="flex" pt={1} spacing={2}>
@@ -167,49 +171,52 @@ export default function InventoryStockFormPage() {
 
                 <Grid container xs={12} display="flex" pt={2} spacing={2}>
                   <Grid item xs={6} sm={3}>
-                    <MDInput
-                      label={t("notes")}
-                      value={data && data.notes ? data.notes : ""}
-                      onChange={handleNotesChange}
-                      helperText={error && error.notes ? error.notes : ""}
+                    <Input
+                      label={t("Name")}
+                      value={data && data.name ? data.name : ""}
+                      onChange={handleNameChange}
+                      helperText={error && error.name ? error.name : ""}
                     />
                   </Grid>
                 </Grid>
-
-                {/* <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                  <Grid item xs={6} sm={3}>
-                    <MDInput
-                      label={t("productId")}
-                      value={data && data.productId ? data.productId : ""}
-                      onChange={handleProductIdChange}
-                      helperText={error && error.productId ? error.productId : ""}
-                    />
-                  </Grid>
-                </Grid> */}
 
                 <Grid container xs={12} display="flex" pt={2} spacing={2}>
                   <Grid item xs={6} sm={3}>
-                    <MDInput
-                      label={t("quantity")}
-                      value={data && data.quantity ? data.quantity : ""}
-                      onChange={handleQuantityChange}
-                      helperText={error && error.quantity ? error.quantity : ""}
+                    <Input
+                      label={t("Description")}
+                      value={data && data.description ? data.description : ""}
+                      onChange={handleDescriptionChange}
+                      helperText={error && error.description ? error.description : ""}
                     />
                   </Grid>
                 </Grid>
 
-                {/* <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                <Grid container xs={12} display="flex" pt={2} spacing={2}>
                   <Grid item xs={6} sm={3}>
-                    <MDInput
-                      label={t("locationId")}
-                      value={data && data.locationId ? data.locationId : ""}
-                      onChange={handleLocationIdChange}
-                      helperText={error && error.locationId ? error.locationId : ""}
+                    <Input
+                      label={t("Status")}
+                      value={data && data.status ? data.status : ""}
+                      onChange={handleStatusChange}
+                      helperText={error && error.status ? error.status : ""}
                     />
                   </Grid>
-                </Grid> */}
+                </Grid>
+                <Grid container xs={12} display="flex" pt={2} spacing={2}>
+                  <Grid item xs={6} sm={3}>
+                    <Input
+                      label={t("Phone")}
+                      value={data && data.phone ? data.phone : ""}
+                      onChange={handlePhoneChange}
+                      helperText={error && error.phone ? error.phone : ""}
+                    />
+                  </Grid>
+                </Grid>
               </MDSection>
-
+              <MDSection title={t("Address")}>
+                <Grid item xs={12} sm={10} md={10} lg={8} xl={8}>
+                  <AddressForm address={data ? data.address : {}} onChange={handleAddressChange} />
+                </Grid>
+              </MDSection>
               <Grid display="flex" justifyContent="flex-end" xs={12} px={2} py={2}>
                 <MDButton
                   color="secondary"

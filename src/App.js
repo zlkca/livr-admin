@@ -17,7 +17,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
-
+import { useTranslation } from "react-i18next";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
@@ -45,7 +45,7 @@ import { ACCOUNT_COOKIE } from "const";
 import { setSignedInUser } from "redux/auth/auth.slice";
 import { JWT_COOKIE } from "const";
 import { LANGUAGE_COOKIE } from "const";
-import { useTranslation } from "react-i18next";
+
 import { selectSignedInUser } from "redux/auth/auth.selector";
 import { MyRoutes } from "routes";
 import { isAdmin } from "permission";

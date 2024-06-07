@@ -1,14 +1,16 @@
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { useGridApiRef } from "@mui/x-data-grid";
+
 import DateRangeFilter from "components/DateRangeFilter";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDLinearProgress from "components/MDLinearProgress";
 import GridTable from "components/common/GridTable";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+
 import { selectEmployees } from "redux/account/account.selector";
 import { setEmployees } from "redux/account/account.slice";
 import { setEmployee } from "redux/account/account.slice";
@@ -25,6 +27,7 @@ import {
   getDefaultDateRange,
 } from "utils";
 import CellButton from "components/common/CellButton";
+import { Cfg } from "config";
 
 export default function EmployeeList(props) {
   const { user, rowsPerPage, height, onDateRangeChange } = props;
@@ -44,25 +47,31 @@ export default function EmployeeList(props) {
   const [searchYear, setSearchYear] = useState(today.getFullYear());
   const [dateRange, setDateRange] = useState(getDefaultDateRange());
 
-  const columns = [
+  let columns = [
     { headerName: t("Username"), field: "username", minWidth: 180, flex: 1 },
     { headerName: t("Email"), field: "email", minWidth: 280, flex: 1.5 },
     { headerName: t("Phone"), field: "phone", minWidth: 160, flex: 1 },
-    {
+    { headerName: t("Status"), field: "status", minWidth: 120, flex: 1 },
+  ];
+
+  if (Cfg.MultiStore.enabled) {
+    columns.push({
       headerName: t("Roles"),
       field: "roles",
       minWidth: 260,
       flex: 1,
       valueGetter: (params) => (params.row?.roles ? params.row?.roles.join(", ") : t("Unknown")),
-    },
-    { headerName: t("Status"), field: "status", minWidth: 120, flex: 1 },
-    {
+    });
+    columns.push({
       headerName: t("Branch"),
       field: "branch",
       minWidth: 300,
       valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("N/A")),
       flex: 1,
-    },
+    });
+  }
+
+  columns = columns.concat([
     { headerName: t("Created Date"), field: "created", minWidth: 200, flex: 1 },
     {
       headerName: t("Actions"),
@@ -82,7 +91,7 @@ export default function EmployeeList(props) {
         );
       },
     },
-  ];
+  ]);
 
   const handleEdit = () => {
     if (selectedRow) {

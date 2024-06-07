@@ -6,9 +6,9 @@ import { useGridApiRef } from "@mui/x-data-grid";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 
-import { setInventoryLocation } from "../../redux/inventory/inventory.slice";
-import { selectInventoryLocations } from "../../redux/inventory/inventory.selector";
-import { setInventoryLocations } from "../../redux/inventory/inventory.slice";
+import { setSupplier } from "redux/supplier/supplier.slice";
+import { selectSuppliers } from "redux/supplier/supplier.selector";
+import { setSuppliers } from "redux/supplier/supplier.slice";
 import { setSignedInUser } from "redux/auth/auth.slice";
 import { setSnackbar } from "redux/ui/ui.slice";
 import { selectSnackbar } from "redux/ui/ui.selector";
@@ -24,18 +24,17 @@ import DashboardLayout from "layouts/DashboardLayout";
 import DashboardNavbar from "layouts/DashboardNavbar";
 import Footer from "layouts/Footer";
 
-import { inventoryLocationAPI } from "../../services/inventoryLocationAPI";
-import { ActionButton } from "components/common/Button";
+import { supplierAPI } from "../../services/supplierAPI";
 
 const GridCfg = { RowsPerPage: 20 };
 
-export default function InventoryLocationListPage() {
+export default function SupplierListPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const gridApiRef = useGridApiRef();
 
-  const inventoryLocations = useSelector(selectInventoryLocations);
+  const suppliers = useSelector(selectSuppliers);
   const signedInUser = useSelector(selectSignedInUser);
   const [selectedRow, setSelectedRow] = useState();
   const snackbar = useSelector(selectSnackbar);
@@ -43,8 +42,6 @@ export default function InventoryLocationListPage() {
   const columns = [
     { headerName: t("Name"), field: "name", minWidth: 200, flex: 1 },
     // { headerName: t("Description"), field: "description", minWidth: 200, flex: 1 },
-    { headerName: t("Address"), field: "address", minWidth: 200, flex: 1 },
-    { headerName: t("Type"), field: "type", minWidth: 200, flex: 1 },
     { headerName: t("Status"), field: "status", minWidth: 200, flex: 1 },
     {
       headerName: t("Creator"),
@@ -63,9 +60,9 @@ export default function InventoryLocationListPage() {
         return (
           <CellButton
             onClick={() => {
-              dispatch(setInventoryLocation(params.row));
-              const inventoryLocationId = params.row._id;
-              navigate("/inventoryLocations/" + inventoryLocationId);
+              dispatch(setSupplier(params.row));
+              const supplierId = params.row._id;
+              navigate("/suppliers/" + supplierId);
             }}
           >
             {t("View Details")}
@@ -76,15 +73,8 @@ export default function InventoryLocationListPage() {
   ];
 
   const handleCreate = () => {
-    dispatch(setInventoryLocation());
-    navigate("/inventoryLocations/new/form");
-  };
-
-  const handleMove = (direction) => {
-    if (selectedRow) {
-      dispatch(setInventoryLocation(selectedRow));
-      navigate(`/inventoryTransactions/new/form?dir=${direction}`);
-    }
+    dispatch(setSupplier());
+    navigate("/suppliers/new/form");
   };
 
   const handleSelectRow = (row) => {
@@ -93,9 +83,9 @@ export default function InventoryLocationListPage() {
 
   useEffect(() => {
     if (signedInUser) {
-      inventoryLocationAPI.searchInventoryLocations({}).then((r) => {
+      supplierAPI.searchSuppliers({}).then((r) => {
         if (r.status == 200) {
-          dispatch(setInventoryLocations(r.data));
+          dispatch(setSuppliers(r.data));
         } else if (r.status === 401) {
           dispatch(setSignedInUser());
         }
@@ -110,21 +100,20 @@ export default function InventoryLocationListPage() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <CardHead title={t("InventoryLocations")} />
+              <CardHead title={t("Suppliers")} />
               <MDBox pt={2} px={2} style={{ height: 1240 }}>
                 <Grid container display="flex" justifyContent={"flex-start"}>
                   <Grid item xs={2} md={9}>
                     <Grid container spacing={2} direction="row" justifyContent="flex-end">
                       <Grid item>
-                        <ActionButton onClick={handleCreate}>{t("Create")}</ActionButton>
-                      </Grid>
-                      <Grid item>
-                        <ActionButton onClick={() => handleMove("in")}>{t("Move in")}</ActionButton>
-                      </Grid>
-                      <Grid item>
-                        <ActionButton onClick={() => handleMove("out")}>
-                          {t("Move out")}
-                        </ActionButton>
+                        <MDButton
+                          color="info"
+                          variant={"outlined"}
+                          size="small"
+                          onClick={handleCreate}
+                        >
+                          {t("Create")}
+                        </MDButton>
                       </Grid>
                     </Grid>
                   </Grid>
@@ -133,7 +122,7 @@ export default function InventoryLocationListPage() {
                   <GridTable
                     autoPageSize
                     apiRef={gridApiRef}
-                    data={inventoryLocations}
+                    data={suppliers}
                     columns={columns}
                     onRowClick={handleSelectRow}
                     rowsPerPage={GridCfg.RowsPerPage}

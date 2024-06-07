@@ -42,15 +42,15 @@ export default function ProductListPage() {
   const snackbar = useSelector(selectSnackbar);
 
   const columns = [
-    {
-      headerName: t("Category"),
-      field: "category",
-      minWidth: 180,
-      flex: 1,
-      valueGetter: (params) => (params.row?.category ? params.row?.category.name : t("Unassigned")),
-    },
+    // {
+    //   headerName: t("Category"),
+    //   field: "category",
+    //   minWidth: 180,
+    //   flex: 1,
+    //   valueGetter: (params) => (params.row?.category ? params.row?.category.name : t("Unassigned")),
+    // },
     { headerName: t("Name"), field: "name", minWidth: 200, flex: 1 },
-    { headerName: t("Description"), field: "description", minWidth: 200, flex: 1 },
+    // { headerName: t("Description"), field: "description", minWidth: 200, flex: 1 },
     { headerName: t("SKU"), field: "SKU", minWidth: 120, flex: 1 },
     { headerName: t("Cost"), field: "cost", minWidth: 90, flex: 1 },
     { headerName: t("Price"), field: "price", minWidth: 90, flex: 1 },

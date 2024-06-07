@@ -49,8 +49,6 @@ export default function InventoryTransactionListPage() {
       valueGetter: (params) => (params.row?.product ? params.row?.product.name : t("Unknown")),
     },
     { headerName: t("Quantity"), field: "quantity", minWidth: 200, flex: 1 },
-    { headerName: t("CostAtTransaction"), field: "costAtTransaction", minWidth: 200, flex: 1 },
-    { headerName: t("PriceAtTransaction"), field: "priceAtTransaction", minWidth: 200, flex: 1 },
     {
       headerName: t("From"),
       field: "from",

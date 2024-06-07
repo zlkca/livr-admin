@@ -29,11 +29,13 @@ export default function Sidemenu({ menus, collapseName }) {
       //     />
       //   </Link>
       // ) : (
-        if(enabled){
-          returnValue = <NavLink key={key} to={route}>
-          <SidenavCollapse name={t(name)} icon={icon} active={key === collapseName} />
-        </NavLink>
-        }
+      if (enabled) {
+        returnValue = (
+          <NavLink key={key} to={route}>
+            <SidenavCollapse name={t(name)} icon={icon} active={key === collapseName} />
+          </NavLink>
+        );
+      }
 
       // );
     } else if (type === "title") {

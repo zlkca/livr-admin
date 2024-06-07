@@ -41,12 +41,28 @@ export default function InventoryStockListPage() {
 
   const columns = [
     { headerName: t("Notes"), field: "notes", minWidth: 200, flex: 1 },
-    { headerName: t("ProductId"), field: "productId", minWidth: 200, flex: 1 },
+    {
+      headerName: t("Product"),
+      field: "product",
+      minWidth: 200,
+      flex: 1,
+      valueGetter: (params) => (params.row?.product ? params.row?.product.name : t("Unknown")),
+    },
     { headerName: t("Quantity"), field: "quantity", minWidth: 200, flex: 1 },
-    { headerName: t("LastUpdatedCost"), field: "lastUpdatedCost", minWidth: 200, flex: 1 },
-    { headerName: t("LastUpdatedPrice"), field: "lastUpdatedPrice", minWidth: 200, flex: 1 },
-    { headerName: t("LocationId"), field: "locationId", minWidth: 200, flex: 1 },
-    { headerName: t("Type"), field: "type", minWidth: 200, flex: 1 },
+    {
+      headerName: t("Location"),
+      field: "location.name",
+      minWidth: 200,
+      flex: 1,
+      valueGetter: (params) => (params.row?.location ? params.row?.location.name : t("Unknown")),
+    },
+    {
+      headerName: t("Type"),
+      field: "location.type",
+      minWidth: 200,
+      flex: 1,
+      valueGetter: (params) => (params.row?.location ? params.row?.location.type : t("Unknown")),
+    },
     {
       headerName: t("Creator"),
       field: "creator",

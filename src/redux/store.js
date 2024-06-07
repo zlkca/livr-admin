@@ -12,6 +12,7 @@ import feedbackReducer from "../redux/feedback/feedback.slice";
 import productReducer from "../redux/product/product.slice";
 import inventoryReducer from "../redux/inventory/inventory.slice";
 import categoryReducer from "../redux/category/category.slice";
+import supplierReducer from "../redux/supplier/supplier.slice";
 
 export default configureStore({
   reducer: {
@@ -24,7 +25,7 @@ export default configureStore({
     account: accountReducer,
     order: orderReducer,
     feedback: feedbackReducer,
-    // product: productReducer,
+    supplier: supplierReducer,
     product: productReducer,
     inventory: inventoryReducer,
     category: categoryReducer,

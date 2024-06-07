@@ -12,16 +12,14 @@
         "Manage Brands": "店铺管理",
         "Manage Messages": "消息管理",
         "Manage Price": "價格管理",
-
         "Manage Categories": "分类管理",
-
         "Manage Qrcodes": "二维码管理",
-
         "Manage Specs": "规格管理",
-
         "Manage Orders": "订单管理",
-
         "Manage Payments": "付款管理",
+        "Inventory Locations": "库存位置",
+        "Inventory Transactions": "库存转移",
+        "Stock": "库存",
         "Receivable":"应收款",
         "Receivable Payments":"应收款",
         "Receivable by branch": "分公司应收款",
@@ -32,6 +30,12 @@
         "Summary":"概要",
         "Title.": "称谓",
         "Clear Search": "清除查找",
+        "Category":"分类",
+        "Categories":"分类",
+        "Product":"产品",
+        "Products":"产品",
+        "Supplier":"供应商",
+        "Suppliers":"供应商",
         "Orders": "订单",
         "Client": "客户",
         "Clients": "客户",

@@ -31,6 +31,7 @@ import { setSnackbar } from "redux/ui/ui.slice";
 import exportToCsv from "export/exportToCSV";
 import { getDefaultDateRange } from "utils";
 import CellButton from "components/common/CellButton";
+import { Cfg } from "config";
 // import exportToExcel from "export/exportToExcel";
 
 export default function OrderList(props) {
@@ -130,55 +131,67 @@ export default function OrderList(props) {
     exportToCsv(`${BrandName}-orders-${new Date().toISOString()}.csv`, dataList);
     // exportToExcel(`${BrandName}-orders-${new Date().toISOString()}.xlsx`, dataList);
   };
-  const columns = [
+  let columns = [
     {
       headerName: t("ID"),
       field: "id",
       minWidth: 150,
       flex: 2,
     },
-    {
+  ];
+  if (Cfg.MultiStore.enabled) {
+    columns.push({
       headerName: t("Branch"),
       field: "branch",
       minWidth: 280,
-      flex: 2,
-      valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("Unassigned")),
-    },
-    {
+      valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("N/A")),
+      flex: 1,
+    });
+  }
+  if (!Cfg.OnlineStore.enabled) {
+    columns.push({
       headerName: t("Sales"),
       field: "sales",
       minWidth: 150,
+      valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("N/A")),
       flex: 1,
-      valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("Unassigned")),
-    },
-    {
-      headerName: t("Client"),
-      field: "client",
-      minWidth: 150,
-      flex: 1,
-      valueGetter: (params) => (params.row?.client ? params.row?.client.username : t("Unknown")),
-    },
-    {
-      headerName: t("pre-tax Total"),
-      field: "amount",
-      minWidth: 80,
-      flex: 1,
-    },
-    {
+    });
+  }
+
+  columns.push({
+    headerName: t("Client"),
+    field: "client",
+    minWidth: 150,
+    flex: 1,
+    valueGetter: (params) => (params.row?.client ? params.row?.client.username : t("Unknown")),
+  });
+
+  columns.push({
+    headerName: t("pre-tax Total"),
+    field: "amount",
+    minWidth: 80,
+    flex: 1,
+  });
+
+  if (Cfg.Deposit.enabled) {
+    columns.push({
       headerName: t("Deposit Receivable"),
       field: "deposit",
       minWidth: 80,
       flex: 1,
-    },
+    });
+    columns.push({
+      headerName: t("Balance"),
+      field: "balance",
+      minWidth: 80,
+      flex: 1,
+    });
+  }
+
+  columns = columns.concat([
     {
       headerName: t("Tax Option"),
       field: "taxOpt",
-      minWidth: 80,
-      flex: 1,
-    },
-    {
-      headerName: t("Balance"),
-      field: "balance",
       minWidth: 80,
       flex: 1,
     },
@@ -202,7 +215,7 @@ export default function OrderList(props) {
         );
       },
     },
-  ];
+  ]);
 
   const handleSearchModeChange = (mode) => {
     if (mode === "year") {

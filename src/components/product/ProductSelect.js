@@ -60,12 +60,6 @@ export default function ProductSelect({ products, selected, onSelect }) {
       valueGetter: (params) => (params.row?.name ? params.row?.name : t("Unknown")),
     },
     {
-      headerName: t("Address"),
-      field: "address",
-      width: 400,
-      valueGetter: (params) => (params.row?.address ? params.row?.address : t("Unassigned")),
-    },
-    {
       headerName: t("Created Date"),
       field: "created",
       width: 200,

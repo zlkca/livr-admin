@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Card, Checkbox, FormControlLabel, FormGroup, Grid } from "@mui/material";
+import { Card, Grid } from "@mui/material";
 
 import {
   selectInventoryLocation,
@@ -28,6 +28,10 @@ import MDSelect from "components/MDSelect";
 import ProductSelectBackdrop from "components/product/ProductSelectBackdrop";
 import { selectProducts } from "redux/product/product.selector";
 import { productAPI } from "services/productAPI";
+import { selectSuppliers } from "redux/supplier/supplier.selector";
+import { setProducts } from "redux/product/product.slice";
+import { setSuppliers } from "redux/supplier/supplier.slice";
+import { supplierAPI } from "services/supplierAPI";
 
 export default function InventoryTransactionFormPage() {
   const { t } = useTranslation();
@@ -40,7 +44,7 @@ export default function InventoryTransactionFormPage() {
   const [data, setData] = useState();
   const [backdrop, setBackdrop] = useState({ opened: false });
   const [locationOptions, setLocationOptions] = useState([]);
-
+  const suppliers = useSelector(selectSuppliers);
   const signedInUser = useSelector(selectSignedInUser);
   const inventoryTransaction = useSelector(selectInventoryTransaction);
   const inventoryLocation = useSelector(selectInventoryLocation);
@@ -48,25 +52,51 @@ export default function InventoryTransactionFormPage() {
   const locations = useSelector(selectInventoryLocations);
 
   useEffect(() => {
-    if (locations)
-      setLocationOptions(
-        locations.map((it) => ({
-          id: it._id,
-          label: it.name,
-        }))
-      );
-  }, [locations]);
+    const opts = [];
+    if (suppliers) {
+      suppliers.map((it) => {
+        opts.push({ id: it._id, label: it.name, type: "supplier" });
+      });
+    }
+    if (locations) {
+      locations.map((it) => {
+        opts.push({ id: it._id, label: it.name, type: it.type });
+      });
+    }
+    setLocationOptions(opts);
+  }, [suppliers, locations]);
+
+  const getLocationFromOptions = (id) => {
+    const opt = locationOptions.find((it) => it.id == id);
+    return { _id: opt.id, name: opt.label, type: opt.type };
+  };
 
   useEffect(() => {
     if (params.id === "new") {
       const dir = searchParams.get("dir");
 
       if (dir === "in") {
-        setData({ ...data, to: { _id: inventoryLocation._id, name: inventoryLocation.name } });
+        setData({
+          ...data,
+          to: {
+            _id: inventoryLocation._id,
+            name: inventoryLocation.name,
+            type: inventoryLocation.type,
+          },
+        });
       } else {
-        setData({ ...data, from: { _id: inventoryLocation._id, name: inventoryLocation.name } });
+        setData({
+          ...data,
+          from: {
+            _id: inventoryLocation._id,
+            name: inventoryLocation.name,
+            type: inventoryLocation.type,
+          },
+        });
       }
     }
+    productAPI.fetchProducts().then((r) => dispatch(setProducts(r.data)));
+    supplierAPI.fetchSuppliers().then((r) => dispatch(setSuppliers(r.data)));
   }, [params]);
 
   useEffect(() => {
@@ -102,23 +132,13 @@ export default function InventoryTransactionFormPage() {
       return false;
     }
 
-    if (!d.costAtTransaction) {
-      alert(t("CostAtTransaction is required"));
-      return false;
-    }
-
-    if (!d.priceAtTransaction) {
-      alert(t("PriceAtTransaction is required"));
-      return false;
-    }
-
     if (!d.from) {
-      alert(t("LocationId is required"));
+      alert(t("From location is required"));
       return false;
     }
 
     if (!d.to) {
-      alert(t("LocationId is required"));
+      alert(t("To location is required"));
       return false;
     }
 
@@ -149,25 +169,15 @@ export default function InventoryTransactionFormPage() {
     setData(a);
   };
 
-  const handleCostAtTransactionChange = (event) => {
-    const a = { ...data, costAtTransaction: event.target.value };
-    setData(a);
-  };
-
-  const handlePriceAtTransactionChange = (event) => {
-    const a = { ...data, priceAtTransaction: event.target.value };
-    setData(a);
-  };
-
   const handleFromChange = (event) => {
     const id = event.target.value;
-    const a = { ...data, from: locations.find((it) => it._id == id) };
+    const a = { ...data, from: getLocationFromOptions(id) };
     setData(a);
   };
 
   const handleToChange = (event) => {
     const id = event.target.value;
-    const a = { ...data, to: locations.find((it) => it._id == id) };
+    const a = { ...data, to: getLocationFromOptions(id) };
     setData(a);
   };
 
@@ -175,9 +185,13 @@ export default function InventoryTransactionFormPage() {
     if (product) {
       setData({
         ...data,
-        product: { _id: product._id, name: product.name },
-        costAtTransaction: product.cost,
-        priceAtTransaction: product.price,
+        product: {
+          _id: product._id,
+          name: product.name,
+          cost: product.cost,
+          price: product.price,
+          discount: product.discount,
+        },
       });
       setError({ ...error, product: "" });
     }
@@ -269,30 +283,6 @@ export default function InventoryTransactionFormPage() {
                       value={data && data.product ? data.product.name : ""}
                       onClick={handleOpenProductBackdrop}
                       helperText={error && error.product ? error.product : ""}
-                    />
-                  </Grid>
-                </Grid>
-
-                <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                  <Grid item xs={6} sm={3}>
-                    <MDInput
-                      readOnly
-                      label={t("costAtTransaction")}
-                      value={data && data.costAtTransaction ? data.costAtTransaction : ""}
-                      onChange={handleCostAtTransactionChange}
-                      helperText={error && error.costAtTransaction ? error.costAtTransaction : ""}
-                    />
-                  </Grid>
-                </Grid>
-
-                <Grid container xs={12} display="flex" pt={2} spacing={2}>
-                  <Grid item xs={6} sm={3}>
-                    <MDInput
-                      readOnly
-                      label={t("priceAtTransaction")}
-                      value={data && data.priceAtTransaction ? data.priceAtTransaction : ""}
-                      onChange={handlePriceAtTransactionChange}
-                      helperText={error && error.priceAtTransaction ? error.priceAtTransaction : ""}
                     />
                   </Grid>
                 </Grid>

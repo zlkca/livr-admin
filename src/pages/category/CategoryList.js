@@ -41,7 +41,7 @@ export default function CategoryListPage() {
 
   const columns = [
     { headerName: t("Name"), field: "name", minWidth: 200, flex: 1 },
-    { headerName: t("Description"), field: "description", minWidth: 200, flex: 1 },
+    // { headerName: t("Description"), field: "description", minWidth: 200, flex: 1 },
     { headerName: t("Status"), field: "status", minWidth: 200, flex: 1 },
     {
       headerName: t("Creator"),

@@ -1,14 +1,16 @@
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { useGridApiRef } from "@mui/x-data-grid";
+
 import DateRangeFilter from "components/DateRangeFilter";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDLinearProgress from "components/MDLinearProgress";
 import GridTable from "components/common/GridTable";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+
 import { selectClients } from "redux/account/account.selector";
 import { setClients } from "redux/account/account.slice";
 import { setClient } from "redux/account/account.slice";
@@ -16,12 +18,14 @@ import { selectSignedInUser } from "redux/auth/auth.selector";
 import { setSnackbar } from "redux/ui/ui.slice";
 import { accountAPI } from "services/accountAPI";
 import { isAdmin } from "permission";
-import { isValidDate } from "utils";
-import { getFirstDayOfYear } from "utils";
-import { getLastDayOfYear } from "utils";
-import { getLastDayOfMonth } from "utils";
-import { getFirstDayOfMonth } from "utils";
-import { logout } from "utils";
+import {
+  isValidDate,
+  getFirstDayOfYear,
+  getLastDayOfYear,
+  getLastDayOfMonth,
+  getFirstDayOfMonth,
+} from "utils";
+import { Cfg } from "config";
 
 export default function ClientList(props) {
   const { user, rowsPerPage, height, onDateRangeChange } = props;
@@ -44,47 +48,48 @@ export default function ClientList(props) {
     getLastDayOfMonth(today.getFullYear(), today.getMonth()),
   ]);
 
-  const columns = [
-    { headerName: t("Username"), field: "username", minWidth: 200, flex: 1 },
-    {
+  const columns = [{ headerName: t("Username"), field: "username", minWidth: 200, flex: 1 }];
+  if (Cfg.MultiStore.enabled) {
+    columns.push({
       headerName: t("Branch"),
       field: "branch",
       minWidth: 300,
       valueGetter: (params) => (params.row?.branch ? params.row?.branch.name : t("N/A")),
       flex: 1,
-    },
-    {
+    });
+  }
+  if (!Cfg.OnlineStore.enabled) {
+    columns.push({
       headerName: t("Sales"),
       field: "sales",
       minWidth: 160,
       valueGetter: (params) => (params.row?.sales ? params.row?.sales.username : t("N/A")),
       flex: 1,
+    });
+  }
+  columns.push({ headerName: t("Email"), field: "email", minWidth: 200, flex: 1.5 });
+  columns.push({ headerName: t("Phone"), field: "phone", minWidth: 160, flex: 1 });
+  columns.push({ headerName: t("Created Date"), field: "created", minWidth: 200, flex: 1 });
+  columns.push({
+    headerName: t("Actions"),
+    field: "_id",
+    minWidth: 160,
+    flex: 1,
+    renderCell: (params) => {
+      return (
+        <MDButton
+          color="info"
+          size="small"
+          onClick={() => {
+            dispatch(setClient(params.row));
+            navigate(`/clients/${params.row._id}`);
+          }}
+        >
+          {t("View Details")}
+        </MDButton>
+      );
     },
-    { headerName: t("Email"), field: "email", minWidth: 200, flex: 1.5 },
-    { headerName: t("Phone"), field: "phone", minWidth: 160, flex: 1 },
-    // { headerName: t("Status"), field: "status", minWidth: 150, flex: 1 },
-    { headerName: t("Created Date"), field: "created", minWidth: 200, flex: 1 },
-    {
-      headerName: t("Actions"),
-      field: "_id",
-      minWidth: 160,
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <MDButton
-            color="info"
-            size="small"
-            onClick={() => {
-              dispatch(setClient(params.row));
-              navigate(`/clients/${params.row._id}`);
-            }}
-          >
-            {t("View Details")}
-          </MDButton>
-        );
-      },
-    },
-  ];
+  });
 
   const handleEdit = () => {
     if (selectedRow) {
